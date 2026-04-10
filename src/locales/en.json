@@ -1,0 +1,216 @@
+{
+  "navigation": {
+    "sentimentAnalysis": "Sentiment Analysis",
+    "faq": "FAQ",
+    "contactUs": "Contact Us",
+    "login": "Login"
+  },
+  "footer": {
+    "copyright": "© {{year}} SentivyaDZ. All rights reserved.",
+    "faq": "FAQ",
+    "contactUs": "Contact Us"
+  },
+  "home": {
+    "tagline": "Algerian platform to hear your customers' voice and analyze sentiments in Algerian Dialect",
+    "title": "Hear your customers' voice in Dialect,",
+    "subtitle": "and understand their sentiments on social media.",
+    "description": "SentivyaDZ combines the power of AI and Algerian Dialect analysis to give you a clear vision of every experience your customers live on social media.",
+    "getStarted": "Sentiment Analysis",
+    "features": {
+      "aiAnalysis": {
+        "title": "AI Sentiment Analysis",
+        "description": "We analyze thousands of comments in Algerian Dialect with high accuracy to understand your customers' real feelings"
+      },
+      "multiPlatform": {
+        "title": "Multi-Platform and Multi-Language",
+        "description": "We collect sentiments from Twitter, Facebook, and Instagram - all this in Algerian Dialect"
+      },
+      "realTimeAlerts": {
+        "title": "Real-time Instant Alerts",
+        "description": "Be the first to know when your brand reputation changes and take appropriate action"
+      },
+      "brandProtection": {
+        "title": "Brand Reputation Protection",
+        "description": "Monitor negative sentiments before they turn into a crisis and affect your business"
+      }
+    },
+    "analytics": {
+      "title": "Sentiment Analytics and Trends",
+      "description": "Track the evolution of customer feelings over the past months and discover important trends",
+      "sentimentEvolution": "Sentiment Evolution Over 6 Months",
+      "positive": "Positive",
+      "neutral": "Neutral", 
+      "negative": "Negative",
+      "totalComments": "Total Comments",
+      "thisMonth": "This Month",
+      "positiveRate": "Positive Rate",
+      "ofTotalComments": "of total comments",
+      "lastUpdate": "Last Update",
+      "realTime": "Real-time"
+    },
+    "howItWorks": {
+      "title": "How does SentivyaDZ work?",
+      "description": "Three simple steps to stay informed about everything said about your brand.",
+      "step1": {
+        "title": "We Collect Comments",
+        "description": "From Twitter, Facebook, and Instagram. Everything customers write in Dialect reaches you in one place."
+      },
+      "step2": {
+        "title": "We Analyze in Dialect",
+        "description": "AI understands Algerian dialect and determines the sentiment: positive, negative, or neutral."
+      },
+      "step3": {
+        "title": "Instant Alerts",
+        "description": "In case of increased negativity, you are immediately alerted to take action before brand reputation is affected."
+      }
+    },
+    "whatWeOffer": {
+      "title": "What do we offer?",
+      "description": "Clear tools to hear the voice of Algerian customers and protect your brand reputation.",
+      "sentimentAnalysis": {
+        "title": "Sentiment Analysis",
+        "description": "Live statistics, comments in dialect, and alerts when negativity increases. Everything on one page."
+      },
+      "dialectAnalysis": {
+        "title": "Algerian Dialect Analysis",
+        "description": "Our model understands Algerian writing on social media: expressions, abbreviations, and tone of speech."
+      },
+      "reputationIndicator": {
+        "title": "Brand Reputation Indicator",
+        "description": "Is reputation rising or falling? Clear alert before crisis escalates."
+      }
+    },
+    "whoWeServe": {
+      "title": "Who do we serve?",
+      "description": "Brands, companies, and customer service teams can benefit from SentivyaDZ.",
+      "localBrands": "Local Brands",
+      "smes": "SMEs and Startups",
+      "customerService": "Customer Service and Call Centers",
+      "agencies": "Agencies and Advertising"
+    },
+    "platforms": {
+      "title": "Connected to platforms your customers use daily",
+      "description": "We collect sentiments from Twitter (X), Facebook, and Instagram in one place.",
+      "twitter": "Twitter / X",
+      "facebook": "Facebook", 
+      "instagram": "Instagram"
+    },
+    "cta": {
+      "title": "Ready to hear your customers' voice in dialect?",
+      "description": "Start now by creating an account or contact our team.",
+      "contactUs": "Contact Us"
+    }
+  },
+  "faq": {
+    "tagline": "Support & Help",
+    "title": "Frequently Asked Questions (FAQ)",
+    "description": "We've selected the most frequently asked questions from our clients about surveys, the platform, and Algerian dialect analysis. You can always contact us if you don't find your answer here.",
+    "questions": {
+      "q1": "How does SentivyaDZ specifically handle Algerian dialect?",
+      "a1": "Our model has been trained to understand Algerian dialect with all its expressions, abbreviations, and popular vocabulary. It supports analyzing writing in dialect as used by Algerian customers on social media platforms.",
+      "q2": "What social media platforms does SentivyaDZ support?",
+      "a2": "We support Twitter (X), Facebook, and Instagram. We can monitor all comments and posts that mention your brand and analyze them in Algerian dialect.",
+      "q3": "Can I receive instant alerts when negative sentiments increase?",
+      "a3": "Yes, the platform provides an instant alert system that monitors the level of negative sentiments. When the specified threshold is exceeded, you are immediately notified to take necessary actions to protect your brand reputation.",
+      "q4": "Does the platform support languages other than Algerian dialect?",
+      "a4": "SentivyaDZ focuses primarily on Algerian dialect for its excellence in this field, but we plan to add support for Modern Standard Arabic and other Maghreb dialects in the future.",
+      "q5": "How can I start using SentivyaDZ?",
+      "a5": "You can easily start by creating an account and logging into the platform directly."
+    }
+  },
+  "contact": {
+    "tagline": "Contact Us",
+    "title": "The SentivyaDZ team is ready to help you every step of the way",
+    "description": "Fill out the form below and one of our customer experience experts will contact you as soon as possible.",
+    "form": {
+      "fullName": "Full Name *",
+      "fullNamePlaceholder": "Enter your full name",
+      "email": "Email *",
+      "emailPlaceholder": "example@email.com",
+      "company": "Company Name",
+      "companyPlaceholder": "Your company name",
+      "phone": "Phone Number",
+      "phonePlaceholder": "+213 XXX XXX XXX",
+      "message": "Message *",
+      "messagePlaceholder": "How can we help you? Tell us about your needs...",
+      "sending": "Sending...",
+      "sendMessage": "Send Message",
+      "success": "✓ Your message has been sent successfully! We will contact you soon.",
+      "error": "✕ An error occurred while sending the message. Please try again."
+    },
+    "contactInfo": {
+      "title": "Contact Information",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address"
+    },
+    "whyChooseUs": {
+      "title": "Why choose SentivyaDZ?",
+      "deepUnderstanding": "Deep understanding of Algerian dialect",
+      "support247": "Specialized 24/7 technical support",
+      "customSolutions": "Custom solutions for Algerian market",
+      "competitivePrices": "Competitive prices and flexibility in dealing"
+    }
+  },
+  "login": {
+    "title": "Login",
+    "welcome": "Welcome to SentivyaDZ",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "loginButton": "Login to Platform",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create your company account",
+    "services": {
+      "sentiment": "Sentiment Analysis",
+      "opinion": "Customer Opinion Analysis", 
+      "reports": "Marketing Reports",
+      "intelligence": "Marketing Intelligence"
+    },
+    "errors": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email format",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters"
+    }
+  },
+  "socialListening": {
+    "tagline": "Sentiment Analysis",
+    "title": "Analysis of Algerian Customers' Sentiments on Social Media",
+    "description": "We collect comments in Algerian dialect from Twitter, Facebook, and Instagram, and evaluate general sentiment (positive / negative / neutral) with instant alerts when negative tone increases.",
+    "warning": " Warning: Noticeable increase in negative sentiments",
+    "warningDescription": "Current negative sentiment percentage has exceeded {{threshold}}%. Review recent comments and identify possible causes for decreased customer satisfaction. Brand reputation is at risk of decline.",
+    "reputationIndicator": "Brand Reputation Indicator (sentiments for this period)",
+    "attentionRisk": "Attention: Reputation at risk of decline",
+    "positiveReputation": "Positive Reputation",
+    "moderateLevel": "Moderate Level",
+    "positive": "{{percentage}}% Positive",
+    "negative": "{{percentage}}% Negative", 
+    "neutral": "{{percentage}}% Neutral",
+    "distribution": "Sentiment Distribution",
+    "allPlatforms": "All Platforms",
+    "twitter": "Twitter",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "comments": "comments",
+    "totalComments": "Total comments:",
+    "negativeThreshold": "Current negative sentiment alert threshold:",
+    "recentComments": "Recent comments in Algerian dialect",
+    "source": "Source",
+    "platform": "Platform"
+  },
+  "mediaMonitoring": {
+    "tagline": "Media Monitoring",
+    "title": "Follow how people talk about your brand everywhere and understand its real image",
+    "description": "Collect media coverage from different sources in one platform and connect it with survey results."
+  },
+  "profiles": {
+    "tagline": "Customer Profiles",
+    "title": "One profile that gathers everything you need to know about your customer",
+    "description": "Connect every interaction, survey and conversation record in one profile that gives you a complete picture of each customer's experience."
+  },
+  "notFound": {
+    "description": "The page you are looking for does not exist, you can return to the home page or explore sentiment analysis.",
+    "backToHome": "Back to Home",
+    "analyzeSentiments": "Analyze Sentiments"
+  }
+}

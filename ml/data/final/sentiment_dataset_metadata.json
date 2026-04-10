@@ -1,0 +1,41 @@
+{
+  "final_dataset_path": "C:\\Users\\hp\\Lucidia-project\\ml\\data\\final\\sentiment_dataset_final.csv",
+  "final_shape": [
+    11492,
+    5
+  ],
+  "final_label_distribution": {
+    "0": 4687,
+    "1": 4971,
+    "2": 1834
+  },
+  "label_mapping_final": {
+    "0": "negative",
+    "1": "neutral",
+    "2": "positive"
+  },
+  "source_mappings": {
+    "dataset_1": {
+      "-1": 0,
+      "0": 1,
+      "1": 2
+    },
+    "dataset_2": {
+      "1": 0,
+      "0": 1,
+      "2": 2,
+      "11": "removed"
+    },
+    "dataset_3": {
+      "0": 0,
+      "1": 1,
+      "2": 2
+    }
+  },
+  "notes": [
+    "Unnamed columns removed",
+    "Invalid label rows removed",
+    "Exact duplicate texts removed within each dataset and globally",
+    "Basic text normalization applied"
+  ]
+}
