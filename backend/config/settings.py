@@ -49,6 +49,10 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
 
     "accounts",
+    "companies",
+    "posts",
+    "ingestion",
+    
 ]
 
 MIDDLEWARE = [
@@ -164,3 +168,73 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+def _csv_env(name: str, default: str = "") -> list[str]:
+    raw = os.getenv(name, default) or ""
+    return [x.strip() for x in raw.split(",") if x.strip()]
+
+
+def _int_env(name: str) -> int | None:
+    raw = (os.getenv(name, "") or "").strip()
+    if not raw:
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        return None
+
+
+def _env_bool(name: str, default: bool = False) -> bool:
+    raw = (os.getenv(name, "") or "").strip().lower()
+    if raw in ("1", "true", "yes", "on"):
+        return True
+    if raw in ("0", "false", "no", "off"):
+        return False
+    return default
+
+
+# --- Ingestion (Phase 3): keywords + RSS for all sources; API keys optional ---
+INGESTION_DEFAULT_COMPANY_ID = _int_env("INGESTION_DEFAULT_COMPANY_ID")
+INGESTION_KEYWORDS = _csv_env("INGESTION_KEYWORDS")
+INGESTION_RSS_FEEDS = _csv_env("INGESTION_RSS_FEEDS")
+INGESTION_RSS_FILTER_BY_KEYWORDS = _env_bool("INGESTION_RSS_FILTER_BY_KEYWORDS", True)
+INGESTION_GDELT_MAX_RECORDS = int(os.getenv("INGESTION_GDELT_MAX_RECORDS", "15"))
+INGESTION_YOUTUBE_MAX_VIDEOS = int(os.getenv("INGESTION_YOUTUBE_MAX_VIDEOS", "5"))
+INGESTION_YOUTUBE_MAX_COMMENTS = int(os.getenv("INGESTION_YOUTUBE_MAX_COMMENTS", "50"))
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY", "")
+TWITTER_BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN", "")
+INGESTION_TWITTER_MAX_RESULTS = int(os.getenv("INGESTION_TWITTER_MAX_RESULTS", "10"))
+ENABLE_TWITTER_SCRAPER = _env_bool("ENABLE_TWITTER_SCRAPER", False)
+INGESTION_TWITTER_SCRAPER_MAX = int(os.getenv("INGESTION_TWITTER_SCRAPER_MAX", "20"))
+
+GOOGLE_NEWS_ENABLED = _env_bool("GOOGLE_NEWS_ENABLED", True)
+REDDIT_ENABLED = _env_bool("REDDIT_ENABLED", True)
+HACKERNEWS_ENABLED = _env_bool("HACKERNEWS_ENABLED", True)
+INGESTION_REDDIT_LIMIT = int(os.getenv("INGESTION_REDDIT_LIMIT", "25"))
+INGESTION_HACKERNEWS_HITS = int(os.getenv("INGESTION_HACKERNEWS_HITS", "20"))
+
+# Scheduled ingestion (django-crontab). On the server (Linux/macOS or WSL):
+#   python manage.py crontab add
+#   python manage.py crontab show
+#   python manage.py crontab remove
+# Note: `manage.py crontab` imports fcntl and does not run on native Windows.
+# For production at scale, prefer Celery + django-celery-beat + Redis (see ingestion/cron.py).
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "ingestion": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}

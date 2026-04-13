@@ -5,6 +5,7 @@ from django.conf import settings
 
 from .email_service import send_activation_email
 from .models import AccessRequest, ActivationToken
+from companies.services import sync_membership_from_access_request
 
 User = get_user_model()
 
@@ -40,6 +41,8 @@ def approve_requests(modeladmin, request, queryset):
         access_request.is_approved = True
         access_request.approved_user = user.email
         access_request.save()
+
+        sync_membership_from_access_request(user, access_request)
 
         token, raw_token = ActivationToken.create_token(
             user=user,

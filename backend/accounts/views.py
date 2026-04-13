@@ -12,6 +12,8 @@ from .serializers import (
     SetPasswordWithTokenSerializer,
 )
 from .models import AccessRequest
+from companies.models import Company
+from companies.serializers import CompanyWithRoleSerializer
 
 
 class LoginView(TokenObtainPairView):
@@ -98,6 +100,17 @@ def set_password_with_token(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def me(request):
+    companies_qs = (
+        Company.objects.filter(memberships__user=request.user)
+        .distinct()
+        .order_by("name")
+    )
+    companies_data = CompanyWithRoleSerializer(
+        companies_qs,
+        many=True,
+        context={"request": request},
+    ).data
+
     return Response(
         {
             "user": {
@@ -105,7 +118,8 @@ def me(request):
                 "email": request.user.email,
                 "username": request.user.username,
                 "first_name": request.user.first_name,
-            }
+            },
+            "companies": companies_data,
         },
         status=status.HTTP_200_OK,
     )
