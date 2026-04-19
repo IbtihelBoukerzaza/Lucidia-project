@@ -213,7 +213,7 @@ REDDIT_ENABLED = _env_bool("REDDIT_ENABLED", True)
 HACKERNEWS_ENABLED = _env_bool("HACKERNEWS_ENABLED", True)
 INGESTION_REDDIT_LIMIT = int(os.getenv("INGESTION_REDDIT_LIMIT", "25"))
 INGESTION_HACKERNEWS_HITS = int(os.getenv("INGESTION_HACKERNEWS_HITS", "20"))
-
+FACEBOOK_PAGE_URL = "https://www.facebook.com/MobilisOfficielle/"
 # Scheduled ingestion (django-crontab). On the server (Linux/macOS or WSL):
 #   python manage.py crontab add
 #   python manage.py crontab show

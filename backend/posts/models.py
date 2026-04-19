@@ -12,6 +12,7 @@ class Post(models.Model):
         GOOGLE_NEWS = "google_news", "Google News"
         REDDIT = "reddit", "Reddit"
         HACKERNEWS = "hackernews", "Hacker News"
+        FACEBOOK = "facebook", "Facebook"
         MANUAL = "manual", "Manual"
 
     class Platform(models.TextChoices):

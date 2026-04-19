@@ -11,7 +11,9 @@ from companies.models import Company ,CompanyKeyword
 from . import gdelt, google_news, hackernews, reddit, rss_feeds, youtube
 from .store import upsert_post
 from .twitter_safe import fetch_twitter
-
+from .x_scraper import fetch_x_comments
+from .facebook_scraper import fetch_last_post_comments
+from .facebook import normalize_facebook_data
 logger = logging.getLogger(__name__)
 
 
@@ -25,6 +27,7 @@ def run_ingestion(
     skip_google_news: bool = False,
     skip_reddit: bool = False,
     skip_hackernews: bool = False,
+    skip_facebook: bool = False,
 ) -> dict[str, Any]:
     """
     Fetch from enabled sources, normalize, and upsert posts for the given company.
@@ -152,11 +155,47 @@ def run_ingestion(
             "reason": "no API key or no keywords",
         }
 
+    # X / Twitter scraping (safe fallback)
     if not skip_twitter and keywords:
-        rows = fetch_twitter(keywords=keywords)
-        logger.info("Twitter: fetched %s candidate rows", len(rows))
-        consume("twitter", rows)
+        rows = fetch_x_comments(
+        keywords=keywords,
+        max_per_keyword=int(
+            getattr(settings, "INGESTION_TWITTER_SCRAPER_MAX", 20)
+        ),
+    )
+        logger.info("X (scraper): fetched %s candidate rows", len(rows))
+        consume("x", rows)
     elif not skip_twitter:
-        stats["sources"]["twitter"] = {"skipped": True, "reason": "no keywords"}
+        stats["sources"]["x"] = {"skipped": True, "reason": "no keywords"}
+       # Facebook scraping
+    if not skip_facebook:
+      try:
+        # ⚠️ IMPORTANT: you must decide how to get the page URL
+        facebook_url = getattr(settings, "FACEBOOK_PAGE_URL", None)
+
+        if not facebook_url:
+            stats["sources"]["facebook"] = {
+                "skipped": True,
+                "reason": "no FACEBOOK_PAGE_URL configured",
+            }
+        else:
+            raw_data = fetch_last_post_comments(facebook_url)
+
+            rows = normalize_facebook_data(raw_data)
+
+            logger.info("Facebook: fetched %s candidate rows", len(rows))
+
+            consume("facebook", rows)
+
+      except Exception as e:
+        logger.exception("Facebook ingestion failed: %s", e)
+        stats["sources"]["facebook"] = {
+            "error": str(e),
+        }
+    else:
+        stats["sources"]["facebook"] = {
+        "skipped": True,
+        "reason": "--skip-facebook",
+    }
 
     return stats
