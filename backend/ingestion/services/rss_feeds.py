@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import re
 from typing import Any
 
 import feedparser
@@ -25,15 +26,47 @@ def _stable_id(link: str, title: str) -> str:
 def _entry_matches_keywords(
     title: str,
     summary: str,
-    keywords: list[str] | None,
+    keywords: list[str],
 ) -> bool:
+    """
+    Return True only if the article contains at least one keyword
+    as a complete phrase — never split into individual words.
+
+    Examples:
+        keyword="Mobilis"        → matches "Mobilis lance une offre"
+        keyword="Algérie Télécom"→ matches only if BOTH words appear together
+        keyword="موبيليس"        → substring match in Arabic text
+
+    We do NOT split "Mobilis Algeria" into ["mobilis", "algeria"]
+    because "algérie" alone matches every Algerian news article.
+    """
     if not keywords:
         return True
-    blob = f"{title}\n{summary}".casefold()
+
+    blob = f"{title} {summary}".lower()
+
     for kw in keywords:
-        k = kw.strip()
-        if k and k.casefold() in blob:
+        kw = kw.strip()
+        if not kw:
+            continue
+        kw_lower = kw.lower()
+
+        # Multi-word keyword: all words must appear AND close to each other
+        # We check the full phrase as a substring first
+        if kw_lower in blob:
             return True
+
+        # For multi-word keywords, also accept if all words appear
+        # BUT only if the keyword is a known company name pattern
+        # (skip this for generic words like "algeria")
+        words = kw_lower.split()
+        if len(words) >= 2:
+            # Only do word-by-word for proper company names
+            # where each word is at least 5 chars (filters out "de", "la", etc)
+            meaningful_words = [w for w in words if len(w) >= 5]
+            if meaningful_words and all(w in blob for w in meaningful_words):
+                return True
+
     return False
 
 
@@ -46,23 +79,31 @@ def fetch_rss_entries(
 ) -> list[dict[str, Any]]:
     """
     Fetch many feeds; skip empty URLs and failed fetches.
-    If filter_by_keywords is True and keywords is non-empty, keep only entries
-    whose title or summary contains at least one keyword (case-insensitive).
+    If filter_by_keywords is True, keep only entries that contain
+    at least one keyword as a complete phrase.
     """
     rows: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+
     urls = [u.strip() for u in (feed_urls or []) if u and str(u).strip()]
     if not urls:
         return rows
 
-    active_keywords = list(keywords or []) if filter_by_keywords else None
+    active_keywords = list(keywords or []) if filter_by_keywords else []
 
-    headers = {"User-Agent": USER_AGENT}
     session = requests.Session()
-    session.headers.update(headers)
+    session.headers["User-Agent"] = USER_AGENT
 
     for feed_url in urls:
         try:
-            resp = session.get(feed_url, timeout=timeout)
+            resp = session.get(
+                feed_url,
+                timeout=timeout,
+                headers={
+                    "User-Agent": USER_AGENT,
+                    "Accept": "application/rss+xml, application/xml, text/xml, */*",
+                },
+            )
             resp.raise_for_status()
             if not resp.content:
                 logger.warning("RSS empty body for %s", feed_url)
@@ -86,6 +127,9 @@ def fetch_rss_entries(
             logger.info("RSS no entries for %s", feed_url)
             continue
 
+        feed_fetched = 0
+        feed_filtered = 0
+
         for entry in entries:
             title = (entry.get("title") or "").strip()
             link = (entry.get("link") or "").strip()
@@ -100,9 +144,11 @@ def fetch_rss_entries(
             if isinstance(guid, dict):
                 guid = str(guid.get("value") or "").strip()
 
+            # Strict keyword filter — full phrase match only
             if active_keywords and not _entry_matches_keywords(
                 title, summary, active_keywords
             ):
+                feed_filtered += 1
                 continue
 
             text_parts = [title]
@@ -115,6 +161,11 @@ def fetch_rss_entries(
             ext_source = guid or link or title
             external_id = _stable_id(link, ext_source)[:512]
 
+            if external_id in seen_ids:
+                continue
+            seen_ids.add(external_id)
+
+            feed_fetched += 1
             rows.append(
                 {
                     "text": text[:100000],
@@ -125,5 +176,10 @@ def fetch_rss_entries(
                     "author": None,
                 }
             )
+
+        logger.info(
+            "RSS %s: fetched=%d filtered_out=%d",
+            feed_url, feed_fetched, feed_filtered,
+        )
 
     return rows

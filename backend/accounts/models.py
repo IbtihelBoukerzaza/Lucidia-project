@@ -50,9 +50,11 @@ class ActivationToken(models.Model):
         related_name="activation_tokens",
     )
     access_request = models.ForeignKey(
-        AccessRequest,
-        on_delete=models.CASCADE,
-        related_name="activation_tokens",
+    AccessRequest,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name="activation_tokens",
     )
     token_hash = models.CharField(max_length=64, unique=True)
     expires_at = models.DateTimeField()

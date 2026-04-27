@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any
 
 import requests
@@ -17,6 +18,49 @@ USER_AGENT = (
     "Python/requests"
 )
 
+# Languages we accept — covers Arabic, French, English
+# Reddit posts in Spanish, Portuguese, Italian etc. are noise for this use case
+ALLOWED_LANG_PATTERNS = re.compile(
+    r"[a-zA-ZÀ-ÿ\u0600-\u06FF]"  # Latin + Arabic chars
+)
+
+# Common Spanish/Portuguese words that indicate off-topic posts
+SPANISH_NOISE = {
+    "que", "una", "del", "los", "las", "por", "con", "para",
+    "está", "esto", "este", "pero", "como", "más", "también",
+    "cuando", "porque", "donde", "desde", "hasta", "tiene",
+    "hacer", "sobre", "entre", "cada", "todo", "todos",
+}
+
+
+def _is_relevant(text: str, keyword: str) -> bool:
+    """
+    Check the post actually mentions the keyword.
+    Whole-word match for single words, phrase match for multi-word.
+    """
+    if not text or not keyword:
+        return False
+
+    text_lower = text.lower()
+    kw_lower = keyword.lower().strip()
+    words = kw_lower.split()
+
+    if len(words) > 1:
+        return all(w in text_lower for w in words)
+
+    pattern = r"\b" + re.escape(kw_lower) + r"\b"
+    return bool(re.search(pattern, text_lower))
+
+
+def _is_spanish_noise(text: str) -> bool:
+    """
+    Detect Spanish/Portuguese posts by counting noise words.
+    If more than 3 Spanish words appear, skip the post.
+    """
+    words = set(re.findall(r"\b\w+\b", text.lower()))
+    matches = words & SPANISH_NOISE
+    return len(matches) >= 3
+
 
 def fetch_reddit_posts(
     *,
@@ -28,20 +72,23 @@ def fetch_reddit_posts(
         return []
 
     rows: list[dict[str, Any]] = []
-    headers = {"User-Agent": USER_AGENT}
+    seen_ids: set[str] = set()
+
     session = requests.Session()
-    session.headers.update(headers)
+    session.headers["User-Agent"] = USER_AGENT
 
     for keyword in keywords:
         kw = keyword.strip()
         if not kw:
             continue
+
         params = {
             "q": kw,
             "limit": min(max(limit_per_keyword, 1), 100),
             "sort": "new",
             "raw_json": 1,
         }
+
         try:
             r = session.get(SEARCH_URL, params=params, timeout=timeout)
             r.raise_for_status()
@@ -50,7 +97,10 @@ def fetch_reddit_posts(
             logger.warning("Reddit search failed for %r: %s", kw, exc)
             continue
 
+        fetched = 0
+        filtered = 0
         listing = (data.get("data") or {}).get("children") or []
+
         for child in listing:
             if not isinstance(child, dict):
                 continue
@@ -60,19 +110,40 @@ def fetch_reddit_posts(
             selftext = (d.get("selftext") or "").strip()
             permalink = (d.get("permalink") or "").strip()
             author = (d.get("author") or "").strip() or None
+
             if not rid:
                 continue
+
             parts = [title]
             if selftext and selftext not in ("[removed]", "[deleted]"):
                 parts.append(selftext)
             text = "\n\n".join(p for p in parts if p).strip()
             if not text:
                 continue
+
+            # Skip if keyword not actually in the post
+            if not _is_relevant(text, kw):
+                filtered += 1
+                logger.debug("Reddit: filtered irrelevant post %r", title[:60])
+                continue
+
+            # Skip Spanish/Portuguese noise posts
+            if _is_spanish_noise(text):
+                filtered += 1
+                logger.debug("Reddit: filtered Spanish noise %r", title[:60])
+                continue
+
+            # Dedup
+            if rid in seen_ids:
+                continue
+            seen_ids.add(rid)
+
             full_url = (
                 f"https://www.reddit.com{permalink}"
                 if permalink.startswith("/")
                 else permalink or None
             )
+            fetched += 1
             rows.append(
                 {
                     "text": text[:100000],
@@ -83,5 +154,10 @@ def fetch_reddit_posts(
                     "author": author,
                 }
             )
+
+        logger.info(
+            "Reddit: keyword=%r fetched=%d filtered_out=%d",
+            kw, fetched, filtered,
+        )
 
     return rows

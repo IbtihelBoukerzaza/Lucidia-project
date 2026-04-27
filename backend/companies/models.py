@@ -60,7 +60,6 @@ class CompanyKeyword(models.Model):
         related_name="keywords",
     )
     keyword = models.CharField(max_length=255)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -69,3 +68,57 @@ class CompanyKeyword(models.Model):
 
     def __str__(self):
         return f"{self.company.name} - {self.keyword}"
+
+
+class CompanySocialProfile(models.Model):
+    """
+    Stores one social/RSS URL per platform per company.
+    This centralizes per-company source URLs in the database instead of settings.
+
+    Examples:
+        platform="facebook"  url="https://www.facebook.com/Mobilis.dz"
+        platform="instagram" url="https://www.instagram.com/mobilis.dz/"
+        platform="tiktok"    url="https://www.tiktok.com/@mobilis.dz"
+        platform="rss"       url="https://feeds.bbci.co.uk/news/rss.xml"
+
+    A company can have multiple RSS feeds (one row per feed).
+    A company should have at most one row per social platform.
+    """
+
+    class Platform(models.TextChoices):
+        FACEBOOK = "facebook", "Facebook"
+        INSTAGRAM = "instagram", "Instagram"
+        TIKTOK = "tiktok", "TikTok"
+        RSS = "rss", "RSS Feed"
+        YOUTUBE_CHANNEL = "youtube_channel", "YouTube Channel"
+        X = "x", "X / Twitter"
+
+    company = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        related_name="social_profiles",
+    )
+    platform = models.CharField(
+        max_length=30,
+        choices=Platform.choices,
+    )
+    url = models.URLField(max_length=2048)
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Uncheck to temporarily disable this source without deleting it.",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["platform"]
+        # One URL per platform per company
+        # Exception: RSS — a company can have multiple feeds
+        constraints = [
+            models.UniqueConstraint(
+                fields=["company", "platform", "url"],
+                name="companies_socialprofile_company_platform_url_uniq",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.company.name} | {self.platform} | {self.url}"

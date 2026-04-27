@@ -1,6 +1,6 @@
-from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
+from companies.models import CompanySocialProfile
 from ingestion.services.facebook_scraper import fetch_last_post_comments
 from ingestion.services.facebook import normalize_facebook_data
 from ingestion.services.store import upsert_post
@@ -21,17 +21,22 @@ class Command(BaseCommand):
         company_id = options["company_id"]
 
         if company_id is None:
-            company_id = getattr(settings, "INGESTION_DEFAULT_COMPANY_ID", None)
+            raise CommandError("Pass --company-id")
 
-        if company_id is None:
-            raise CommandError(
-                "Pass --company-id or set INGESTION_DEFAULT_COMPANY_ID"
+        facebook_url = (
+            CompanySocialProfile.objects
+            .filter(
+                company_id=company_id,
+                platform=CompanySocialProfile.Platform.FACEBOOK,
+                is_active=True,
             )
-
-        facebook_url = getattr(settings, "FACEBOOK_PAGE_URL", None)
-
+            .values_list("url", flat=True)
+            .first()
+        )
         if not facebook_url:
-            raise CommandError("FACEBOOK_PAGE_URL is not configured")
+            raise CommandError(
+                "No active Facebook URL configured for this company in CompanySocialProfile.",
+            )
 
         self.stdout.write("Fetching Facebook data...")
 

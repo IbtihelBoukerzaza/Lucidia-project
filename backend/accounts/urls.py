@@ -9,6 +9,7 @@ from .views import (
     set_password_with_token,
     me,
     logout_user,
+    invite_member,
 )
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
     path("me/", me, name="me"),
     path("logout/", logout_user, name="logout"),
+    path("invite/", invite_member, name="invite-member"),
 ]

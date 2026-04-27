@@ -1,6 +1,9 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
 from .models import Company, Membership
+
+User = get_user_model()
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -26,3 +29,32 @@ class CompanyWithRoleSerializer(CompanySerializer):
             .first()
         )
         return m.role if m else None
+
+
+class MembershipUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "email", "first_name")
+        read_only_fields = fields
+
+
+class CompanyMembershipSerializer(serializers.ModelSerializer):
+    user = MembershipUserSerializer(read_only=True)
+
+    class Meta:
+        model = Membership
+        fields = ("id", "user", "role", "created_at")
+        read_only_fields = fields
+
+
+class CompanyMembershipUpsertSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    role = serializers.ChoiceField(choices=Membership.Role.choices)
+
+    def validate_email(self, value):
+        email = value.strip().lower()
+        if not User.objects.filter(email__iexact=email).exists():
+            raise serializers.ValidationError(
+                "No user found with this email. User must have an account first.",
+            )
+        return email

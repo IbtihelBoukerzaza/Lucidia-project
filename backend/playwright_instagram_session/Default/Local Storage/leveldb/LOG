@@ -1,0 +1,6 @@
+2026/04/27-11:13:45.514 46e4 Reusing MANIFEST C:\Users\hp\Lucidia-project\backend\playwright_instagram_session\Default\Local Storage\leveldb/MANIFEST-000001
+2026/04/27-11:13:45.536 46e4 Recovering log #49
+2026/04/27-11:13:45.539 46e4 Reusing old log C:\Users\hp\Lucidia-project\backend\playwright_instagram_session\Default\Local Storage\leveldb/000049.log 
+2026/04/27-11:14:45.554 46e4 Level-0 table #53: started
+2026/04/27-11:14:45.577 46e4 Level-0 table #53: 18289 bytes OK
+2026/04/27-11:14:45.589 46e4 Delete type=0 #49

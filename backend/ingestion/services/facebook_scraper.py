@@ -1,11 +1,19 @@
+"""
+ingestion/services/facebook_scraper.py
+
+Playwright-based Facebook comment scraper.
+Extracts comments from the latest post on a Facebook page.
+Uses headless browser — no login required for public pages.
+"""
+
+import logging
 import time
 from typing import List, Dict
+
 from playwright.sync_api import sync_playwright
 
+logger = logging.getLogger(__name__)
 
-# ------------------------
-# Utils
-# ------------------------
 
 def clean(text: str) -> str:
     if not text:
@@ -16,48 +24,35 @@ def clean(text: str) -> str:
 def is_valid(author: str, text: str) -> bool:
     if not text or len(text.strip()) < 3:
         return False
-
     junk = ["like", "reply", "see more", "voir plus"]
     if text.lower() in junk:
         return False
-
     return True
 
 
-# ------------------------
-# Main scraper
-# ------------------------
-
 def fetch_last_post_comments(page_url: str) -> List[Dict]:
-
     results = []
 
     with sync_playwright() as p:
-
         browser = p.chromium.launch(headless=True)
         context = browser.new_context()
         page = context.new_page()
 
-        print("Opening page...")
+        logger.info("Opening Facebook page: %s", page_url)
         page.goto(page_url, timeout=60000)
         time.sleep(5)
 
-        # ------------------------
-        # STEP 1: get latest post
-        # ------------------------
+        # --- Find latest post ---
         posts = page.query_selector_all("div[role='article']")
-
         if not posts:
-            print("❌ No posts found")
+            logger.warning("No posts found on %s", page_url)
             browser.close()
             return []
 
         latest_post = posts[0]
-        print("✅ Found latest post")
+        logger.info("Found latest post")
 
-        # ------------------------
-        # STEP 2: open post
-        # ------------------------
+        # --- Open post ---
         try:
             link = latest_post.query_selector("a[href*='/posts/']")
             if link:
@@ -66,14 +61,11 @@ def fetch_last_post_comments(page_url: str) -> List[Dict]:
                 time.sleep(5)
             else:
                 post_url = page_url
-        except:
+        except Exception:
             post_url = page_url
 
-        # ------------------------
-        # STEP 3: expand comments
-        # ------------------------
-        print("Expanding comments...")
-
+        # --- Expand comments ---
+        logger.info("Expanding comments...")
         for _ in range(5):
             buttons = page.query_selector_all("div[role='button']")
             for b in buttons:
@@ -82,81 +74,51 @@ def fetch_last_post_comments(page_url: str) -> List[Dict]:
                     if any(k in txt for k in ["more comments", "voir plus", "view more"]):
                         b.click()
                         time.sleep(1)
-                except:
+                except Exception:
                     continue
 
-        # ------------------------
-        # STEP 4: scroll
-        # ------------------------
-        print("Scrolling...")
-
+        # --- Scroll ---
+        logger.info("Scrolling...")
         for _ in range(8):
             page.mouse.wheel(0, 3000)
             time.sleep(2)
 
-        # ------------------------
-        # STEP 5: extract comments (FIXED)
-        # ------------------------
-        print("Extracting comments...")
-
+        # --- Extract comments ---
+        logger.info("Extracting comments...")
         comment_blocks = page.query_selector_all("div[role='article']")
-        print(f"Found {len(comment_blocks)} blocks")
+        logger.info("Found %d comment blocks", len(comment_blocks))
 
         seen = set()
         comments = []
 
         for block in comment_blocks:
-
             try:
                 full_text = clean(block.inner_text())
 
-                # ------------------------
-                # FIX 1: skip post content / stickers / big blocks
-                # ------------------------
+                # Skip post content / stickers / big blocks
                 if len(full_text) > 500:
                     continue
 
-                # ------------------------
-                # AUTHOR
-                # ------------------------
+                # Author
                 author_el = block.query_selector("a span span")
                 author = clean(author_el.inner_text()) if author_el else "Unknown"
 
-                # ------------------------
-                # TEXT
-                # ------------------------
+                # Text
                 text_el = block.query_selector("div[dir='auto']")
-
                 if not text_el:
                     continue
-
                 text = clean(text_el.inner_text())
 
-                # ------------------------
-                # FIX 2: remove empty / UI text
-                # ------------------------
                 if len(text.strip()) < 3:
                     continue
 
-                skip_keywords = [
-                    "see more",
-                    "voir plus",
-                    "comment",
-                    "répondre"
-                ]
-
+                skip_keywords = ["see more", "voir plus", "comment", "répondre"]
                 if any(k in text.lower() for k in skip_keywords):
                     continue
 
-                # ------------------------
-                # FIX 3: remove post duplication
-                # ------------------------
                 if text in full_text and len(text) > 80:
                     continue
 
-                # ------------------------
-                # YOUR ORIGINAL FILTERS
-                # ------------------------
                 if not is_valid(author, text):
                     continue
 
@@ -166,26 +128,20 @@ def fetch_last_post_comments(page_url: str) -> List[Dict]:
                 if "reply" in text.lower():
                     continue
 
-                # ------------------------
-                # DEDUP
-                # ------------------------
                 key = (author, text)
-
                 if key not in seen:
                     seen.add(key)
-                    comments.append({
-                        "author": author,
-                        "text": text
-                    })
+                    comments.append({"author": author, "text": text})
 
-            except:
+            except Exception:
                 continue
 
         browser.close()
 
-        results.append({
-            "post_url": post_url,
-            "comments": comments
-        })
+        logger.info(
+            "Facebook scrape done: %d comments from %s",
+            len(comments), post_url,
+        )
+        results.append({"post_url": post_url, "comments": comments})
 
     return results

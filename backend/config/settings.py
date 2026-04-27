@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     "companies",
     "posts",
     "ingestion",
-    
+    "sentiment_engine",
+    "alerts",
 ]
 
 MIDDLEWARE = [
@@ -170,11 +171,6 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-def _csv_env(name: str, default: str = "") -> list[str]:
-    raw = os.getenv(name, default) or ""
-    return [x.strip() for x in raw.split(",") if x.strip()]
-
-
 def _int_env(name: str) -> int | None:
     raw = (os.getenv(name, "") or "").strip()
     if not raw:
@@ -196,10 +192,7 @@ def _env_bool(name: str, default: bool = False) -> bool:
 
 # --- Ingestion (Phase 3): keywords + RSS for all sources; API keys optional ---
 INGESTION_DEFAULT_COMPANY_ID = _int_env("INGESTION_DEFAULT_COMPANY_ID")
-INGESTION_KEYWORDS = _csv_env("INGESTION_KEYWORDS")
-INGESTION_RSS_FEEDS = _csv_env("INGESTION_RSS_FEEDS")
 INGESTION_RSS_FILTER_BY_KEYWORDS = _env_bool("INGESTION_RSS_FILTER_BY_KEYWORDS", True)
-INGESTION_GDELT_MAX_RECORDS = int(os.getenv("INGESTION_GDELT_MAX_RECORDS", "15"))
 INGESTION_YOUTUBE_MAX_VIDEOS = int(os.getenv("INGESTION_YOUTUBE_MAX_VIDEOS", "5"))
 INGESTION_YOUTUBE_MAX_COMMENTS = int(os.getenv("INGESTION_YOUTUBE_MAX_COMMENTS", "50"))
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY", "")
@@ -207,19 +200,19 @@ TWITTER_BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN", "")
 INGESTION_TWITTER_MAX_RESULTS = int(os.getenv("INGESTION_TWITTER_MAX_RESULTS", "10"))
 ENABLE_TWITTER_SCRAPER = _env_bool("ENABLE_TWITTER_SCRAPER", False)
 INGESTION_TWITTER_SCRAPER_MAX = int(os.getenv("INGESTION_TWITTER_SCRAPER_MAX", "20"))
-
 GOOGLE_NEWS_ENABLED = _env_bool("GOOGLE_NEWS_ENABLED", True)
 REDDIT_ENABLED = _env_bool("REDDIT_ENABLED", True)
-HACKERNEWS_ENABLED = _env_bool("HACKERNEWS_ENABLED", True)
 INGESTION_REDDIT_LIMIT = int(os.getenv("INGESTION_REDDIT_LIMIT", "25"))
-INGESTION_HACKERNEWS_HITS = int(os.getenv("INGESTION_HACKERNEWS_HITS", "20"))
-FACEBOOK_PAGE_URL = "https://www.facebook.com/MobilisOfficielle/"
-# Scheduled ingestion (django-crontab). On the server (Linux/macOS or WSL):
-#   python manage.py crontab add
-#   python manage.py crontab show
-#   python manage.py crontab remove
-# Note: `manage.py crontab` imports fcntl and does not run on native Windows.
-# For production at scale, prefer Celery + django-celery-beat + Redis (see ingestion/cron.py).
+INGESTION_TIKTOK_VIDEO_LIMIT = int(os.getenv("INGESTION_TIKTOK_VIDEO_LIMIT", default=5))
+INGESTION_TIKTOK_COMMENT_LIMIT = int(os.getenv("INGESTION_TIKTOK_COMMENT_LIMIT", default=30))
+# Retired sources: GDELT and HackerNews are intentionally disabled in this build.
+# Scheduler runtime uses `python manage.py run_scheduler` (Windows-compatible).
+
+# --- Sentiment Engine ---
+SENTIMENT_MODELS = {
+    "dziribert": BASE_DIR.parent / "ml" / "artifacts" / "production" / "dziribert_v1",
+    "marbert":   BASE_DIR.parent / "ml" / "artifacts" / "production" / "marbert_v1",
+}
 
 
 LOGGING = {

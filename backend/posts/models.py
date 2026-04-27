@@ -5,14 +5,14 @@ from companies.models import Company
 
 class Post(models.Model):
     class Source(models.TextChoices):
-        GDELT = "gdelt", "GDELT"
         RSS = "rss", "RSS"
         YOUTUBE = "youtube", "YouTube"
         TWITTER = "twitter", "Twitter"
         GOOGLE_NEWS = "google_news", "Google News"
         REDDIT = "reddit", "Reddit"
-        HACKERNEWS = "hackernews", "Hacker News"
         FACEBOOK = "facebook", "Facebook"
+        INSTAGRAM = "instagram", "Instagram"
+        TIKTOK = "tiktok", "TikTok"        
         MANUAL = "manual", "Manual"
 
     class Platform(models.TextChoices):
@@ -37,11 +37,39 @@ class Post(models.Model):
     url = models.URLField(blank=True, null=True, max_length=2048)
     author = models.CharField(max_length=255, blank=True, null=True)
 
+    # --- Sentiment fields (populated by sentiment_engine) ---
+    sentiment = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=[
+            ("positive", "Positive"),
+            ("neutral", "Neutral"),
+            ("negative", "Negative"),
+        ],
+        db_index=True,
+    )
+    sentiment_score = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="Confidence score of the predicted sentiment (0.0 – 1.0).",
+    )
+    sentiment_scores = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Full probability distribution: {negative, neutral, positive}.",
+    )
+    sentiment_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="When sentiment was last classified.",
+    )
     class Meta:
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=["company", "-created_at"]),
             models.Index(fields=["company", "source"]),
+            models.Index(fields=["company", "sentiment"]),
         ]
         constraints = [
             models.UniqueConstraint(

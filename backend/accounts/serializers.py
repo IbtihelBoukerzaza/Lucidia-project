@@ -29,9 +29,19 @@ class AccessRequestSerializer(serializers.ModelSerializer):
         return value
 
     def validate_company_name(self, value):
+        from companies.models import Company
         value = value.strip()
         if len(value) < 2:
             raise serializers.ValidationError("Company name is too short.")
+        if Company.objects.filter(name__iexact=value).exists():
+            raise serializers.ValidationError(
+                "A company with this name already exists on the platform. "
+                "If you are an employee, ask your company admin to invite you."
+            )
+        if AccessRequest.objects.filter(company_name__iexact=value, is_approved=None).exists():
+            raise serializers.ValidationError(
+                "An access request for this company is already pending review."
+            )
         return value
 
     def validate_goal(self, value):
