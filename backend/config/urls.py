@@ -9,4 +9,6 @@ urlpatterns = [
     path("api/companies/", include("ingestion.urls")),
     path("api/sentiment/", include("sentiment_engine.urls")),
     path("api/alerts/",    include("alerts.urls")),
+    path("api/topics/",    include("topics.urls")),
+    path("api/surveys/", include("surveys.urls")),
 ]

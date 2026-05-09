@@ -7,6 +7,7 @@ import re
 from typing import Any
 
 import requests
+from langdetect import detect, LangDetectException
 
 from posts.models import Post
 
@@ -18,11 +19,7 @@ USER_AGENT = (
     "Python/requests"
 )
 
-# Languages we accept — covers Arabic, French, English
-# Reddit posts in Spanish, Portuguese, Italian etc. are noise for this use case
-ALLOWED_LANG_PATTERNS = re.compile(
-    r"[a-zA-ZÀ-ÿ\u0600-\u06FF]"  # Latin + Arabic chars
-)
+ALLOWED_LANGS = {"ar", "fr", "en"}
 
 # Common Spanish/Portuguese words that indicate off-topic posts
 SPANISH_NOISE = {
@@ -60,6 +57,40 @@ def _is_spanish_noise(text: str) -> bool:
     words = set(re.findall(r"\b\w+\b", text.lower()))
     matches = words & SPANISH_NOISE
     return len(matches) >= 3
+
+
+def _is_allowed_language(text: str) -> bool:
+    """
+    Returns True if the overall post language is Arabic, French, or English.
+    Also checks word by word — if any word is detected as a foreign language,
+    the post is rejected.
+    """
+    if not text or not text.strip():
+        return False
+
+    # Step 1: check overall language of the full text
+    try:
+        overall_lang = detect(text)
+        if overall_lang not in ALLOWED_LANGS:
+            logger.debug("Reddit: rejected post (lang=%s): %s", overall_lang, text[:60])
+            return False
+    except LangDetectException:
+        # Can't detect overall — proceed to word-level check
+        pass
+
+    # Step 2: word-level check — reject if any word is clearly foreign
+    for word in text.split():
+        if len(word) < 3:
+            continue
+        try:
+            word_lang = detect(word)
+            if word_lang not in ALLOWED_LANGS:
+                logger.debug("Reddit: rejected word %r (lang=%s)", word, word_lang)
+                return False
+        except LangDetectException:
+            continue  # can't detect single word — allow it
+
+    return True
 
 
 def fetch_reddit_posts(
@@ -131,6 +162,12 @@ def fetch_reddit_posts(
             if _is_spanish_noise(text):
                 filtered += 1
                 logger.debug("Reddit: filtered Spanish noise %r", title[:60])
+                continue
+
+            # Skip posts in disallowed languages
+            if not _is_allowed_language(text):
+                filtered += 1
+                logger.debug("Reddit: filtered foreign language post %r", title[:60])
                 continue
 
             # Dedup

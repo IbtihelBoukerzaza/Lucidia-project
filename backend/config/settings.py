@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     "ingestion",
     "sentiment_engine",
     "alerts",
+    "topics",
+    "surveys",
 ]
 
 MIDDLEWARE = [
