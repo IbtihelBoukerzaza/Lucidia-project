@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, NavLink, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { api } from "../services/api";
 
 export default function SetPasswordPage() {
   const navigate = useNavigate();
@@ -30,16 +31,7 @@ export default function SetPasswordPage() {
       }
 
       try {
-        const response = await fetch(
-          "http://127.0.0.1:8000/api/accounts/activation/verify/",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token }),
-          }
-        );
+        const response = await api.verifyActivation({ token });
 
         const data = await response.json();
 
@@ -98,20 +90,12 @@ export default function SetPasswordPage() {
     setLoadingSubmit(true);
 
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/accounts/activation/set-password/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token,
-            password,
-            confirm_password: confirmPassword,
-          }),
-        }
-      );
+      const response = await api.setPassword({
+          token,
+          password,
+          confirm_password: confirmPassword,
+});
+  
 
       const data = await response.json();
 

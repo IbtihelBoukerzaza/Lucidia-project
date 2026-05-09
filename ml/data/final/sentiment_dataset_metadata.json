@@ -1,13 +1,13 @@
 {
   "final_dataset_path": "C:\\Users\\hp\\Lucidia-project\\ml\\data\\final\\sentiment_dataset_final.csv",
   "final_shape": [
-    11492,
+    11310,
     5
   ],
   "final_label_distribution": {
-    "0": 4687,
-    "1": 4971,
-    "2": 1834
+    "0": 4658,
+    "1": 4862,
+    "2": 1790
   },
   "label_mapping_final": {
     "0": "negative",

@@ -11,10 +11,17 @@ import Login from "./pages/Login.jsx";
 import RequestAccessPage from "./pages/RequestAccessPage.jsx";
 import SetPasswordPage from "./pages/SetPasswordPage.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
-
+import TeamPage from "./pages/TeamPage.jsx";
+import SettingsPage from "./pages/SettingsPage.jsx";
+import PostsPage from "./pages/PostsPage.jsx";
+import SentimentPage from "./pages/SentimentPage.jsx";
+import AlertsPage from "./pages/AlertsPage.jsx";
+import TopicsPage from "./pages/TopicsPage.jsx";
+import SurveysPage from "./pages/SurveysPage.jsx";
+import PublicSurveyPage from "./pages/PublicSurveyPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LanguageSwitcher from "./components/LanguageSwitcher.jsx";
-
+import AppNavbar from "./components/AppNavbar.jsx";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "./contexts/LanguageContext";
 
@@ -42,10 +49,34 @@ function LogoSentivya() {
           />
         </svg>
       </span>
-
       <span className="text-sm font-semibold tracking-tight text-slate-50">
         Sentivya<span className="text-sky-300">DZ</span>
       </span>
+    </div>
+  );
+}
+
+/* ================= PUBLIC LAYOUT (marketing site) ================= */
+function PublicLayout({ children }) {
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main className="flex-1 pt-24 pb-16">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+          {children}
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+/* ================= APP LAYOUT (internal pages) ================= */
+function AppLayout({ children }) {
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-50">
+      <AppNavbar />
+      {children}
     </div>
   );
 }
@@ -54,48 +85,107 @@ function LogoSentivya() {
 function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
-      <SiteShell />
-    </div>
-  );
-}
+      <Routes>
+        {/* Public marketing pages */}
+        <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+        <Route path="/resources/faq" element={<PublicLayout><FaqPage /></PublicLayout>} />
+        <Route path="/contact-us" element={<PublicLayout><ContactPage /></PublicLayout>} />
+        <Route path="/products/media-monitoring" element={<PublicLayout><MediaMonitoringPage /></PublicLayout>} />
+        <Route path="/products/profiles" element={<PublicLayout><ProfilesPage /></PublicLayout>} />
+        <Route path="/products/social-listening" element={<PublicLayout><SocialListeningPage /></PublicLayout>} />
 
-/* ================= SHELL ================= */
-function SiteShell() {
-  return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
+        {/* Auth pages — no header/footer */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/request-access" element={<RequestAccessPage />} />
+        <Route path="/set-password" element={<SetPasswordPage />} />
+        {/* After /set-password route — no auth, no layout */}
+        <Route path="/s/:token" element={<PublicSurveyPage />} />
 
-      <main className="flex-1 pt-24 pb-16">
-        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/resources/faq" element={<FaqPage />} />
-            <Route path="/contact-us" element={<ContactPage />} />
-           
+        {/* Internal app pages — protected, no public header/footer */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/team"
+           element={
+           <ProtectedRoute adminOnly>
+             <AppLayout>
+              <TeamPage />
+             </AppLayout>
+           </ProtectedRoute>
+  }
+/>      <Route
+           path="/settings"
+           element={
+          <ProtectedRoute adminOnly>
+           <AppLayout>
+            <SettingsPage />
+           </AppLayout>
+          </ProtectedRoute>
+  }
+/>
+        <Route
+          path="/posts"
+          element={
+          <ProtectedRoute>
+           <AppLayout>
+            <PostsPage />
+           </AppLayout>
+          </ProtectedRoute>
+  }
+/>
+                <Route
+          path="/alerts"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <AlertsPage />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sentiment"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <SentimentPage />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+           path="/topics"
+           element={
+             <ProtectedRoute>
+              <AppLayout>
+               <TopicsPage />
+              </AppLayout>
+             </ProtectedRoute>
+  }
+/>
+        {/* After /topics route */}
+<Route
+  path="/surveys"
+  element={
+    <ProtectedRoute adminOnly>
+      <AppLayout>
+        <SurveysPage />
+      </AppLayout>
+    </ProtectedRoute>
+  }
+/>
 
-            <Route path="/products/media-monitoring" element={<MediaMonitoringPage />} />
-            <Route path="/products/profiles" element={<ProfilesPage />} />
-            <Route path="/products/social-listening" element={<SocialListeningPage />} />
 
-            <Route path="/login" element={<Login />} />
-            <Route path="/request-access" element={<RequestAccessPage />} />
-            <Route path="/set-password" element={<SetPasswordPage />} />
-
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </div>
-      </main>
-
-      <Footer />
+        <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
+      </Routes>
     </div>
   );
 }
@@ -159,12 +249,10 @@ function Footer() {
     <footer className="border-t border-slate-800/80 bg-slate-950/90">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <p>© {new Date().getFullYear()} SentivyaDZ. جميع الحقوق محفوظة.</p>
-
         <div className="flex flex-wrap items-center gap-4">
           <NavLink to="/resources/faq" className="hover:text-slate-100">
             {t("footer.faq")}
           </NavLink>
-
           <NavLink to="/contact-us" className="hover:text-slate-100">
             {t("footer.contactUs")}
           </NavLink>

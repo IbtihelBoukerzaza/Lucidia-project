@@ -2,12 +2,15 @@ import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
-import { setAuthTokens, isAuthenticated } from "../utils/auth";
+import { isAuthenticated } from "../utils/auth";
+import { useAuth } from "../contexts/AuthContext";
+import { api } from "../services/api";
 import { useTranslation } from "react-i18next";
 
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,16 +73,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/accounts/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      const response = await api.login(email, password);
 
       const data = await response.json();
 
@@ -91,7 +85,7 @@ export default function Login() {
         throw new Error(message);
       }
 
-      setAuthTokens({
+      await auth.login({
         access: data.access,
         refresh: data.refresh,
         user: data.user,
