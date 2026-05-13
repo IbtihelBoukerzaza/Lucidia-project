@@ -1,216 +1,689 @@
 {
   "navigation": {
-    "sentimentAnalysis": "Sentiment Analysis",
+    "home": "Home",
+    "posts": "Posts",
+    "sentiment": "Sentiment",
+    "topics": "Topics",
+    "alerts": "Alerts",
+    "engagement": "Engagement",
+    "surveys": "Surveys",
+    "team": "Team",
+    "settings": "Settings",
+    "login": "Login",
     "faq": "FAQ",
     "contactUs": "Contact Us",
-    "login": "Login"
+    "logout": "Logout"
   },
+
+"alerts": {
+  "empty": "No alerts",
+  "viewAll": "View all",
+  "badge": "Alert System",
+  "title": "Alerts",
+  "description": "Create automatic alert rules triggered after every data collection run to monitor your brand.",
+  "noCompany": "No company selected",
+  "tabs": { "rules": "Rules", "notifications": "Notifications" },
+  "rules": {
+    "count": "{{count}} rule(s) defined",
+    "none": "No rules yet",
+    "add": "Add Rule",
+    "cancel": "Cancel",
+    "newRule": "New Rule",
+    "ruleType": "Rule Type",
+    "keyword": "Keyword",
+    "keywordPlaceholder": "e.g. problem",
+    "threshold": "Threshold",
+    "severity": "Severity",
+    "saving": "Saving...",
+    "save": "Save Rule",
+    "createdBy": "Created by",
+    "active": "Active",
+    "inactive": "Inactive",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this rule?",
+    "emptyTitle": "No alert rules yet",
+    "emptyDesc": "Add a rule to receive automatic alerts after every data collection run",
+    "errorNumeric": "Please enter a valid numeric threshold.",
+    "errorKeyword": "Please enter a keyword for this rule type.",
+    "threshold_label": "Threshold ({{unit}})",
+    "types": {
+      "negative_pct_above":   { "label": "Negative ratio exceeds threshold",         "unit": "%",      "hint": "e.g. 40 — triggers if negative ratio exceeds 40%" },
+      "positive_pct_below":   { "label": "Positive ratio drops below threshold",     "unit": "%",      "hint": "e.g. 30 — triggers if positive ratio drops below 30%" },
+      "negative_count_above": { "label": "Daily negative post count exceeds limit",  "unit": "posts",  "hint": "e.g. 100 — triggers if negative posts exceed 100 per day" },
+      "volume_spike":         { "label": "Daily post volume exceeds limit",          "unit": "posts",  "hint": "e.g. 500 — triggers if total posts exceed 500 per day" },
+      "keyword_spike":        { "label": "Keyword appears more than threshold",      "unit": "times",  "hint": "e.g. 50 — triggers if keyword appears more than 50 times per day" },
+      "sentiment_drop":       { "label": "Sharp drop in positive vs yesterday",      "unit": "points", "hint": "e.g. 20 — triggers if positive drops more than 20 points vs yesterday" },
+      "negative_streak":      { "label": "Negative sentiment dominant for N days",   "unit": "days",   "hint": "e.g. 3 — triggers if negative is dominant for 3 consecutive days" }
+    },
+    "severityOptions": {
+      "low": "Low", "medium": "Medium", "high": "High"
+    }
+  },
+  "notifications": {
+    "unread": "{{count}} unread",
+    "allRead": "All notifications read",
+    "markAll": "Mark all as read",
+    "marking": "Working...",
+    "emptyTitle": "No notifications yet",
+    "emptyDesc": "Notifications will appear here automatically after each data collection run",
+    "messages": {
+      "negative_pct_above":   "Negative sentiment reached {{threshold}}% threshold",
+      "positive_pct_below":   "Positive sentiment dropped below {{threshold}}%",
+      "negative_count_above": "Daily negative post count exceeded {{threshold}} posts",
+      "volume_spike":         "Daily post volume exceeded {{threshold}} posts",
+      "keyword_spike":        "Keyword «{{keyword}}» exceeded {{threshold}} daily occurrences",
+      "sentiment_drop":       "Positive sentiment dropped more than {{threshold}} points vs yesterday",
+      "negative_streak":      "Negative sentiment has been dominant for {{threshold}} consecutive days",
+      "unknown":              "An alert was triggered"
+    }
+  }
+},
+
   "footer": {
     "copyright": "© {{year}} SentivyaDZ. All rights reserved.",
     "faq": "FAQ",
     "contactUs": "Contact Us"
   },
-  "home": {
-    "tagline": "Algerian platform to hear your customers' voice and analyze sentiments in Algerian Dialect",
-    "title": "Hear your customers' voice in Dialect,",
-    "subtitle": "and understand their sentiments on social media.",
-    "description": "SentivyaDZ combines the power of AI and Algerian Dialect analysis to give you a clear vision of every experience your customers live on social media.",
-    "getStarted": "Sentiment Analysis",
-    "features": {
-      "aiAnalysis": {
-        "title": "AI Sentiment Analysis",
-        "description": "We analyze thousands of comments in Algerian Dialect with high accuracy to understand your customers' real feelings"
-      },
-      "multiPlatform": {
-        "title": "Multi-Platform and Multi-Language",
-        "description": "We collect sentiments from Twitter, Facebook, and Instagram - all this in Algerian Dialect"
-      },
-      "realTimeAlerts": {
-        "title": "Real-time Instant Alerts",
-        "description": "Be the first to know when your brand reputation changes and take appropriate action"
-      },
-      "brandProtection": {
-        "title": "Brand Reputation Protection",
-        "description": "Monitor negative sentiments before they turn into a crisis and affect your business"
-      }
-    },
-    "analytics": {
-      "title": "Sentiment Analytics and Trends",
-      "description": "Track the evolution of customer feelings over the past months and discover important trends",
-      "sentimentEvolution": "Sentiment Evolution Over 6 Months",
-      "positive": "Positive",
-      "neutral": "Neutral", 
-      "negative": "Negative",
-      "totalComments": "Total Comments",
-      "thisMonth": "This Month",
-      "positiveRate": "Positive Rate",
-      "ofTotalComments": "of total comments",
-      "lastUpdate": "Last Update",
-      "realTime": "Real-time"
-    },
-    "howItWorks": {
-      "title": "How does SentivyaDZ work?",
-      "description": "Three simple steps to stay informed about everything said about your brand.",
-      "step1": {
-        "title": "We Collect Comments",
-        "description": "From Twitter, Facebook, and Instagram. Everything customers write in Dialect reaches you in one place."
-      },
-      "step2": {
-        "title": "We Analyze in Dialect",
-        "description": "AI understands Algerian dialect and determines the sentiment: positive, negative, or neutral."
-      },
-      "step3": {
-        "title": "Instant Alerts",
-        "description": "In case of increased negativity, you are immediately alerted to take action before brand reputation is affected."
-      }
-    },
-    "whatWeOffer": {
-      "title": "What do we offer?",
-      "description": "Clear tools to hear the voice of Algerian customers and protect your brand reputation.",
-      "sentimentAnalysis": {
-        "title": "Sentiment Analysis",
-        "description": "Live statistics, comments in dialect, and alerts when negativity increases. Everything on one page."
-      },
-      "dialectAnalysis": {
-        "title": "Algerian Dialect Analysis",
-        "description": "Our model understands Algerian writing on social media: expressions, abbreviations, and tone of speech."
-      },
-      "reputationIndicator": {
-        "title": "Brand Reputation Indicator",
-        "description": "Is reputation rising or falling? Clear alert before crisis escalates."
-      }
-    },
-    "whoWeServe": {
-      "title": "Who do we serve?",
-      "description": "Brands, companies, and customer service teams can benefit from SentivyaDZ.",
-      "localBrands": "Local Brands",
-      "smes": "SMEs and Startups",
-      "customerService": "Customer Service and Call Centers",
-      "agencies": "Agencies and Advertising"
-    },
+"home": {
+  "tagline": "Algerian Social Listening & Sentiment Analysis",
+  "title": "Understand what your",
+  "subtitle": "Algerian audience says",
+  "description": "Gantra monitors social media and news content, analyzing sentiment with high accuracy and full support for Algerian dialect and Arabizi.",
+  "requestTrial": "Request Free Trial",
+  "getStarted": "Learn More",
+  "trust": {
+    "brands": "Brands",
+    "accuracy": "Analysis Accuracy",
+    "monitoring": "Continuous Monitoring"
+  },
+  "features": {
+    "aiAnalysis":      { "title": "AI-Powered Analysis",       "description": "DziriBERT and MARBERT models trained on Algerian dialect classify sentiment with over 98% accuracy." },
+    "multiPlatform":   { "title": "Multi-Platform Monitoring", "description": "Facebook, Instagram, TikTok, YouTube, Reddit, X — everything in one place." },
+    "realTimeAlerts":  { "title": "Real-Time Alerts",          "description": "Get notified the moment any indicator crosses your threshold, so you can act before a crisis escalates." },
+    "brandProtection": { "title": "Brand Reputation Protection","description": "Monitor your brand image daily and track any shift in your audience's sentiment." }
+  },
+  "analytics": {
+    "title": "Live Analytics Dashboard",
+    "description": "Real data updated after every monitoring run",
+    "liveData": "Live Data",
+    "sentimentEvolution": "Sentiment Evolution Over Time",
+    "positive": "Positive",
+    "neutral": "Neutral",
+    "negative": "Negative",
+    "totalComments": "Total Comments",
+    "thisMonth": "This month",
+    "positiveRate": "Positive Rate",
+    "ofTotalComments": "Of total comments",
+    "lastUpdate": "Last Update",
+    "realTime": "Real time",
+    "now": "Now"
+  },
+  "howItWorks": {
+    "title": "How does it work?",
+    "description": "Three simple steps to get accurate insights about your brand",
+    "step1": { "title": "Add Your Brand",         "description": "Register the keywords and social media accounts of your company." },
+    "step2": { "title": "Automatic Monitoring",   "description": "The platform automatically collects all posts and comments related to your brand across all platforms." },
+    "step3": { "title": "Instant Analysis & Alerts","description": "Sentiment is analyzed automatically and you receive alerts as soon as any significant change is detected." }
+  },
+  "whatWeOffer": {
+    "title": "What do we offer?",
+    "description": "Integrated tools to understand Algerian public opinion about your brand",
+    "sentimentAnalysis":   { "title": "Sentiment Analysis",          "description": "Automatic classification of every post and comment as positive, negative, or neutral." },
+    "dialectAnalysis":     { "title": "Algerian Dialect Support",    "description": "Models specifically trained on Algerian dialect, Arabizi, and mixed-language content." },
+    "reputationIndicator": { "title": "Digital Reputation Indicator","description": "Daily tracking of your brand image with alerts on any sudden deterioration." }
+  },
+  "platforms": {
+    "title": "Supported Platforms",
+    "description": "We monitor content from all platforms most used in Algeria",
+    "twitter": "X / Twitter",
+    "facebook": "Facebook",
+    "instagram": "Instagram"
+  },
+  "whoWeServe": {
+    "title": "Who do we serve?",
+    "description": "Gantra serves companies and institutions that want to understand the Algerian public's opinion",
+    "localBrands": "Algerian Brands",
+    "smes": "Small & Medium Enterprises",
+    "customerService": "Customer Service Teams",
+    "agencies": "Digital Marketing Agencies"
+  },
+  "cta": {
+    "title": "Ready to understand your Algerian audience?",
+    "description": "Join the companies that rely on Gantra to monitor their digital reputation and understand their customers' sentiment.",
+    "contactUs": "Contact Us"
+  }
+},
+
+  "dashboard": {
+    "brand": "AI Platform",
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "admin": "Admin",
+    "analyst": "Analyst",
+    "logout": "Logout",
+    "posts": "Posts",
+    "sentiment": "Sentiment",
+    "topics": "Topics",
+    "alerts": "Alerts",
+    "team": "Team",
+    "settings": "Settings",
+    "surveys": "Surveys",
+    "engagement": "Engagement",
+    "administration": "Administration",
+    "services": "Services"
+  },
+
+  "posts": {
+    "badge": "Social Monitoring",
+    "title": "Posts",
+    "description": "Track all posts and comments related to your brand across different platforms.",
+    "totalPosts": "Total Posts",
+    "searchResults": "Search Results",
+    "searchFor": "Searching for:",
+    "search": "Search inside posts...",
+    "clearFilters": "Clear Filters",
+    "viewSource": "View Source",
+    "noResults": "No Results",
+    "noResultsFor": "No posts contain",
+    "emptyTitle": "No Posts",
+    "emptyDescription": "Try changing filters or enabling social listening.",
+    "prev": "Previous",
+    "next": "Next",
     "platforms": {
-      "title": "Connected to platforms your customers use daily",
-      "description": "We collect sentiments from Twitter (X), Facebook, and Instagram in one place.",
-      "twitter": "Twitter / X",
-      "facebook": "Facebook", 
-      "instagram": "Instagram"
+      "social": "Social",
+      "news": "News"
     },
-    "cta": {
-      "title": "Ready to hear your customers' voice in dialect?",
-      "description": "Start now by creating an account or contact our team.",
-      "contactUs": "Contact Us"
-    }
-  },
-  "faq": {
-    "tagline": "Support & Help",
-    "title": "Frequently Asked Questions (FAQ)",
-    "description": "We've selected the most frequently asked questions from our clients about surveys, the platform, and Algerian dialect analysis. You can always contact us if you don't find your answer here.",
-    "questions": {
-      "q1": "How does SentivyaDZ specifically handle Algerian dialect?",
-      "a1": "Our model has been trained to understand Algerian dialect with all its expressions, abbreviations, and popular vocabulary. It supports analyzing writing in dialect as used by Algerian customers on social media platforms.",
-      "q2": "What social media platforms does SentivyaDZ support?",
-      "a2": "We support Twitter (X), Facebook, and Instagram. We can monitor all comments and posts that mention your brand and analyze them in Algerian dialect.",
-      "q3": "Can I receive instant alerts when negative sentiments increase?",
-      "a3": "Yes, the platform provides an instant alert system that monitors the level of negative sentiments. When the specified threshold is exceeded, you are immediately notified to take necessary actions to protect your brand reputation.",
-      "q4": "Does the platform support languages other than Algerian dialect?",
-      "a4": "SentivyaDZ focuses primarily on Algerian dialect for its excellence in this field, but we plan to add support for Modern Standard Arabic and other Maghreb dialects in the future.",
-      "q5": "How can I start using SentivyaDZ?",
-      "a5": "You can easily start by creating an account and logging into the platform directly."
-    }
-  },
-  "contact": {
-    "tagline": "Contact Us",
-    "title": "The SentivyaDZ team is ready to help you every step of the way",
-    "description": "Fill out the form below and one of our customer experience experts will contact you as soon as possible.",
-    "form": {
-      "fullName": "Full Name *",
-      "fullNamePlaceholder": "Enter your full name",
-      "email": "Email *",
-      "emailPlaceholder": "example@email.com",
-      "company": "Company Name",
-      "companyPlaceholder": "Your company name",
-      "phone": "Phone Number",
-      "phonePlaceholder": "+213 XXX XXX XXX",
-      "message": "Message *",
-      "messagePlaceholder": "How can we help you? Tell us about your needs...",
-      "sending": "Sending...",
-      "sendMessage": "Send Message",
-      "success": "✓ Your message has been sent successfully! We will contact you soon.",
-      "error": "✕ An error occurred while sending the message. Please try again."
-    },
-    "contactInfo": {
-      "title": "Contact Information",
-      "email": "Email",
-      "phone": "Phone",
-      "address": "Address"
-    },
-    "whyChooseUs": {
-      "title": "Why choose SentivyaDZ?",
-      "deepUnderstanding": "Deep understanding of Algerian dialect",
-      "support247": "Specialized 24/7 technical support",
-      "customSolutions": "Custom solutions for Algerian market",
-      "competitivePrices": "Competitive prices and flexibility in dealing"
-    }
-  },
-  "login": {
-    "title": "Login",
-    "welcome": "Welcome to SentivyaDZ",
-    "emailPlaceholder": "Email",
-    "passwordPlaceholder": "Password",
-    "loginButton": "Login to Platform",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create your company account",
-    "services": {
-      "sentiment": "Sentiment Analysis",
-      "opinion": "Customer Opinion Analysis", 
-      "reports": "Marketing Reports",
-      "intelligence": "Marketing Intelligence"
+    "filters": {
+      "allSources": "All Sources",
+      "allPlatforms": "All Platforms"
     },
     "errors": {
-      "emailRequired": "Email is required",
-      "emailInvalid": "Invalid email format",
-      "passwordRequired": "Password is required",
-      "passwordMinLength": "Password must be at least 6 characters"
+      "loadFailed": "Failed to load posts"
     }
   },
-  "socialListening": {
-    "tagline": "Sentiment Analysis",
-    "title": "Analysis of Algerian Customers' Sentiments on Social Media",
-    "description": "We collect comments in Algerian dialect from Twitter, Facebook, and Instagram, and evaluate general sentiment (positive / negative / neutral) with instant alerts when negative tone increases.",
-    "warning": " Warning: Noticeable increase in negative sentiments",
-    "warningDescription": "Current negative sentiment percentage has exceeded {{threshold}}%. Review recent comments and identify possible causes for decreased customer satisfaction. Brand reputation is at risk of decline.",
-    "reputationIndicator": "Brand Reputation Indicator (sentiments for this period)",
-    "attentionRisk": "Attention: Reputation at risk of decline",
-    "positiveReputation": "Positive Reputation",
-    "moderateLevel": "Moderate Level",
-    "positive": "{{percentage}}% Positive",
-    "negative": "{{percentage}}% Negative", 
-    "neutral": "{{percentage}}% Neutral",
-    "distribution": "Sentiment Distribution",
-    "allPlatforms": "All Platforms",
-    "twitter": "Twitter",
-    "facebook": "Facebook",
-    "instagram": "Instagram",
-    "comments": "comments",
-    "totalComments": "Total comments:",
-    "negativeThreshold": "Current negative sentiment alert threshold:",
-    "recentComments": "Recent comments in Algerian dialect",
-    "source": "Source",
-    "platform": "Platform"
+  "sentiment": {
+  "badge": "Sentiment Analysis",
+  "title": "Sentiment Analysis",
+  "description": "Understand how your audience feels about your brand across all platforms.",
+  "backToDashboard": "Dashboard",
+  "distribution": {
+    "title": "Sentiment Distribution",
+    "total": "Total analyzed posts",
+    "positive": "Positive",
+    "neutral": "Neutral",
+    "negative": "Negative"
   },
-  "mediaMonitoring": {
-    "tagline": "Media Monitoring",
-    "title": "Follow how people talk about your brand everywhere and understand its real image",
-    "description": "Collect media coverage from different sources in one platform and connect it with survey results."
+  "timeline": {
+    "title": "Sentiment Over Time",
+    "line": "Line",
+    "bar": "Bar",
+    "days7": "7 days",
+    "days14": "14 days",
+    "days30": "30 days",
+    "noData": "No data available"
+  },
+  "stats": {
+    "totalPosts": "Total Posts",
+    "totalPostsSub": "analyzed",
+    "positiveRate": "Positive Rate",
+    "positiveRateSub": "of total posts",
+    "lastUpdate": "Last Update",
+    "lastUpdateSub": "latest data"
+  },
+  "wordCloud": {
+    "title": "Word Cloud",
+    "hint": "Word size reflects frequency — hover for details",
+    "noData": "No data available"
+  },
+  "feed": {
+    "title": "Posts by Sentiment",
+    "all": "All",
+    "positive": "Positive",
+    "neutral": "Neutral",
+    "negative": "Negative",
+    "posts": "posts",
+    "confidence": "confidence",
+    "viewSource": "View Source",
+    "noData": "No posts found",
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
+  },
+  "keywords": {
+    "title": "Top Keywords by Sentiment",
+    "positive": "Positive",
+    "neutral": "Neutral",
+    "negative": "Negative",
+    "noData": "No data available"
+  },
+  "errors": {
+    "loadFailed": "Failed to load data",
+    "noCompany": "No company selected"
+  }
+},
+"topics": {
+  "badge": "Topic Analysis",
+  "title": "Topics",
+  "description": "Discover the most discussed keywords and topics around your brand across all platforms.",
+  "noCompany": "No company selected",
+  "noData": "Not enough data",
+  "top": "Top",
+  "days": "days",
+  "topKeywords": { "title": "Top Keywords & Topics" },
+  "trends": { "title": "Keyword Trends Over Time" },
+  "bySource": { "title": "Keywords by Source" },
+  "coOccurrence": {
+    "title": "Most Co-occurring Words",
+    "description": "Word pairs that frequently appear together in the same post",
+    "sharedPosts": "shared posts"
+  }
+},
+"login": {
+  "title": "Sign In",
+  "welcome": "Welcome back to Gantra",
+  "emailLabel": "Email address",
+  "emailPlaceholder": "user@company.dz",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "••••••••",
+  "submit": "Sign in to platform",
+  "loading": "Signing in...",
+  "noAccount": "Don't have an account?",
+  "createAccount": "Request access",
+  "secureNote": "🔒 Encrypted & secure connection",
+  "services": {
+    "sentiment": "Sentiment Analysis",
+    "opinion": "Opinion Monitoring",
+    "reports": "Smart Reports",
+    "intelligence": "Competitive Intelligence"
+  },
+  "stats": {
+    "accuracy": "Model accuracy",
+    "sources": "Data sources",
+    "realtime": "Live updates"
+  },
+  "panel": {
+    "headline": "Listen to your brand with AI",
+    "subheadline": "Sentiment Analysis • Social Monitoring • Real-time Reports",
+    "quote": "Gantra changed how we handle digital public opinion.",
+    "quoteAuthor": "Marketing Team, Mobilis"
+  },
+  "errors": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 6 characters"
+  }
+},
+"requestAccess": {
+  "title": "Request Platform Access",
+  "subtitle": "Complete the steps below to join Gantra",
+  "haveAccount": "Already have an account?",
+  "backToLogin": "Sign in",
+  "secureNote": "Your information is fully protected and encrypted",
+  "employees": "employees",
+  "steps": {
+    "personal": "Your personal information",
+    "company": "Company information",
+    "goal": "Your goal on the platform"
+  },
+  "fields": {
+    "fullName": "Full name",
+    "email": "Professional email",
+    "companyName": "Company name",
+    "sector": "Industry sector",
+    "companySize": "Company size",
+    "goal": "What is your goal for using the platform?"
+  },
+  "placeholders": {
+    "fullName": "Enter your full name",
+    "companyName": "Your company name",
+    "sector": "Select sector",
+    "companySize": "Select size",
+    "goal": "e.g. Monitor brand reputation and analyze customer sentiment..."
+  },
+  "sectors": {
+    "ecommerce": "E-commerce",
+    "finance": "Banking / Finance",
+    "telecom": "Telecom",
+    "services": "Services",
+    "other": "Other"
+  },
+  "nav": {
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit request",
+    "sending": "Sending..."
+  },
+  "errors": {
+    "nameRequired": "Full name is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email address",
+    "companyRequired": "Company name is required",
+    "sectorRequired": "Sector is required",
+    "sizeRequired": "Company size is required",
+    "goalRequired": "Goal is required",
+    "failed": "Failed to submit request",
+    "unexpected": "An unexpected error occurred"
+  },
+  "success": {
+    "title": "Request submitted!",
+    "message": "Thank you for your interest in Gantra. Our team will contact you within 24–48 hours.",
+    "backToLogin": "Back to login"
+  },
+  "services": {
+    "sentiment": "Sentiment analysis",
+    "listening": "Social listening",
+    "reputation": "Brand reputation",
+    "reports": "Smart reports",
+    "dialect": "Algerian dialect"
+  },
+  "panel": {
+    "headline": "Intelligent listening platform for the Algerian market",
+    "subheadline": "Dialect-aware sentiment, reputation monitoring, executive reports",
+    "quote": "\"We turn every comment, reaction, and word in the digital space into actionable intelligence.\"",
+    "quoteAuthor": "The Gantra Team"
+  },
+  "trust": {
+    "accuracy": "94% accuracy",
+    "sources": "8+ sources",
+    "dialect": "Algerian dialect",
+    "realtime": "Live 24/7"
+  }
+},
+"engagement": {
+  "badge": "Engagement Analytics",
+  "title": "Audience Engagement",
+  "description": "Track post performance across social platforms and measure how your audience engages with content.",
+  "stats": {
+    "posts":    "Posts",
+    "likes":    "Likes",
+    "comments": "Comments",
+    "shares":   "Shares",
+    "views":    "Views"
+  },
+  "metrics": {
+    "likes":    "Likes",
+    "comments": "Comments",
+    "shares":   "Shares",
+    "views":    "Views"
+  },
+  "topPosts": {
+    "title":  "Top Performing Posts",
+    "noData": "No data available"
+  },
+  "platformBreakdown": {
+    "title":  "Engagement by Platform",
+    "noData": "No data available"
+  },
+  "table": {
+    "title":        "All Posts",
+    "platform":     "Platform",
+    "link":         "Link",
+    "date":         "Date",
+    "allPlatforms": "All Platforms",
+    "noData":       "No posts found",
+    "prev":         "Prev",
+    "next":         "Next",
+    "page":         "Page",
+    "of":           "of"
+  },
+  "errors": {
+    "loadFailed": "Failed to load engagement data",
+    "noCompany":  "Please select a company to view engagement data"
+  }
+},
+"surveys": {
+  "badge": "Survey Management",
+  "title": "Surveys",
+  "description": "Create opinion surveys and collect customer feedback with automatic sentiment analysis.",
+  "noCompany": "No company selected",
+  "types": {
+    "mixed": "Mixed", "nps": "NPS", "csat": "CSAT", "feedback": "Open Feedback"
+  },
+  "questionTypes": {
+    "text": "Free text", "rating": "Rating (1–5)",
+    "nps": "NPS (0–10)", "multiple_choice": "Multiple choice"
+  },
+  "card": {
+    "active": "Active", "inactive": "Inactive",
+    "questions": "questions", "responses": "responses",
+    "manage": "Manage", "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this survey?"
+  },
+  "create": {
+    "button": "New Survey", "title": "New Survey",
+    "titleLabel": "Title", "titlePlaceholder": "e.g. Customer satisfaction survey",
+    "descLabel": "Description (optional)", "descPlaceholder": "Brief description...",
+    "typeLabel": "Survey type",
+    "saving": "Creating...", "submit": "Create Survey"
+  },
+  "detail": {
+    "share": "Share Survey",
+    "copyLink": "Copy link", "copied": "Copied!",
+    "analytics": "View Results & Analytics",
+    "activate": "Activate", "deactivate": "Deactivate"
+  },
+  "questions": {
+    "count": "Questions ({{count}})",
+    "add": "Add Question", "cancel": "Cancel",
+    "typeLabel": "Question type", "textLabel": "Question text",
+    "textPlaceholder": "Type your question here...",
+    "choicesLabel": "Choices (comma separated)",
+    "choicesPlaceholder": "Option 1, Option 2, Option 3",
+    "saving": "Adding...", "save": "Add Question",
+    "empty": "No questions yet — add the first one",
+    "deleteConfirm": "Delete this question?",
+    "errorText": "Question text is required.",
+    "errorChoices": "Please enter choices separated by commas."
+  },
+  "analytics": {
+    "title": "Survey Results",
+    "totalResponses": "Total Responses",
+    "answers": "answers", "avgRating": "Average rating"
+  },
+  "empty": {
+    "title": "No surveys yet",
+    "desc": "Click «New Survey» to create your first survey"
+  },
+  "errors": {
+    "loadFailed": "Failed to load data",
+    "createFailed": "Failed to create survey",
+    "titleRequired": "Title is required."
+  }
+},
+"team": {
+  "badge": "Team Management",
+  "title": "Team",
+  "description": "Manage team members and invite analysts to access the sentiment analysis dashboard.",
+  "roles": {
+    "admin":   "Admin",
+    "analyst": "Analyst"
+  },
+  "members": {
+    "title": "Team Members",
+    "count": "members",
+    "empty": "No members yet"
+  },
+  "invite": {
+    "button":              "Invite Analyst",
+    "title":               "Invite New Analyst",
+    "firstName":           "First Name",
+    "firstNamePlaceholder":"e.g. Ahmed",
+    "email":               "Email",
+    "emailPlaceholder":    "analyst@company.dz",
+    "submit":              "Send Invitation",
+    "sending":             "Sending...",
+    "success":             "Invitation sent successfully",
+    "errorFields":         "Please fill in all fields",
+    "errorFailed":         "Failed to send invitation"
+  },
+  "errors": {
+    "loadFailed": "Failed to load team members",
+    "noCompany":  "Please select a company to view the team"
+  }
+},
+"publicSurvey": {
+  "badge": "Survey",
+  "questionsCount": "questions",
+  "anonymous": "Your answers are anonymous",
+  "textPlaceholder": "Write your answer here...",
+  "answered": "Answered",
+  "submit": "Submit Answers",
+  "submitting": "Submitting...",
+  "poweredBy": "Powered by",
+  "nps": { "notAtAll": "Not at all likely", "definitely": "Extremely likely" },
+  "submitted": {
+    "title": "Thank you!",
+    "message": "Your answers have been submitted successfully. We appreciate your time.",
+    "poweredBy": "Powered by Gantra"
+  },
+  "errors": {
+    "title": "Survey Unavailable",
+    "notAvailable": "This survey is not available or has expired.",
+    "loadError": "An error occurred while loading the survey.",
+    "submitFailed": "Failed to submit answers. Please try again."
+  }
+},
+"settings": {
+  "badge": "Company Settings",
+  "title": "Settings",
+  "description": "Manage your search keywords, social profiles, and data collection for your company.",
+  "ingest": {
+    "title": "Social Listening",
+    "desc": "Fetch the latest posts and comments from all added sources",
+    "button": "Run Listening",
+    "running": "Collecting data...",
+    "success": "Data collection completed ✓",
+    "new": "New", "existing": "Existing", "skipped": "Skipped",
+    "statusSkipped": "Skipped", "statusError": "Error",
+    "errorFailed": "Data collection failed",
+    "errorUnexpected": "Unexpected error"
+  },
+  "keywords": {
+    "title": "Keywords",
+    "desc": "Used to search Google News, Reddit, and YouTube",
+    "placeholder": "Add a keyword...",
+    "add": "Add",
+    "empty": "No keywords yet",
+    "addSuccess": "Keyword added successfully",
+    "errorLoad": "Failed to load keywords",
+    "errorAdd": "Failed to add keyword",
+    "errorDelete": "Failed to delete keyword"
   },
   "profiles": {
-    "tagline": "Customer Profiles",
-    "title": "One profile that gathers everything you need to know about your customer",
-    "description": "Connect every interaction, survey and conversation record in one profile that gives you a complete picture of each customer's experience."
+    "title": "Social Profiles",
+    "desc": "Page links from which data is collected",
+    "add": "Add",
+    "empty": "No profiles added yet",
+    "addSuccess": "Profile added successfully",
+    "errorLoad": "Failed to load profiles",
+    "errorAdd": "Failed to add profile",
+    "errorDelete": "Failed to delete profile"
+  }
+},
+"contact": {
+  "tagline": "Get in Touch",
+  "title": "We'd love to hear from you",
+  "description": "Have a question or want to learn more about Gantra? Our team is ready to help.",
+  "form": {
+    "title": "Send us a message",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your full name",
+    "email": "Email address",
+    "emailPlaceholder": "example@company.dz",
+    "company": "Company",
+    "companyPlaceholder": "Your company name",
+    "phone": "Phone number",
+    "phonePlaceholder": "+213 ...",
+    "message": "Message",
+    "messagePlaceholder": "Write your message here...",
+    "sendMessage": "Send message",
+    "sending": "Sending...",
+    "success": "Your message was sent successfully! We'll get back to you soon.",
+    "error": "An error occurred while sending. Please try again."
   },
-  "notFound": {
-    "description": "The page you are looking for does not exist, you can return to the home page or explore sentiment analysis.",
-    "backToHome": "Back to Home",
-    "analyzeSentiments": "Analyze Sentiments"
+  "contactInfo": {
+    "title": "Contact information",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "addressValue": "Algiers, Algeria"
+  },
+  "whyChooseUs": {
+    "title": "Why Gantra?",
+    "deepUnderstanding": "Deep understanding of the Algerian market and local dialect",
+    "support247": "Technical support available 24/7",
+    "customSolutions": "Custom solutions for every company and sector",
+    "competitivePrices": "Competitive pricing with quality guarantees"
+  }
+},
+"faq": {
+  "tagline": "FAQ",
+  "title": "Everything you need to know about Gantra",
+  "description": "Answers to the most common questions about the platform, how it works, and its technical features.",
+  "stats": {
+    "questions": "{{count}} questions",
+    "support": "24/7 support available",
+    "updated": "Continuously updated"
+  },
+  "questions": {
+    "q1": "What is Gantra and what is its purpose?",
+    "a1": "Gantra is an Algerian platform specialized in monitoring and analyzing sentiment in the digital space. It collects posts and comments related to your brand from social media and news sources, then analyzes them using AI models specifically trained on Algerian dialect to give you an accurate understanding of what your audience is saying.",
+
+    "q2": "Which platforms does Gantra support?",
+    "a2": "Gantra currently supports: Facebook, Instagram, TikTok, YouTube, Reddit, X (Twitter), Google News, and RSS feeds. The platform continuously expands its list of sources to cover as much Algerian digital content as possible.",
+
+    "q3": "How does the platform handle Algerian dialect and Arabizi?",
+    "a3": "Gantra relies on two specialized models: DziriBERT and MARBERT, both trained on real Algerian Arabic data including dialect, Arabizi, and Arabic-French mixed content. This gives the platform a high ability to understand local context compared to general solutions.",
+
+    "q4": "How do automatic alerts work?",
+    "a4": "Company administrators can create custom alert rules such as: alert when negative sentiment exceeds 40%, or when a keyword appears more than 50 times per day. These alerts are triggered automatically after each monitoring run and reach users inside the platform instantly.",
+
+    "q5": "Who can access data within the company?",
+    "a5": "The platform uses a role-based access control system. Administrators have full access including settings, team management, surveys, and triggering monitoring. Analysts have read-only access to data and reports without the ability to modify settings or invite new members.",
+
+    "q6": "What are surveys and how do they work?",
+    "a6": "Gantra allows you to create custom surveys and send them to customers via a direct link or QR code. You can add different types of questions such as NPS scale, satisfaction ratings, and open-ended questions. Text answers are automatically analyzed and classified by sentiment without any manual intervention.",
+
+    "q7": "Do you need technical expertise to use the platform?",
+    "a7": "No, Gantra is designed to be easy to use for all team members regardless of their technical background. The user interface is clear and simple, and the monitoring and data collection process works automatically. The administrator only needs to add keywords and social media accounts once."
+  },
+  "cta": {
+    "title": "Didn't find an answer to your question?",
+    "subtitle": "Our team is ready to help at any time.",
+    "button": "Contact Support"
+  }
+},
+"setPassword": {
+  "title":               "Activate Account",
+  "subtitle":            "Create a strong password to complete your account activation",
+  "verifying":           "Verifying activation link...",
+  "invalidToken":        "Activation link is invalid or expired",
+  "verifyFailed":        "Could not verify activation token",
+  "accountLabel":        "Account",
+  "newUser":             "New User",
+  "passwordLabel":       "New Password",
+  "passwordPlaceholder": "Enter a strong password",
+  "confirmLabel":        "Confirm Password",
+  "confirmPlaceholder":  "Re-enter your password",
+  "submit":              "Save Password",
+  "saving":              "Saving...",
+  "successMessage":      "Password set successfully, redirecting...",
+  "backTo":              "Back to",
+  "loginLink":           "Login",
+  "strength": {
+    "weak":   "Weak",
+    "fair":   "Fair",
+    "good":   "Good",
+    "strong": "Strong"
+  },
+  "errors": {
+    "passwordRequired": "Password is required",
+    "passwordShort":    "Password must be at least 8 characters",
+    "confirmRequired":  "Please confirm your password",
+    "passwordMismatch": "Passwords do not match",
+    "saveFailed":       "Failed to set password"
   }
 }
+  }

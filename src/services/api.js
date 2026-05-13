@@ -93,13 +93,13 @@ export const api = {
     }),
   triggerIngestion: (companyId) =>
   request(`/api/companies/${companyId}/ingest/`, { method: "POST" }),
-  getPosts: (companyId, { page = 1, source = "", platform = "" } = {}) => {
-    const params = new URLSearchParams({ company: companyId, page });
-    if (source) params.append("source", source);
-    if (platform) params.append("platform", platform);
-    return request(`/api/posts/?${params.toString()}`);
-  },
-
+ getPosts: (companyId, { page = 1, source = "", platform = "", search = "" } = {}) => {
+  const params = new URLSearchParams({ company: companyId, page });
+  if (source) params.append("source", source);
+  if (platform) params.append("platform", platform);
+  if (search) params.append("search", search);
+  return request(`/api/posts/?${params.toString()}`);
+},
   getSentimentDashboard: (companyId) =>
     request(`/api/sentiment/dashboard/?company=${companyId}`),
 
@@ -209,4 +209,13 @@ getCoOccurrence: (companyId, top = 15) =>
       method: "POST",
       body: JSON.stringify(data),
     }),
+     // Engagement
+getEngagement: (companyId, platform = "", page = 1) =>
+  request(`/api/engagement/?company=${companyId}&platform=${platform}&page=${page}`),
+
+getEngagementStats: (companyId) =>
+  request(`/api/engagement/stats/?company=${companyId}`),
+
+getEngagementTop: (companyId, metric = "like_count", limit = 10, platform = "") =>
+  request(`/api/engagement/top/?company=${companyId}&metric=${metric}&limit=${limit}&platform=${platform}`),
 };

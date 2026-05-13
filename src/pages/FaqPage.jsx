@@ -1,150 +1,360 @@
-import { HelpCircle, MessageCircle, Users, BookOpen } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "../contexts/ThemeContext";
+import { motion, AnimatePresence } from "framer-motion";
+import { HelpCircle, MessageCircle, Users, BookOpen, ChevronDown } from "lucide-react";
 
-export default function FaqPage() {
-  const { t } = useTranslation()
-  const [isVisible, setIsVisible] = useState(false)
-  const [currentIcon, setCurrentIcon] = useState(0)
-  
-  const icons = [
-    { Icon: MessageCircle, color: 'text-sky-400', delay: 0 },
-    { Icon: Users, color: 'text-emerald-400', delay: 200 },
-    { Icon: BookOpen, color: 'text-amber-400', delay: 400 }
-  ]
-
-  useEffect(() => {
-    setIsVisible(true)
-    const interval = setInterval(() => {
-      setCurrentIcon((prev) => (prev + 1) % icons.length)
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [])
-  const faqs = [
-    {
-      q: t('faq.questions.q1'),
-      a: t('faq.questions.a1'),
-    },
-    {
-      q: t('faq.questions.q2'),
-      a: t('faq.questions.a2'),
-    },
-    {
-      q: t('faq.questions.q3'),
-      a: t('faq.questions.a3'),
-    },
-    {
-      q: t('faq.questions.q4'),
-      a: t('faq.questions.a4'),
-    },
-    {
-      q: t('faq.questions.q5'),
-      a: t('faq.questions.a5'),
-    },
-  ]
-
+function Orbs({ isDark }) {
   return (
-    <div className="space-y-10">
-      {/* Hero Banner Section */}
-      <section className={`relative overflow-hidden rounded-3xl border border-slate-800/80 bg-gradient-to-br from-slate-900/90 via-slate-950/95 to-slate-900/90 p-8 lg:p-12 shadow-xl shadow-slate-950/70 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-           style={{
-             backgroundImage: `
-               linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(15, 23, 42, 0.9) 100%),
-               radial-gradient(circle at 20% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-               radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-               radial-gradient(circle at 40% 40%, rgba(251, 146, 60, 0.05) 0%, transparent 50%),
-               repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(148, 163, 184, 0.02) 35px, rgba(148, 163, 184, 0.02) 70px)
-             `,
-             backgroundSize: 'cover, auto, auto, auto, auto'
-           }}>
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:items-center">
-          <div className="space-y-6">
-            <div className={`inline-flex items-center rounded-full border border-sky-500/40 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold text-sky-200 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
-              <HelpCircle className="ml-2 h-4 w-4" />
-              {t('faq.tagline')}
-            </div>
-            <h1 className={`text-3xl font-bold leading-relaxed text-slate-50 sm:text-4xl lg:text-[2.7rem] transition-all duration-700 delay-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
-            {t('faq.title')}
-            </h1>
-              <p className="max-w-2xl text-sm text-slate-300">
-          {t('faq.description')}
-        </p>
-          </div>
-          
-          {/* Animated Visual Elements */}
-          <div className="relative h-64 lg:h-80">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative">
-                {/* Central animated icon */}
-                <div className={`absolute inset-0 flex items-center justify-center transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}>
-                  {icons.map(({ Icon, color }, index) => (
-                    <div
-                      key={index}
-                      className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ${
-                        currentIcon === index ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 rotate-180'
-                      }`}
-                      style={{ transitionDelay: `${index * 100}ms` }}
-                    >
-                      <div className="rounded-3xl border border-slate-700/50 bg-slate-800/30 p-8 backdrop-blur-sm shadow-2xl">
-                        <Icon className={`h-16 w-16 ${color} transition-all duration-300 hover:scale-110`} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                {/* Orbiting elements */}
-                <div className={`h-32 w-32 transition-all duration-1000 delay-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-                  {icons.map(({ Icon, color }, index) => {
-                    const angle = (index * 120 + currentIcon * 30) * Math.PI / 180
-                    const x = Math.cos(angle) * 60
-                    const y = Math.sin(angle) * 60
-                    return (
-                      <div
-                        key={index}
-                        className="absolute top-1/2 left-1/2 transition-all duration-1000 ease-in-out"
-                        style={{
-                          transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-                        }}
-                      >
-                        <div className="rounded-xl border border-slate-700/30 bg-slate-800/20 p-3 backdrop-blur-sm">
-                          <Icon className={`h-6 w-6 ${color} opacity-60`} />
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            </div>
-            
-            {/* Animated decorative elements */}
-            <div className={`absolute -top-4 -right-4 h-24 w-24 rounded-full bg-sky-500/10 blur-2xl transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}></div>
-            <div className={`absolute -bottom-4 -left-4 h-32 w-32 rounded-full bg-emerald-500/10 blur-2xl transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}></div>
-            <div className={`absolute top-1/2 -left-8 h-16 w-16 rounded-full bg-amber-500/10 blur-xl transition-all duration-1000 delay-900 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}></div>
-          </div>
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <p className="text-[11px] font-semibold text-sky-300">{t('faq.tagline')}</p>
-        <h1 className="text-2xl font-bold text-slate-50">{t('faq.title')}</h1>
-     
-      </section>
-
-      <section className="grid gap-4">
-        {faqs.map((item) => (
-          <details
-            key={item.q}
-            className="group rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4"
-          >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-              <h2 className="text-sm font-semibold text-slate-50">{item.q}</h2>
-              <span className="text-xs text-sky-300 group-open:rotate-90 transition">→</span>
-            </summary>
-            <p className="mt-3 text-xs leading-relaxed text-slate-300">{item.a}</p>
-          </details>
-        ))}
-      </section>
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+      <div style={{
+        position: "absolute", top: "-140px", right: "-80px",
+        width: "480px", height: "480px", borderRadius: "50%",
+        background: isDark
+          ? "radial-gradient(circle, #C9A84C14 0%, transparent 70%)"
+          : "radial-gradient(circle, #C9A84C0E 0%, transparent 70%)",
+      }} />
+      <div style={{
+        position: "absolute", bottom: "-120px", left: "-80px",
+        width: "420px", height: "420px", borderRadius: "50%",
+        background: isDark
+          ? "radial-gradient(circle, #4A90D910 0%, transparent 70%)"
+          : "radial-gradient(circle, #4A90D908 0%, transparent 70%)",
+      }} />
+      <div style={{
+        position: "absolute", top: "40%", left: "30%",
+        width: "300px", height: "300px", borderRadius: "50%",
+        background: isDark
+          ? "radial-gradient(circle, #2E8B5708 0%, transparent 70%)"
+          : "radial-gradient(circle, #2E8B5706 0%, transparent 70%)",
+      }} />
     </div>
-  )
+  );
 }
 
+const ICONS = [
+  { Icon: MessageCircle, color: "#4A90D9", colorDim: "#4A90D915", colorBorder: "#4A90D930" },
+  { Icon: Users,         color: "#2E8B57", colorDim: "#2E8B5715", colorBorder: "#2E8B5730" },
+  { Icon: BookOpen,      color: "#C9A84C", colorDim: "#C9A84C15", colorBorder: "#C9A84C30" },
+];
+
+function RotatingBadge({ isDark }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setIndex((p) => (p + 1) % ICONS.length), 2800);
+    return () => clearInterval(id);
+  }, []);
+
+  const { Icon, color, colorDim, colorBorder } = ICONS[index];
+
+  return (
+    <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{
+        position: "absolute", width: "196px", height: "196px", borderRadius: "50%",
+        border: `1px dashed ${isDark ? "#1E1E1E" : "#E5E7EB"}`,
+      }} />
+      {ICONS.map((item, i) => {
+        const angle = (i * 120) * (Math.PI / 180);
+        const x = Math.cos(angle) * 98;
+        const y = Math.sin(angle) * 98;
+        const OIcon = item.Icon;
+        return (
+          <motion.div key={i} animate={{ x, y }} transition={{ duration: 1.2, ease: "easeInOut" }}
+            style={{
+              position: "absolute", width: "30px", height: "30px", borderRadius: "9px",
+              background: item.colorDim, border: `1px solid ${item.colorBorder}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: item.color, opacity: i === index ? 1 : 0.4, transition: "opacity 0.4s",
+            }}>
+            <OIcon size={13} />
+          </motion.div>
+        );
+      })}
+      <div style={{
+        width: "112px", height: "112px", borderRadius: "50%",
+        border: `1px solid ${isDark ? "#C9A84C22" : "#C9A84C33"}`,
+        background: isDark ? "#111111" : "#FFFFFF",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        boxShadow: isDark ? "0 0 32px #C9A84C08" : "0 0 24px #C9A84C0A",
+        position: "relative", zIndex: 1,
+      }}>
+        <AnimatePresence mode="wait">
+          <motion.div key={index}
+            initial={{ opacity: 0, scale: 0.7, rotate: -20 }}
+            animate={{ opacity: 1, scale: 1,   rotate: 0   }}
+            exit={{   opacity: 0, scale: 0.7, rotate:  20  }}
+            transition={{ duration: 0.38 }}
+            style={{
+              width: "52px", height: "52px", borderRadius: "16px",
+              background: colorDim, border: `1px solid ${colorBorder}`,
+              display: "flex", alignItems: "center", justifyContent: "center", color,
+            }}>
+            <Icon size={24} />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function FaqItem({ q, a, index, isDark }) {
+  const [open, setOpen] = useState(false);
+
+  const ui = {
+    panel:  isDark ? "#111111" : "#FFFFFF",
+    border: isDark ? "#1E1E1E" : "#E5E7EB",
+    text:   isDark ? "#E5E7EB" : "#111111",
+    muted:  isDark ? "#6B7280" : "#9CA3AF",
+  };
+
+  const accents = ["#C9A84C", "#4A90D9", "#2E8B57", "#8B5CF6", "#E53E3E", "#F59E0B", "#14B8A6"];
+  const accent  = accents[index % accents.length];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.07 * index, duration: 0.45 }}
+      style={{
+        background: ui.panel,
+        border: `1px solid ${open ? accent + "44" : ui.border}`,
+        borderRadius: "18px", overflow: "hidden",
+        transition: "border-color 0.25s",
+        position: "relative",
+        boxShadow: open
+          ? (isDark ? `0 4px 24px ${accent}15` : `0 4px 16px ${accent}12`)
+          : (isDark ? "0 2px 12px #00000040" : "0 2px 8px rgba(0,0,0,0.05)"),
+      }}>
+      <div style={{
+        position: "absolute", top: 0, bottom: 0, right: 0, width: "3px",
+        background: open ? accent : "transparent",
+        transition: "background 0.25s", borderRadius: "0 18px 18px 0",
+      }} />
+
+      <button onClick={() => setOpen((p) => !p)}
+        style={{
+          width: "100%", padding: "18px 22px",
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px",
+          background: "none", border: "none", cursor: "pointer",
+          textAlign: "inherit", color: ui.text, position: "relative",
+        }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "14px", flex: 1, minWidth: 0 }}>
+          <div style={{
+            width: "28px", height: "28px", borderRadius: "8px", flexShrink: 0,
+            background: open ? accent + "18" : (isDark ? "#1A1A1A" : "#F1F5F9"),
+            border: `1px solid ${open ? accent + "40" : (isDark ? "#2A2A2A" : "#E5E7EB")}`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: "11px", fontWeight: 900,
+            color: open ? accent : ui.muted, transition: "all 0.25s",
+          }}>
+            {String(index + 1).padStart(2, "0")}
+          </div>
+          <span style={{
+            fontSize: "14px", fontWeight: 700,
+            color: open ? ui.text : (isDark ? "#D1D5DB" : "#374151"),
+            textAlign: "start", lineHeight: 1.45,
+          }}>
+            {q}
+          </span>
+        </div>
+        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.25 }}
+          style={{
+            width: "28px", height: "28px", borderRadius: "8px", flexShrink: 0,
+            background: open ? accent + "18" : "transparent",
+            border: `1px solid ${open ? accent + "40" : (isDark ? "#2A2A2A" : "#E5E7EB")}`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            color: open ? accent : ui.muted,
+            transition: "background 0.25s, border-color 0.25s, color 0.25s",
+          }}>
+          <ChevronDown size={14} />
+        </motion.div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{   height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}>
+            <div style={{
+              padding: "0 22px 20px 22px",
+              borderTop: `1px solid ${isDark ? "#1A1A1A" : "#F1F5F9"}`,
+              paddingTop: "16px",
+            }}>
+              <div style={{ borderRight: `3px solid ${accent}`, paddingRight: "14px" }}>
+                <p style={{ fontSize: "13px", color: ui.muted, lineHeight: 1.8, margin: 0 }}>
+                  {a}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+export default function FaqPage() {
+  const { t }     = useTranslation();
+  const { theme } = useTheme();
+  const isDark    = theme === "dark";
+
+  const ui = {
+    bg:         isDark ? "#0A0A0A" : "#F7F6F2",
+    panel:      isDark ? "#111111" : "#FFFFFF",
+    panel2:     isDark ? "#161616" : "#F8FAFC",
+    border:     isDark ? "#1E1E1E" : "#E5E7EB",
+    borderGold: isDark ? "#C9A84C2A" : "#C9A84C3A",
+    text:       isDark ? "#E5E7EB" : "#111111",
+    muted:      isDark ? "#6B7280" : "#9CA3AF",
+  };
+
+  const faqs = [
+    { q: t("faq.questions.q1"), a: t("faq.questions.a1") },
+    { q: t("faq.questions.q2"), a: t("faq.questions.a2") },
+    { q: t("faq.questions.q3"), a: t("faq.questions.a3") },
+    { q: t("faq.questions.q4"), a: t("faq.questions.a4") },
+    { q: t("faq.questions.q5"), a: t("faq.questions.a5") },
+    { q: t("faq.questions.q6"), a: t("faq.questions.a6") },
+    { q: t("faq.questions.q7"), a: t("faq.questions.a7") },
+  ];
+
+  return (
+    <div style={{
+      minHeight: "100vh", position: "relative",
+      background: ui.bg, color: ui.text,
+      padding: "60px 24px 80px",
+      overflow: "hidden",
+    }}>
+      <Orbs isDark={isDark} />
+
+      <div style={{ position: "relative", zIndex: 1, maxWidth: "860px", margin: "0 auto" }}>
+
+        {/* ── Hero ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65 }}
+          style={{
+            background: ui.panel, border: `1px solid ${ui.border}`,
+            borderRadius: "28px", padding: "44px 40px", marginBottom: "28px",
+            boxShadow: isDark
+              ? "0 0 0 1px #C9A84C08, 0 24px 60px #00000080"
+              : "0 0 0 1px #C9A84C08, 0 24px 60px rgba(0,0,0,0.09)",
+            position: "relative", overflow: "hidden",
+            display: "grid", gridTemplateColumns: "1fr auto",
+            gap: "32px", alignItems: "center",
+          }}
+          className="faq-hero">
+          <div style={{
+            position: "absolute", top: 0, left: "10%", right: "10%", height: "2px",
+            background: "linear-gradient(90deg, transparent, #C9A84C, #4A90D9, transparent)",
+          }} />
+          <div style={{
+            position: "absolute", top: "-50px", right: "-50px",
+            width: "200px", height: "200px", borderRadius: "50%",
+            background: "#C9A84C", opacity: 0.03, filter: "blur(60px)", pointerEvents: "none",
+          }} />
+
+          <div style={{ position: "relative" }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: "7px",
+              background: isDark ? "#C9A84C12" : "#C9A84C0E",
+              border: `1px solid ${ui.borderGold}`,
+              borderRadius: "40px", padding: "5px 14px", marginBottom: "18px",
+            }}>
+              <HelpCircle size={12} color="#C9A84C" />
+              <span style={{ fontSize: "11px", fontWeight: 800, color: "#C9A84C", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                {t("faq.tagline")}
+              </span>
+            </div>
+
+            <h1 style={{
+              fontSize: "clamp(20px, 2.8vw, 30px)", fontWeight: 900,
+              color: ui.text, margin: "0 0 12px", letterSpacing: "-0.02em", lineHeight: 1.3,
+            }}>
+              {t("faq.title")}
+            </h1>
+            <p style={{ fontSize: "13px", color: ui.muted, lineHeight: 1.75, margin: 0, maxWidth: "480px" }}>
+              {t("faq.description")}
+            </p>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "20px" }}>
+              {[
+                { label: t("faq.stats.questions", { count: faqs.length }), color: "#C9A84C" },
+                { label: t("faq.stats.support"),                            color: "#2E8B57" },
+                { label: t("faq.stats.updated"),                            color: "#4A90D9" },
+              ].map((p) => (
+                <div key={p.label} style={{
+                  display: "flex", alignItems: "center", gap: "6px",
+                  background: isDark ? "#161616" : "#F8FAFC",
+                  border: `1px solid ${isDark ? "#2A2A2A" : "#E5E7EB"}`,
+                  borderRadius: "40px", padding: "5px 12px",
+                }}>
+                  <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: p.color, boxShadow: `0 0 5px ${p.color}80` }} />
+                  <span style={{ fontSize: "11px", fontWeight: 700, color: ui.text }}>{p.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="faq-badge" style={{ flexShrink: 0 }}>
+            <RotatingBadge isDark={isDark} />
+          </div>
+        </motion.div>
+
+        {/* ── FAQ items ── */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", position: "relative" }}>
+          {faqs.map((item, i) => (
+            <FaqItem key={i} q={item.q} a={item.a} index={i} isDark={isDark} />
+          ))}
+        </div>
+
+        {/* ── Bottom CTA ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+          style={{
+            marginTop: "28px", background: ui.panel,
+            border: `1px solid ${ui.border}`, borderRadius: "22px",
+            padding: "28px 32px", textAlign: "center",
+            boxShadow: isDark ? "0 4px 24px #00000060" : "0 4px 16px rgba(0,0,0,0.06)",
+            position: "relative", overflow: "hidden",
+          }}>
+          <div style={{
+            position: "absolute", top: 0, left: "20%", right: "20%", height: "2px",
+            background: "linear-gradient(90deg, transparent, #2E8B57, transparent)",
+          }} />
+          <p style={{ fontSize: "14px", fontWeight: 700, color: ui.text, margin: "0 0 6px" }}>
+            {t("faq.cta.title")}
+          </p>
+          <p style={{ fontSize: "12px", color: ui.muted, margin: "0 0 18px" }}>
+            {t("faq.cta.subtitle")}
+          </p>
+          <a href="/contact"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: "8px",
+              padding: "11px 28px", borderRadius: "40px", fontSize: "13px", fontWeight: 800,
+              background: "linear-gradient(135deg, #C9A84C 0%, #E8C56A 45%, #2E8B57 100%)",
+              color: "#060606", textDecoration: "none",
+              boxShadow: "0 4px 16px #C9A84C30", transition: "opacity 0.2s",
+            }}
+            onMouseEnter={e => e.currentTarget.style.opacity = "0.88"}
+            onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
+            {t("faq.cta.button")}
+          </a>
+        </motion.div>
+
+      </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .faq-hero  { grid-template-columns: 1fr !important; }
+          .faq-badge { display: none !important; }
+        }
+      `}</style>
+    </div>
+  );
+}

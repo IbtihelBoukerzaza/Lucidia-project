@@ -267,8 +267,8 @@ def run_ingestion(
                     post_limit=int(getattr(settings, "INGESTION_INSTAGRAM_POST_LIMIT", 5)),
                     comment_limit=int(getattr(settings, "INGESTION_INSTAGRAM_COMMENT_LIMIT", 30)),
                 )
-                rows = normalize_instagram_data(raw_rows)
-                consume("instagram", rows)
+                comment_rows, engaged_posts = normalize_instagram_data(raw_rows)
+                consume("instagram", comment_rows)
             except Exception as e:
                 logger.exception("Instagram ingestion failed: %s", e)
                 stats["sources"]["instagram"] = {"error": str(e)}

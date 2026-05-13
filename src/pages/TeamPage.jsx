@@ -1,227 +1,629 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Users, Sparkles, Building2, UserPlus,
+  Mail, User, X, CheckCircle, ShieldCheck, Eye,
+} from "lucide-react";
 import { api } from "../services/api";
 
-export default function TeamPage() {
-  const navigate = useNavigate();
-  const { user, activeCompany, isAdmin, logout } = useAuth();
+/* ─────────────────────────────────────────
+   SHARED COMPONENTS
+───────────────────────────────────────── */
 
-  const [members, setMembers] = useState([]);
-  const [loadingMembers, setLoadingMembers] = useState(true);
-  const [error, setError] = useState("");
+function Spinner({ color = "#C9A84C" }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "center", padding: "4rem 0" }}>
+      <div style={{
+        width: "32px", height: "32px",
+        border: `2px solid ${color}`,
+        borderTopColor: "transparent",
+        borderRadius: "50%",
+        animation: "spin 0.8s linear infinite",
+      }} />
+    </div>
+  );
+}
 
-  // Modal state
-  const [showModal, setShowModal] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteFirstName, setInviteFirstName] = useState("");
-  const [inviteLoading, setInviteLoading] = useState(false);
-  const [inviteError, setInviteError] = useState("");
-  const [inviteSuccess, setInviteSuccess] = useState("");
+function ErrorBox({ message }) {
+  return (
+    <div style={{
+      borderRadius: "16px", padding: "1rem 1.25rem",
+      background: "rgba(229,62,62,0.08)",
+      border: "1px solid rgba(229,62,62,0.2)",
+      color: "#F87171", fontSize: "0.875rem", textAlign: "right",
+    }}>
+      {message}
+    </div>
+  );
+}
 
-  const fetchMembers = async () => {
-    if (!activeCompany) return;
-    setLoadingMembers(true);
-    try {
-      const response = await api.getMembers(activeCompany.id);
-      const data = await response.json();
-      setMembers(data.members || []);
-    } catch (err) {
-      setError("فشل تحميل أعضاء الفريق");
-    } finally {
-      setLoadingMembers(false);
-    }
+/* ─────────────────────────────────────────
+   INVITE MODAL
+───────────────────────────────────────── */
+
+function InviteModal({ isDark, t, companyId, onClose, onSuccess }) {
+  const [email, setEmail]         = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState("");
+  const [success, setSuccess]     = useState("");
+
+  const ui = {
+    border:   isDark ? "#1E1E1E" : "#E5E7EB",
+    surface:  isDark ? "#111111" : "#FFFFFF",
+    surface2: isDark ? "#0A0A0A" : "#F9FAFB",
+    text:     isDark ? "#E5E7EB" : "#111111",
+    muted:    isDark ? "#6B7280" : "#9CA3AF",
+    inputBg:  isDark ? "#0A0A0A" : "#F9FAFB",
   };
 
-  useEffect(() => {
-    fetchMembers();
-  }, [activeCompany]);
-
-  const handleInvite = async (e) => {
-    e.preventDefault();
-    setInviteError("");
-    setInviteSuccess("");
-
-    if (!inviteEmail || !inviteFirstName) {
-      setInviteError("يرجى ملء جميع الحقول");
+  const handleSubmit = async () => {
+    setError("");
+    setSuccess("");
+    if (!email || !firstName) {
+      setError(t("team.invite.errorFields"));
       return;
     }
-
-    setInviteLoading(true);
+    setLoading(true);
     try {
-      const response = await api.inviteMember({
-        email: inviteEmail,
-        first_name: inviteFirstName,
-        company_id: activeCompany.id,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "فشل إرسال الدعوة");
-      }
-
-      setInviteSuccess("تم إرسال الدعوة بنجاح ✅");
-      setInviteEmail("");
-      setInviteFirstName("");
-      await fetchMembers();
-
+      const res  = await api.inviteMember({ email, first_name: firstName, company_id: companyId });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || t("team.invite.errorFailed"));
+      setSuccess(t("team.invite.success"));
+      setEmail("");
+      setFirstName("");
+      onSuccess();
     } catch (err) {
-      setInviteError(err.message || "حدث خطأ أثناء إرسال الدعوة");
+      setError(err.message || t("team.invite.errorFailed"));
     } finally {
-      setInviteLoading(false);
+      setLoading(false);
     }
-  };
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setInviteEmail("");
-    setInviteFirstName("");
-    setInviteError("");
-    setInviteSuccess("");
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-10">
-      <div className="mx-auto max-w-4xl">
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        style={{
+          position: "fixed", inset: 0, zIndex: 50,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)",
+          padding: "1rem",
+        }}
+        onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.94, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.94, y: 16 }}
+          style={{
+            width: "100%", maxWidth: "460px",
+            borderRadius: "24px",
+            border: `1px solid ${ui.border}`,
+            background: ui.surface,
+            padding: "2rem",
+            position: "relative", overflow: "hidden",
+          }}
+        >
+          {/* accent bar */}
+          <div style={{
+            position: "absolute", top: 0, right: 0, left: 0, height: "3px",
+            background: "linear-gradient(90deg, #C9A84C, #4A90D9)",
+          }} />
+          {/* ambient blob */}
+          <div style={{
+            position: "absolute", top: "-40px", left: "-40px",
+            width: "140px", height: "140px", borderRadius: "50%",
+            background: "#4A90D9", opacity: 0.05, filter: "blur(32px)", pointerEvents: "none",
+          }} />
 
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="mb-2 text-sm text-slate-400 hover:text-sky-400 transition flex items-center gap-1"
+          {/* header */}
+          <div style={{
+            display: "flex", justifyContent: "space-between",
+            alignItems: "center", marginBottom: "1.75rem",
+            position: "relative", zIndex: 1,
+          }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: "10px",
+            }}>
+              <div style={{
+                width: "38px", height: "38px", borderRadius: "10px",
+                background: "#4A90D915", border: "1px solid #4A90D930",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "#4A90D9",
+              }}>
+                <UserPlus size={18} />
+              </div>
+              <h2 style={{ fontSize: "1.1rem", fontWeight: "800", color: ui.text, margin: 0 }}>
+                {t("team.invite.title")}
+              </h2>
+            </div>
+            <button onClick={onClose}
+              style={{
+                width: "32px", height: "32px", borderRadius: "8px",
+                border: `1px solid ${ui.border}`,
+                background: "transparent", cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: ui.muted, transition: "all 0.2s",
+              }}
             >
-              → لوحة التحكم
+              <X size={16} />
             </button>
-            <h1 className="text-3xl font-bold">إدارة الفريق</h1>
-            {activeCompany && (
-              <p className="mt-1 text-sm text-sky-400">{activeCompany.name}</p>
-            )}
           </div>
 
-          <div className="flex items-center gap-3">
-            {isAdmin && (
-              <button
-                onClick={() => setShowModal(true)}
-                className="rounded-lg bg-sky-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-sky-400"
-              >
-                + دعوة محلل
-              </button>
+          {/* fields */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px", position: "relative", zIndex: 1 }}>
+
+            {/* first name */}
+            <div>
+              <label style={{
+                display: "block", fontSize: "0.75rem", fontWeight: "600",
+                color: ui.muted, marginBottom: "6px", textAlign: "right",
+              }}>
+                {t("team.invite.firstName")}
+              </label>
+              <div style={{ position: "relative" }}>
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={e => setFirstName(e.target.value)}
+                  placeholder={t("team.invite.firstNamePlaceholder")}
+                  dir="rtl"
+                  style={{
+                    width: "100%", boxSizing: "border-box",
+                    borderRadius: "12px", padding: "10px 40px 10px 14px",
+                    background: ui.inputBg,
+                    border: `1px solid ${ui.border}`,
+                    color: ui.text, fontSize: "0.875rem",
+                    outline: "none", transition: "border-color 0.2s",
+                  }}
+                  onFocus={e => e.target.style.borderColor = "#4A90D9"}
+                  onBlur={e => e.target.style.borderColor = ui.border}
+                />
+                <User size={15} style={{
+                  position: "absolute", right: "13px", top: "50%",
+                  transform: "translateY(-50%)", color: ui.muted, pointerEvents: "none",
+                }} />
+              </div>
+            </div>
+
+            {/* email */}
+            <div>
+              <label style={{
+                display: "block", fontSize: "0.75rem", fontWeight: "600",
+                color: ui.muted, marginBottom: "6px", textAlign: "right",
+              }}>
+                {t("team.invite.email")}
+              </label>
+              <div style={{ position: "relative" }}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder={t("team.invite.emailPlaceholder")}
+                  dir="ltr"
+                  style={{
+                    width: "100%", boxSizing: "border-box",
+                    borderRadius: "12px", padding: "10px 40px 10px 14px",
+                    background: ui.inputBg,
+                    border: `1px solid ${ui.border}`,
+                    color: ui.text, fontSize: "0.875rem",
+                    outline: "none", transition: "border-color 0.2s",
+                    textAlign: "right",
+                  }}
+                  onFocus={e => e.target.style.borderColor = "#4A90D9"}
+                  onBlur={e => e.target.style.borderColor = ui.border}
+                />
+                <Mail size={15} style={{
+                  position: "absolute", right: "13px", top: "50%",
+                  transform: "translateY(-50%)", color: ui.muted, pointerEvents: "none",
+                }} />
+              </div>
+            </div>
+
+            {/* messages */}
+            {error && <ErrorBox message={error} />}
+            {success && (
+              <div style={{
+                borderRadius: "16px", padding: "0.875rem 1rem",
+                background: "rgba(46,139,87,0.08)",
+                border: "1px solid rgba(46,139,87,0.25)",
+                color: "#2E8B57", fontSize: "0.85rem",
+                display: "flex", alignItems: "center", gap: "8px",
+                justifyContent: "flex-end",
+              }}>
+                <span>{success}</span>
+                <CheckCircle size={16} />
+              </div>
             )}
+
+            {/* submit */}
             <button
-              onClick={handleLogout}
-              className="rounded-lg bg-red-500 px-4 py-2 font-medium text-white transition hover:bg-red-400"
+              onClick={handleSubmit}
+              disabled={loading}
+              style={{
+                width: "100%", padding: "12px",
+                borderRadius: "12px", border: "none",
+                background: loading ? "#4A90D960" : "linear-gradient(135deg, #4A90D9, #2E8B57)",
+                color: "#fff", fontSize: "0.9rem", fontWeight: "700",
+                cursor: loading ? "not-allowed" : "pointer",
+                transition: "all 0.2s",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+              }}
             >
-              تسجيل الخروج
+              {loading ? (
+                <>
+                  <div style={{
+                    width: "16px", height: "16px",
+                    border: "2px solid #ffffff60",
+                    borderTopColor: "#fff",
+                    borderRadius: "50%",
+                    animation: "spin 0.8s linear infinite",
+                  }} />
+                  {t("team.invite.sending")}
+                </>
+              ) : (
+                <>
+                  <UserPlus size={16} />
+                  {t("team.invite.submit")}
+                </>
+              )}
             </button>
           </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+/* ─────────────────────────────────────────
+   MEMBER CARD
+───────────────────────────────────────── */
+
+function MemberCard({ member, isDark, t, index }) {
+  const isAdmin  = member.role === "admin";
+  const color    = isAdmin ? "#2E8B57" : "#4A90D9";
+  const initials = (member.user.first_name || member.user.email || "?")
+    .charAt(0).toUpperCase();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      style={{
+        borderRadius: "18px",
+        border: `1px solid ${isDark ? "#1E1E1E" : "#E5E7EB"}`,
+        background: isDark ? "#0A0A0A" : "#F9FAFB",
+        padding: "1.25rem",
+        display: "flex", alignItems: "center",
+        justifyContent: "space-between", gap: "1rem",
+        position: "relative", overflow: "hidden",
+      }}
+    >
+      {/* left accent line */}
+      <div style={{
+        position: "absolute", top: 0, bottom: 0, right: 0, width: "3px",
+        background: color, borderRadius: "0 18px 18px 0",
+      }} />
+      {/* ambient blob */}
+      <div style={{
+        position: "absolute", top: "-20px", left: "-20px",
+        width: "80px", height: "80px", borderRadius: "50%",
+        background: color, opacity: 0.04, filter: "blur(20px)",
+      }} />
+
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
+        {/* avatar */}
+        <div style={{
+          width: "44px", height: "44px", borderRadius: "12px",
+          background: `${color}15`, border: `1px solid ${color}30`,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          color, fontSize: "1.1rem", fontWeight: "800", flexShrink: 0,
+        }}>
+          {initials}
         </div>
 
-        {/* Members list */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900">
-          <div className="border-b border-slate-800 px-6 py-4">
-            <h2 className="font-semibold text-slate-200">أعضاء الفريق</h2>
-          </div>
-
-          {loadingMembers ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="w-6 h-6 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : error ? (
-            <p className="p-6 text-red-400 text-sm">{error}</p>
-          ) : members.length === 0 ? (
-            <p className="p-6 text-slate-400 text-sm">لا يوجد أعضاء حتى الآن</p>
-          ) : (
-            <ul className="divide-y divide-slate-800">
-              {members.map((member) => (
-                <li key={member.id} className="flex items-center justify-between px-6 py-4">
-                  <div>
-                    <p className="font-medium text-white">
-                      {member.user.first_name || member.user.email}
-                    </p>
-                    <p className="text-sm text-slate-400">{member.user.email}</p>
-                  </div>
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                      member.role === "admin"
-                        ? "bg-emerald-500/20 text-emerald-400"
-                        : "bg-slate-700 text-slate-300"
-                    }`}
-                  >
-                    {member.role === "admin" ? "مدير" : "محلّل"}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
+        <div style={{ textAlign: "right" }}>
+          <p style={{
+            fontWeight: "700", fontSize: "0.92rem",
+            color: isDark ? "#E5E7EB" : "#111111",
+            margin: "0 0 2px",
+          }}>
+            {member.user.first_name || "—"}
+          </p>
+          <p style={{
+            fontSize: "0.78rem", color: isDark ? "#6B7280" : "#9CA3AF",
+            margin: 0, direction: "ltr", textAlign: "right",
+          }}>
+            {member.user.email}
+          </p>
         </div>
       </div>
 
-      {/* Invite Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-8 shadow-2xl">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold">دعوة محلل جديد</h2>
-              <button
-                onClick={closeModal}
-                className="text-slate-400 hover:text-white transition text-xl leading-none"
-              >
-                ✕
-              </button>
+      {/* role badge */}
+      <span style={{
+        display: "inline-flex", alignItems: "center", gap: "5px",
+        padding: "5px 12px", borderRadius: "999px",
+        background: `${color}15`, border: `1px solid ${color}30`,
+        color, fontSize: "0.75rem", fontWeight: "700", flexShrink: 0,
+      }}>
+        {isAdmin ? <ShieldCheck size={13} /> : <Eye size={13} />}
+        {isAdmin ? t("team.roles.admin") : t("team.roles.analyst")}
+      </span>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   MAIN PAGE
+───────────────────────────────────────── */
+
+export default function TeamPage() {
+  const { activeCompany, isAdmin } = useAuth();
+  const { theme }                  = useTheme();
+  const { t }                      = useTranslation();
+  const isDark                     = theme === "dark";
+
+  const [members, setMembers]       = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState("");
+  const [showModal, setShowModal]   = useState(false);
+
+  const ui = {
+    bg:     isDark ? "#0A0A0A" : "#F7F6F2",
+    panel:  isDark ? "#111111" : "#FFFFFF",
+    border: isDark ? "#1E1E1E" : "#E5E7EB",
+    text:   isDark ? "#E5E7EB" : "#111111",
+    muted:  isDark ? "#6B7280" : "#9CA3AF",
+  };
+
+  const fetchMembers = async () => {
+    if (!activeCompany) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res  = await api.getMembers(activeCompany.id);
+      const data = await res.json();
+      setMembers(data.members || []);
+    } catch {
+      setError(t("team.errors.loadFailed"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchMembers(); }, [activeCompany]);
+
+  const adminCount   = members.filter(m => m.role === "admin").length;
+  const analystCount = members.filter(m => m.role !== "admin").length;
+
+  return (
+    <div dir="rtl" style={{ minHeight: "100vh", background: ui.bg, color: ui.text }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
+      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+
+        {/* ── HERO ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{
+            position: "relative", overflow: "hidden",
+            borderRadius: "28px",
+            border: `1px solid ${ui.border}`,
+            background: ui.panel,
+            padding: "2rem", marginBottom: "2rem",
+          }}
+        >
+          {/* blobs */}
+          <div style={{
+            position: "absolute", top: "-60px", left: "-60px",
+            width: "200px", height: "200px", borderRadius: "50%",
+            background: "#4A90D9", opacity: 0.06, filter: "blur(48px)", pointerEvents: "none",
+          }} />
+          <div style={{
+            position: "absolute", bottom: "-60px", right: "-60px",
+            width: "200px", height: "200px", borderRadius: "50%",
+            background: "#C9A84C", opacity: 0.05, filter: "blur(48px)", pointerEvents: "none",
+          }} />
+
+          <div style={{
+            position: "relative", zIndex: 1,
+            display: "flex", flexWrap: "wrap",
+            justifyContent: "space-between", alignItems: "center", gap: "1.5rem",
+          }}>
+            <div>
+              {/* badge */}
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: "6px",
+                padding: "5px 14px", borderRadius: "99px",
+                border: `1px solid ${ui.border}`,
+                background: "#4A90D910",
+                color: "#4A90D9", fontSize: "0.78rem", fontWeight: "700",
+                marginBottom: "1rem",
+              }}>
+                <Sparkles size={13} />
+                {t("team.badge")}
+              </div>
+
+              <h1 style={{ fontSize: "2rem", fontWeight: "900", marginBottom: "0.75rem" }}>
+                {t("team.title")}
+              </h1>
+
+              <p style={{ color: ui.muted, fontSize: "0.9rem", lineHeight: "1.8", maxWidth: "500px" }}>
+                {t("team.description")}
+              </p>
+
+              {activeCompany && (
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: "8px",
+                  marginTop: "1rem", padding: "6px 14px", borderRadius: "99px",
+                  background: isDark ? "#161616" : "#F5F4F0",
+                  border: `1px solid ${ui.border}`,
+                  color: "#C9A84C", fontSize: "0.8rem", fontWeight: "700",
+                }}>
+                  <Building2 size={14} />
+                  {activeCompany.name}
+                </div>
+              )}
             </div>
 
-            <form onSubmit={handleInvite} className="space-y-4">
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">
-                  الاسم الأول
-                </label>
-                <input
-                  type="text"
-                  value={inviteFirstName}
-                  onChange={(e) => setInviteFirstName(e.target.value)}
-                  placeholder="مثال: أحمد"
-                  className="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-sm focus:border-sky-400 focus:ring-1 focus:ring-sky-400 outline-none transition"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">
-                  البريد الإلكتروني
-                </label>
-                <input
-                  type="email"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="analyst@company.dz"
-                  className="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-sm focus:border-sky-400 focus:ring-1 focus:ring-sky-400 outline-none transition"
-                />
-              </div>
-
-              {inviteError && (
-                <p className="text-red-400 text-sm">{inviteError}</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+              {/* summary pills */}
+              {!loading && members.length > 0 && (
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <div style={{
+                    padding: "6px 14px", borderRadius: "99px",
+                    background: "#2E8B5715", border: "1px solid #2E8B5730",
+                    color: "#2E8B57", fontSize: "0.78rem", fontWeight: "700",
+                    display: "flex", alignItems: "center", gap: "5px",
+                  }}>
+                    <ShieldCheck size={13} />
+                    {adminCount} {t("team.roles.admin")}
+                  </div>
+                  <div style={{
+                    padding: "6px 14px", borderRadius: "99px",
+                    background: "#4A90D915", border: "1px solid #4A90D930",
+                    color: "#4A90D9", fontSize: "0.78rem", fontWeight: "700",
+                    display: "flex", alignItems: "center", gap: "5px",
+                  }}>
+                    <Eye size={13} />
+                    {analystCount} {t("team.roles.analyst")}
+                  </div>
+                </div>
               )}
 
-              {inviteSuccess && (
-                <p className="text-emerald-400 text-sm">{inviteSuccess}</p>
-              )}
-
-              <button
-                type="submit"
-                disabled={inviteLoading}
-                className="w-full py-3 rounded-full font-semibold bg-gradient-to-r from-sky-500 via-teal-400 to-emerald-400 text-slate-950 hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {inviteLoading ? "جارٍ الإرسال..." : "إرسال الدعوة"}
-              </button>
-            </form>
+              {/* icon */}
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                width: "72px", height: "72px", borderRadius: "20px",
+                background: "#4A90D915", border: "1px solid #4A90D930",
+                color: "#4A90D9", flexShrink: 0,
+              }}>
+                <Users size={32} />
+              </div>
+            </div>
           </div>
-        </div>
+        </motion.div>
+
+        {/* ── NO COMPANY ── */}
+        {!activeCompany ? (
+          <div style={{
+            textAlign: "center", padding: "4rem 2rem",
+            borderRadius: "22px", border: `1px solid ${ui.border}`,
+            background: ui.panel, color: ui.muted,
+          }}>
+            {t("team.errors.noCompany")}
+          </div>
+        ) : (
+          <div style={{
+            borderRadius: "22px",
+            border: `1px solid ${ui.border}`,
+            background: ui.panel,
+            overflow: "hidden",
+            position: "relative",
+          }}>
+            {/* top gradient bar */}
+            <div style={{
+              position: "absolute", top: 0, right: 0, left: 0, height: "3px",
+              background: "linear-gradient(90deg, #C9A84C, #4A90D9)",
+            }} />
+
+            {/* section header */}
+            <div style={{
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "1.5rem 1.75rem",
+              borderBottom: `1px solid ${ui.border}`,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{
+                  width: "34px", height: "34px", borderRadius: "10px",
+                  background: "#4A90D915", border: "1px solid #4A90D930",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#4A90D9",
+                }}>
+                  <Users size={16} />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: "1rem", fontWeight: "800", color: ui.text, margin: 0 }}>
+                    {t("team.members.title")}
+                  </h2>
+                  {!loading && (
+                    <p style={{ fontSize: "0.72rem", color: ui.muted, margin: 0 }}>
+                      {members.length} {t("team.members.count")}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {isAdmin && (
+                <button
+                  onClick={() => setShowModal(true)}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "7px",
+                    padding: "8px 18px", borderRadius: "12px", border: "none",
+                    background: "linear-gradient(135deg, #4A90D9, #2E8B57)",
+                    color: "#fff", fontSize: "0.83rem", fontWeight: "700",
+                    cursor: "pointer", transition: "opacity 0.2s",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
+                  onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+                >
+                  <UserPlus size={15} />
+                  {t("team.invite.button")}
+                </button>
+              )}
+            </div>
+
+            {/* members list */}
+            <div style={{ padding: "1.25rem 1.75rem" }}>
+              {loading ? (
+                <Spinner color="#4A90D9" />
+              ) : error ? (
+                <ErrorBox message={error} />
+              ) : members.length === 0 ? (
+                <div style={{
+                  textAlign: "center", padding: "3rem",
+                  borderRadius: "16px",
+                  background: isDark ? "#0A0A0A" : "#F9FAFB",
+                  border: `1px solid ${ui.border}`,
+                  color: ui.muted,
+                }}>
+                  {t("team.members.empty")}
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {members.map((member, i) => (
+                    <MemberCard
+                      key={member.id}
+                      member={member}
+                      isDark={isDark}
+                      t={t}
+                      index={i}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* invite modal */}
+      {showModal && (
+        <InviteModal
+          isDark={isDark}
+          t={t}
+          companyId={activeCompany?.id}
+          onClose={() => setShowModal(false)}
+          onSuccess={() => { fetchMembers(); }}
+        />
       )}
     </div>
   );

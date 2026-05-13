@@ -1,285 +1,270 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { useTranslation } from "react-i18next";
 import { api } from "../services/api";
+import { motion } from "framer-motion";
+import { Sparkles, BellRing, Shield, Plus, X, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+/* ── Translation-driven constants ───────────────────────────────────────────── */
 
-const RULE_TYPES = [
-  {
-    value: "negative_pct_above",
-    label: "نسبة السلبي تتجاوز الحد",
-    unit: "%",
-    hint: "مثال: 40 — يُطلق تنبيهاً إذا تجاوزت نسبة السلبي 40%",
-    needsKeyword: false,
-  },
-  {
-    value: "positive_pct_below",
-    label: "نسبة الإيجابي تنخفض عن الحد",
-    unit: "%",
-    hint: "مثال: 30 — يُطلق تنبيهاً إذا انخفضت نسبة الإيجابي عن 30%",
-    needsKeyword: false,
-  },
-  {
-    value: "negative_count_above",
-    label: "عدد السلبيات يتجاوز الحد اليومي",
-    unit: "منشور",
-    hint: "مثال: 100 — يُطلق تنبيهاً إذا تجاوز عدد السلبيات 100 منشور يومياً",
-    needsKeyword: false,
-  },
-  {
-    value: "volume_spike",
-    label: "حجم المنشورات اليومية يتجاوز الحد",
-    unit: "منشور",
-    hint: "مثال: 500 — يُطلق تنبيهاً إذا تجاوز إجمالي المنشورات 500 يومياً",
-    needsKeyword: false,
-  },
-  {
-    value: "keyword_spike",
-    label: "كلمة مفتاحية تتجاوز الحد",
-    unit: "مرة",
-    hint: "مثال: 50 — يُطلق تنبيهاً إذا ظهرت الكلمة أكثر من 50 مرة يومياً",
-    needsKeyword: true,
-  },
-  {
-    value: "sentiment_drop",
-    label: "انخفاض حاد في الإيجابي مقارنة بالأمس",
-    unit: "نقطة",
-    hint: "مثال: 20 — يُطلق تنبيهاً إذا انخفض الإيجابي بأكثر من 20 نقطة عن الأمس",
-    needsKeyword: false,
-  },
-  {
-    value: "negative_streak",
-    label: "السلبي هو الغالب لعدة أيام متتالية",
-    unit: "يوم",
-    hint: "مثال: 3 — يُطلق تنبيهاً إذا كان السلبي الغالب لمدة 3 أيام متتالية",
-    needsKeyword: false,
-  },
-];
+function getRuleTypes(t) {
+  const keys = [
+    "negative_pct_above", "positive_pct_below", "negative_count_above",
+    "volume_spike", "keyword_spike", "sentiment_drop", "negative_streak",
+  ];
+  return keys.map((key) => ({
+    value:        key,
+    label:        t(`alerts.rules.types.${key}.label`),
+    unit:         t(`alerts.rules.types.${key}.unit`),
+    hint:         t(`alerts.rules.types.${key}.hint`),
+    needsKeyword: key === "keyword_spike",
+  }));
+}
 
-const SEVERITY_OPTIONS = [
-  { value: "low",    label: "منخفض",  color: "text-emerald-400" },
-  { value: "medium", label: "متوسط",  color: "text-amber-400"   },
-  { value: "high",   label: "عالٍ",   color: "text-red-400"     },
-];
+function getSeverityOptions(t) {
+  return [
+    { value: "low",    label: t("alerts.rules.severityOptions.low")    },
+    { value: "medium", label: t("alerts.rules.severityOptions.medium") },
+    { value: "high",   label: t("alerts.rules.severityOptions.high")   },
+  ];
+}
 
-const SEVERITY_STYLES = {
-  high:   "bg-red-500/10 text-red-400 border-red-500/20",
-  medium: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  low:    "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+const SEVERITY_CONFIG = {
+  high:   { color: "#E53E3E", bg: "rgba(229,62,62,0.1)",  border: "rgba(229,62,62,0.25)"  },
+  medium: { color: "#F59E0B", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.25)" },
+  low:    { color: "#2E8B57", bg: "rgba(46,139,87,0.1)",  border: "rgba(46,139,87,0.25)"  },
 };
 
-const SEVERITY_DOT = {
-  high:   "bg-red-400",
-  medium: "bg-amber-400",
-  low:    "bg-emerald-400",
+const fadeUp = {
+  hidden:  { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
 };
 
-const SEVERITY_LABELS = {
-  high:   "عالٍ",
-  medium: "متوسط",
-  low:    "منخفض",
-};
+/* ── Helpers ────────────────────────────────────────────────────────────────── */
 
-// ─── Shared ───────────────────────────────────────────────────────────────────
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  const day   = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year  = d.getFullYear();
+  return `${day}/${month}/${year}`;
+}
 
-function Spinner() {
+function formatDateTime(dateStr) {
+  const d = new Date(dateStr);
+  const day   = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year  = d.getFullYear();
+  const hour  = String(d.getHours()).padStart(2, "0");
+  const min   = String(d.getMinutes()).padStart(2, "0");
+  return `${day}/${month}/${year} ${hour}:${min}`;
+}
+
+function buildAlertMessage(alert, t) {
+  if (!alert.rule_type) return t("alerts.notifications.messages.unknown");
+  const key = `alerts.notifications.messages.${alert.rule_type}`;
+  return t(key, {
+    threshold: alert.threshold ?? "",
+    keyword:   alert.keyword   ?? "",
+    value:     alert.threshold ?? "",
+  });
+}
+
+function Spinner({ color = "#C9A84C" }) {
   return (
-    <div className="flex justify-center py-16">
-      <div className="w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+    <div style={{ display: "flex", justifyContent: "center", padding: "3rem 0" }}>
+      <div style={{
+        width: "32px", height: "32px", borderRadius: "50%",
+        border: `2px solid ${color}`, borderTopColor: "transparent",
+        animation: "spin 0.8s linear infinite",
+      }} />
     </div>
   );
 }
 
-function ErrorBox({ message }) {
+function SeverityBadge({ severity, t }) {
+  const cfg   = SEVERITY_CONFIG[severity] || SEVERITY_CONFIG.medium;
+  const label = t(`alerts.rules.severityOptions.${severity}`, severity);
   return (
-    <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-3 text-red-400 text-sm text-right">
-      {message}
-    </div>
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: "5px",
+      padding: "3px 10px", borderRadius: "999px", fontSize: "0.72rem",
+      fontWeight: "700", background: cfg.bg, border: `1px solid ${cfg.border}`,
+      color: cfg.color,
+    }}>
+      <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: cfg.color, flexShrink: 0 }} />
+      {label}
+    </span>
   );
 }
 
-// ─── Rules Tab ────────────────────────────────────────────────────────────────
+/* ── Rules Tab ──────────────────────────────────────────────────────────────── */
 
-function RulesTab({ companyId }) {
-  const [rules,    setRules]    = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState("");
+function RulesTab({ companyId, isDark, t }) {
+  const RULE_TYPES       = getRuleTypes(t);
+  const SEVERITY_OPTIONS = getSeverityOptions(t);
+
+  const [rules,      setRules]      = useState([]);
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [formError,  setFormError]  = useState("");
   const [showForm,   setShowForm]   = useState(false);
+  const [ruleType,   setRuleType]   = useState(RULE_TYPES[0].value);
+  const [threshold,  setThreshold]  = useState("");
+  const [keyword,    setKeyword]    = useState("");
+  const [severity,   setSeverity]   = useState("medium");
 
-  // Form state
-  const [ruleType,  setRuleType]  = useState(RULE_TYPES[0].value);
-  const [threshold, setThreshold] = useState("");
-  const [keyword,   setKeyword]   = useState("");
-  const [severity,  setSeverity]  = useState("medium");
-
-  const selectedRuleType = RULE_TYPES.find((r) => r.value === ruleType);
-
-  const fetchRules = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res  = await api.getAlertRules(companyId);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || "فشل التحميل");
-      setRules(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  const ui = {
+    surface:  isDark ? "#111111" : "#FFFFFF",
+    surface2: isDark ? "#161616" : "#F8FAFC",
+    border:   isDark ? "#1E1E1E" : "#E5E7EB",
+    muted:    isDark ? "#6B7280" : "#9CA3AF",
+    text:     isDark ? "#E5E7EB" : "#111111",
+    input:    isDark ? "#161616" : "#F8FAFC",
   };
 
-  useEffect(() => { fetchRules(); }, [companyId]);
+  const selectedRule = RULE_TYPES.find((r) => r.value === ruleType);
+
+  useEffect(() => {
+    setLoading(true); setError("");
+    api.getAlertRules(companyId)
+      .then((r) => r.json())
+      .then((data) => setRules(data))
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [companyId]);
 
   const handleSubmit = async () => {
     setFormError("");
     if (!threshold || isNaN(Number(threshold))) {
-      setFormError("يجب إدخال قيمة رقمية صحيحة للحد.");
-      return;
+      setFormError(t("alerts.rules.errorNumeric")); return;
     }
-    if (selectedRuleType?.needsKeyword && !keyword.trim()) {
-      setFormError("يجب إدخال الكلمة المفتاحية لهذا النوع من القواعد.");
-      return;
+    if (selectedRule?.needsKeyword && !keyword.trim()) {
+      setFormError(t("alerts.rules.errorKeyword")); return;
     }
     setSubmitting(true);
     try {
-      const res = await api.createAlertRule(companyId, {
-        rule_type: ruleType,
-        threshold: Number(threshold),
-        keyword:   keyword.trim(),
-        severity,
+      const res  = await api.createAlertRule(companyId, {
+        rule_type: ruleType, threshold: Number(threshold),
+        keyword: keyword.trim(), severity,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(Object.values(data).flat().join(" ") || "فشل الحفظ");
-      setRules((prev) => [data, ...prev]);
-      setShowForm(false);
-      setThreshold("");
-      setKeyword("");
-      setSeverity("medium");
-      setRuleType(RULE_TYPES[0].value);
-    } catch (err) {
-      setFormError(err.message);
-    } finally {
-      setSubmitting(false);
-    }
+      if (!res.ok) throw new Error(Object.values(data).flat().join(" ") || t("alerts.rules.saving"));
+      setRules((p) => [data, ...p]);
+      setShowForm(false); setThreshold(""); setKeyword("");
+      setSeverity("medium"); setRuleType(RULE_TYPES[0].value);
+    } catch (e) { setFormError(e.message); }
+    finally { setSubmitting(false); }
   };
 
   const handleToggle = async (rule) => {
     try {
       const res  = await api.toggleAlertRule(rule.id);
       const data = await res.json();
-      setRules((prev) => prev.map((r) => (r.id === rule.id ? data : r)));
+      setRules((p) => p.map((r) => (r.id === rule.id ? data : r)));
     } catch (_) {}
   };
 
   const handleDelete = async (ruleId) => {
-    if (!window.confirm("هل أنت متأكد من حذف هذه القاعدة؟")) return;
+    if (!window.confirm(t("alerts.rules.deleteConfirm"))) return;
     try {
       await api.deleteAlertRule(ruleId);
-      setRules((prev) => prev.filter((r) => r.id !== ruleId));
+      setRules((p) => p.filter((r) => r.id !== ruleId));
     } catch (_) {}
   };
 
+  const inputStyle = {
+    width: "100%", borderRadius: "14px", border: `1px solid ${ui.border}`,
+    background: ui.input, color: ui.text, padding: "0.7rem 1rem",
+    fontSize: "0.875rem", outline: "none", textAlign: "right",
+    transition: "border-color 0.2s",
+  };
+
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-400">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+
+      {/* Header row */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
+        <p style={{ fontSize: "0.82rem", color: ui.muted, margin: 0 }}>
           {rules.length > 0
-            ? `${rules.length} قاعدة مُعرَّفة`
-            : "لا توجد قواعد بعد"}
+            ? t("alerts.rules.count", { count: rules.length })
+            : t("alerts.rules.none")}
         </p>
-        <button
-          onClick={() => { setShowForm((v) => !v); setFormError(""); }}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition border ${
-            showForm
-              ? "border-slate-600 text-slate-400 hover:text-white"
-              : "border-sky-500/40 bg-sky-500/10 text-sky-400 hover:bg-sky-500/20"
-          }`}
-        >
-          {showForm ? "إلغاء ✕" : "+ إضافة قاعدة"}
+        <button onClick={() => { setShowForm((v) => !v); setFormError(""); }}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "6px",
+            padding: "8px 16px", borderRadius: "12px", fontSize: "0.82rem",
+            fontWeight: "600", cursor: "pointer", transition: "all 0.2s",
+            border: showForm ? `1px solid ${ui.border}` : "1px solid rgba(201,168,76,0.4)",
+            background: showForm ? "transparent" : "rgba(201,168,76,0.1)",
+            color: showForm ? ui.muted : "#C9A84C",
+          }}>
+          {showForm
+            ? <><X size={14} /> {t("alerts.rules.cancel")}</>
+            : <><Plus size={14} /> {t("alerts.rules.add")}</>}
         </button>
       </div>
 
-      {/* Add rule form */}
+      {/* Form */}
       {showForm && (
-        <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-slate-200 text-right">
-            قاعدة جديدة
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+          style={{
+            borderRadius: "20px", border: `1px solid ${ui.border}`,
+            background: ui.surface, padding: "1.5rem",
+            display: "flex", flexDirection: "column", gap: "1rem",
+          }}>
+          <div style={{ height: "3px", borderRadius: "3px", background: "#C9A84C", marginBottom: "0.25rem" }} />
+
+          <h3 style={{ margin: 0, fontSize: "0.9rem", fontWeight: "700", color: ui.text, textAlign: "right" }}>
+            {t("alerts.rules.newRule")}
           </h3>
 
-          {/* Rule type */}
-          <div className="space-y-1.5">
-            <label className="block text-xs text-slate-400 text-right">
-              نوع القاعدة
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "0.75rem", color: ui.muted, textAlign: "right" }}>
+              {t("alerts.rules.ruleType")}
             </label>
-            <select
-              value={ruleType}
+            <select value={ruleType}
               onChange={(e) => { setRuleType(e.target.value); setKeyword(""); }}
-              className="w-full rounded-xl bg-slate-800 border border-slate-700
-                         px-3 py-2 text-sm text-slate-200 text-right
-                         focus:border-sky-400 outline-none transition"
-            >
+              style={inputStyle}>
               {RULE_TYPES.map((r) => (
                 <option key={r.value} value={r.value}>{r.label}</option>
               ))}
             </select>
-            {selectedRuleType && (
-              <p className="text-xs text-slate-500 text-right">
-                {selectedRuleType.hint}
+            {selectedRule && (
+              <p style={{ fontSize: "0.72rem", color: ui.muted, textAlign: "right", margin: 0 }}>
+                {selectedRule.hint}
               </p>
             )}
           </div>
 
-          {/* Keyword (conditional) */}
-          {selectedRuleType?.needsKeyword && (
-            <div className="space-y-1.5">
-              <label className="block text-xs text-slate-400 text-right">
-                الكلمة المفتاحية
+          {selectedRule?.needsKeyword && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={{ fontSize: "0.75rem", color: ui.muted, textAlign: "right" }}>
+                {t("alerts.rules.keyword")}
               </label>
-              <input
-                type="text"
-                value={keyword}
+              <input type="text" value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                placeholder="مثال: مشكلة"
-                dir="auto"
-                className="w-full rounded-xl bg-slate-800 border border-slate-700
-                           px-3 py-2 text-sm text-slate-200 text-right
-                           focus:border-sky-400 outline-none transition"
-              />
+                placeholder={t("alerts.rules.keywordPlaceholder")}
+                dir="auto" style={inputStyle} />
             </div>
           )}
 
-          {/* Threshold + Severity row */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="block text-xs text-slate-400 text-right">
-                الحد ({selectedRuleType?.unit || "قيمة"})
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={{ fontSize: "0.75rem", color: ui.muted, textAlign: "right" }}>
+                {t("alerts.rules.threshold_label", { unit: selectedRule?.unit || "" })}
               </label>
-              <input
-                type="number"
-                value={threshold}
+              <input type="number" value={threshold}
                 onChange={(e) => setThreshold(e.target.value)}
-                min="0"
-                placeholder="0"
-                className="w-full rounded-xl bg-slate-800 border border-slate-700
-                           px-3 py-2 text-sm text-slate-200 text-right
-                           focus:border-sky-400 outline-none transition"
-              />
+                min="0" placeholder="0" style={inputStyle} />
             </div>
-            <div className="space-y-1.5">
-              <label className="block text-xs text-slate-400 text-right">
-                مستوى الخطورة
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={{ fontSize: "0.75rem", color: ui.muted, textAlign: "right" }}>
+                {t("alerts.rules.severity")}
               </label>
-              <select
-                value={severity}
-                onChange={(e) => setSeverity(e.target.value)}
-                className="w-full rounded-xl bg-slate-800 border border-slate-700
-                           px-3 py-2 text-sm text-slate-200 text-right
-                           focus:border-sky-400 outline-none transition"
-              >
+              <select value={severity} onChange={(e) => setSeverity(e.target.value)} style={inputStyle}>
                 {SEVERITY_OPTIONS.map((s) => (
                   <option key={s.value} value={s.value}>{s.label}</option>
                 ))}
@@ -287,108 +272,102 @@ function RulesTab({ companyId }) {
             </div>
           </div>
 
-          {formError && <ErrorBox message={formError} />}
+          {formError && (
+            <p style={{ color: "#F87171", fontSize: "0.82rem", textAlign: "right", margin: 0 }}>
+              {formError}
+            </p>
+          )}
 
-          <button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="w-full rounded-xl bg-sky-500/20 border border-sky-500/30
-                       text-sky-400 hover:bg-sky-500/30 py-2 text-sm font-medium
-                       transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {submitting ? "جارٍ الحفظ..." : "حفظ القاعدة"}
+          <button onClick={handleSubmit} disabled={submitting}
+            style={{
+              padding: "0.75rem", borderRadius: "14px", fontSize: "0.875rem",
+              fontWeight: "700", cursor: submitting ? "not-allowed" : "pointer",
+              border: "1px solid rgba(201,168,76,0.4)", background: "rgba(201,168,76,0.15)",
+              color: "#C9A84C", opacity: submitting ? 0.6 : 1, transition: "all 0.2s",
+            }}>
+            {submitting ? t("alerts.rules.saving") : t("alerts.rules.save")}
           </button>
-        </div>
+        </motion.div>
       )}
 
       {/* Rules list */}
-      {loading ? (
-        <Spinner />
-      ) : error ? (
-        <ErrorBox message={error} />
+      {loading ? <Spinner /> : error ? (
+        <p style={{ color: "#F87171", textAlign: "center", fontSize: "0.875rem" }}>{error}</p>
       ) : rules.length === 0 ? (
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/40
-                        px-6 py-12 text-center space-y-2">
-          <p className="text-slate-400">لا توجد قواعد تنبيه بعد</p>
-          <p className="text-xs text-slate-600">
-            أضف قاعدة لتلقّي تنبيهات تلقائية بعد كل عملية جمع بيانات
+        <div style={{
+          borderRadius: "20px", border: `1px solid ${ui.border}`,
+          background: ui.surface, padding: "3rem 1.5rem", textAlign: "center",
+        }}>
+          <Shield size={36} style={{ color: ui.muted, margin: "0 auto 1rem" }} />
+          <p style={{ color: ui.muted, margin: "0 0 6px" }}>{t("alerts.rules.emptyTitle")}</p>
+          <p style={{ fontSize: "0.75rem", color: isDark ? "#374151" : "#CBD5E1", margin: 0 }}>
+            {t("alerts.rules.emptyDesc")}
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {rules.map((rule) => {
             const ruleInfo = RULE_TYPES.find((r) => r.value === rule.rule_type);
             return (
-              <div
-                key={rule.id}
-                className={`rounded-2xl border p-4 transition ${
-                  rule.is_active
-                    ? "border-slate-800 bg-slate-900"
-                    : "border-slate-800/50 bg-slate-900/40 opacity-60"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-3 flex-wrap">
-                  {/* Rule info */}
-                  <div className="space-y-1 text-right flex-1 min-w-0">
-                    <div className="flex items-center gap-2 justify-end flex-wrap">
-                      <span
-                        className={`inline-flex items-center rounded-full border
-                                   px-2.5 py-0.5 text-xs font-medium
-                                   ${SEVERITY_STYLES[rule.severity]}`}
-                      >
-                        {SEVERITY_LABELS[rule.severity]}
-                      </span>
-                      <span className="text-sm font-medium text-slate-200">
+              <motion.div key={rule.id} variants={fadeUp}
+                style={{
+                  borderRadius: "20px", padding: "1.25rem",
+                  border: `1px solid ${rule.is_active ? ui.border : (isDark ? "#161616" : "#F1F5F9")}`,
+                  background: rule.is_active ? ui.surface : (isDark ? "#0D0D0D" : "#FAFAF8"),
+                  opacity: rule.is_active ? 1 : 0.6, transition: "all 0.2s",
+                  position: "relative", overflow: "hidden",
+                }}>
+                <div style={{
+                  position: "absolute", right: 0, top: 0, bottom: 0, width: "3px",
+                  background: SEVERITY_CONFIG[rule.severity]?.color || "#C9A84C",
+                  borderRadius: "0 3px 3px 0",
+                }} />
+
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+                  <div style={{ flex: 1, minWidth: 0, textAlign: "right" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "flex-end", flexWrap: "wrap", marginBottom: "6px" }}>
+                      <SeverityBadge severity={rule.severity} t={t} />
+                      <span style={{ fontSize: "0.875rem", fontWeight: "600", color: ui.text }}>
                         {ruleInfo?.label || rule.rule_type_display}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500">
-                      الحد:{" "}
-                      <span className="text-slate-300 font-medium">
-                        {rule.threshold} {ruleInfo?.unit || ""}
-                      </span>
-                      {rule.keyword && (
-                        <>
-                          {" — "}الكلمة:{" "}
-                          <span className="text-sky-400">{rule.keyword}</span>
-                        </>
-                      )}
+                    <p style={{ fontSize: "0.78rem", color: ui.muted, margin: "0 0 4px" }}>
+                      {t("alerts.rules.threshold")}: <span style={{ color: ui.text, fontWeight: "600" }}>{rule.threshold} {ruleInfo?.unit || ""}</span>
+                      {rule.keyword && <> — {t("alerts.rules.keyword")}: <span style={{ color: "#C9A84C" }}>{rule.keyword}</span></>}
                     </p>
-                    <p className="text-xs text-slate-600">
-                      أُنشئت بواسطة {rule.created_by_name} —{" "}
-                      {new Date(rule.created_at).toLocaleDateString("ar-DZ", {
-                        year: "numeric", month: "short", day: "numeric",
-                      })}
+                    <p style={{ fontSize: "0.72rem", color: isDark ? "#374151" : "#CBD5E1", margin: 0 }}>
+                      {t("alerts.rules.createdBy")} {rule.created_by_name} — {formatDate(rule.created_at)}
                     </p>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    {/* Toggle */}
-                    <button
-                      onClick={() => handleToggle(rule)}
-                      className={`rounded-lg px-3 py-1.5 text-xs font-medium
-                                 border transition ${
-                        rule.is_active
-                          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
-                          : "border-slate-700 text-slate-400 hover:text-white"
-                      }`}
-                    >
-                      {rule.is_active ? "مفعّل" : "معطّل"}
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+                    <button onClick={() => handleToggle(rule)}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: "5px",
+                        padding: "6px 12px", borderRadius: "10px", fontSize: "0.75rem",
+                        fontWeight: "600", cursor: "pointer", transition: "all 0.2s",
+                        border: rule.is_active ? "1px solid rgba(46,139,87,0.3)" : `1px solid ${ui.border}`,
+                        background: rule.is_active ? "rgba(46,139,87,0.1)" : "transparent",
+                        color: rule.is_active ? "#2E8B57" : ui.muted,
+                      }}>
+                      {rule.is_active ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
+                      {rule.is_active ? t("alerts.rules.active") : t("alerts.rules.inactive")}
                     </button>
 
-                    {/* Delete */}
-                    <button
-                      onClick={() => handleDelete(rule.id)}
-                      className="rounded-lg px-3 py-1.5 text-xs font-medium
-                                 border border-red-500/20 text-red-400
-                                 hover:bg-red-500/10 transition"
-                    >
-                      حذف
+                    <button onClick={() => handleDelete(rule.id)}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: "5px",
+                        padding: "6px 12px", borderRadius: "10px", fontSize: "0.75rem",
+                        fontWeight: "600", cursor: "pointer", transition: "all 0.2s",
+                        border: "1px solid rgba(229,62,62,0.25)",
+                        background: "rgba(229,62,62,0.08)", color: "#F87171",
+                      }}>
+                      <Trash2 size={13} />
+                      {t("alerts.rules.delete")}
                     </button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -397,130 +376,123 @@ function RulesTab({ companyId }) {
   );
 }
 
-// ─── Notifications Tab ────────────────────────────────────────────────────────
+/* ── Notifications Tab ──────────────────────────────────────────────────────── */
 
-function NotificationsTab({ companyId }) {
-  const [alerts,   setAlerts]   = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState("");
+function NotificationsTab({ companyId, isDark, t }) {
+  const [alerts,     setAlerts]     = useState([]);
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState("");
   const [markingAll, setMarkingAll] = useState(false);
 
-  const fetchAlerts = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res  = await api.getAlerts(companyId);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || "فشل التحميل");
-      setAlerts(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  const ui = {
+    surface:  isDark ? "#111111" : "#FFFFFF",
+    surface2: isDark ? "#161616" : "#F8FAFC",
+    border:   isDark ? "#1E1E1E" : "#E5E7EB",
+    muted:    isDark ? "#6B7280" : "#9CA3AF",
+    text:     isDark ? "#E5E7EB" : "#111111",
   };
 
-  useEffect(() => { fetchAlerts(); }, [companyId]);
+  useEffect(() => {
+    setLoading(true); setError("");
+    api.getAlerts(companyId)
+      .then((r) => r.json())
+      .then((data) => setAlerts(data))
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [companyId]);
 
   const handleMarkRead = async (alert) => {
     if (alert.is_read) return;
     await api.markAlertRead(alert.id);
-    setAlerts((prev) =>
-      prev.map((a) => (a.id === alert.id ? { ...a, is_read: true } : a))
-    );
+    setAlerts((p) => p.map((a) => (a.id === alert.id ? { ...a, is_read: true } : a)));
   };
 
   const handleMarkAll = async () => {
     setMarkingAll(true);
     await api.markAllAlertsRead(companyId);
-    setAlerts((prev) => prev.map((a) => ({ ...a, is_read: true })));
+    setAlerts((p) => p.map((a) => ({ ...a, is_read: true })));
     setMarkingAll(false);
   };
 
   const unreadCount = alerts.filter((a) => !a.is_read).length;
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-400">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
+        <p style={{ fontSize: "0.82rem", color: ui.muted, margin: 0 }}>
           {unreadCount > 0
-            ? `${unreadCount} غير مقروء`
-            : "كل الإشعارات مقروءة"}
+            ? t("alerts.notifications.unread", { count: unreadCount })
+            : t("alerts.notifications.allRead")}
         </p>
         {unreadCount > 0 && (
-          <button
-            onClick={handleMarkAll}
-            disabled={markingAll}
-            className="rounded-xl px-4 py-2 text-sm font-medium border
-                       border-slate-700 text-slate-400 hover:text-white
-                       transition disabled:opacity-50"
-          >
-            {markingAll ? "جارٍ..." : "تحديد الكل كمقروء"}
+          <button onClick={handleMarkAll} disabled={markingAll}
+            style={{
+              padding: "8px 16px", borderRadius: "12px", fontSize: "0.82rem",
+              fontWeight: "600", cursor: markingAll ? "not-allowed" : "pointer",
+              border: `1px solid ${ui.border}`, background: "transparent",
+              color: ui.muted, opacity: markingAll ? 0.6 : 1, transition: "all 0.2s",
+            }}>
+            {markingAll ? t("alerts.notifications.marking") : t("alerts.notifications.markAll")}
           </button>
         )}
       </div>
 
-      {loading ? (
-        <Spinner />
-      ) : error ? (
-        <ErrorBox message={error} />
+      {loading ? <Spinner /> : error ? (
+        <p style={{ color: "#F87171", textAlign: "center", fontSize: "0.875rem" }}>{error}</p>
       ) : alerts.length === 0 ? (
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/40
-                        px-6 py-12 text-center space-y-2">
-          <p className="text-slate-400">لا توجد إشعارات بعد</p>
-          <p className="text-xs text-slate-600">
-            ستظهر الإشعارات هنا تلقائياً بعد كل عملية جمع بيانات
+        <div style={{
+          borderRadius: "20px", border: `1px solid ${ui.border}`,
+          background: ui.surface, padding: "3rem 1.5rem", textAlign: "center",
+        }}>
+          <BellRing size={36} style={{ color: ui.muted, margin: "0 auto 1rem" }} />
+          <p style={{ color: ui.muted, margin: "0 0 6px" }}>{t("alerts.notifications.emptyTitle")}</p>
+          <p style={{ fontSize: "0.75rem", color: isDark ? "#374151" : "#CBD5E1", margin: 0 }}>
+            {t("alerts.notifications.emptyDesc")}
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {alerts.map((alert) => {
-            const time = new Date(alert.triggered_at).toLocaleDateString(
-              "ar-DZ",
-              { year: "numeric", month: "short", day: "numeric",
-                hour: "2-digit", minute: "2-digit" }
-            );
+            const cfg = SEVERITY_CONFIG[alert.severity] || SEVERITY_CONFIG.medium;
             return (
-              <div
-                key={alert.id}
+              <motion.div key={alert.id} variants={fadeUp}
                 onClick={() => handleMarkRead(alert)}
-                className={`rounded-2xl border p-4 transition cursor-pointer
-                            hover:border-slate-700 ${
-                  alert.is_read
-                    ? "border-slate-800 bg-slate-900/40"
-                    : "border-slate-700 bg-slate-900"
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  {/* Severity dot */}
-                  <span
-                    className={`mt-1.5 h-2.5 w-2.5 rounded-full shrink-0
-                               ${SEVERITY_DOT[alert.severity] || "bg-slate-400"}`}
-                  />
+                style={{
+                  borderRadius: "20px", padding: "1.25rem", cursor: "pointer",
+                  border: `1px solid ${alert.is_read ? ui.border : cfg.border}`,
+                  background: alert.is_read ? ui.surface : (isDark ? "#111111" : "#FFFFFF"),
+                  transition: "all 0.2s", position: "relative", overflow: "hidden",
+                }}>
+                <div style={{
+                  position: "absolute", right: 0, top: 0, bottom: 0, width: "3px",
+                  background: cfg.color, borderRadius: "0 3px 3px 0",
+                  opacity: alert.is_read ? 0.3 : 1,
+                }} />
 
-                  <div className="flex-1 min-w-0 space-y-1.5 text-right">
-                    <p className="text-sm text-slate-200 leading-relaxed">
-                      {alert.message}
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
+                  <span style={{
+                    marginTop: "4px", width: "10px", height: "10px", borderRadius: "50%",
+                    background: cfg.color, flexShrink: 0, opacity: alert.is_read ? 0.4 : 1,
+                  }} />
+                  <div style={{ flex: 1, minWidth: 0, textAlign: "right" }}>
+                    <p style={{ fontSize: "0.875rem", color: ui.text, lineHeight: "1.7", margin: "0 0 8px" }}>
+                      {buildAlertMessage(alert, t)}
                     </p>
-                    <div className="flex items-center gap-2 justify-end flex-wrap">
-                      <span
-                        className={`inline-flex items-center rounded-full border
-                                   px-2 py-0.5 text-xs font-medium
-                                   ${SEVERITY_STYLES[alert.severity]}`}
-                      >
-                        {alert.severity_display}
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "flex-end", flexWrap: "wrap" }}>
+                      <SeverityBadge severity={alert.severity} t={t} />
+                      <span style={{ fontSize: "0.72rem", color: ui.muted }}>
+                        {formatDateTime(alert.triggered_at)}
                       </span>
-                      <span className="text-xs text-slate-500">{time}</span>
                     </div>
                   </div>
-
-                  {/* Unread indicator */}
                   {!alert.is_read && (
-                    <span className="mt-1.5 h-2 w-2 rounded-full bg-sky-400 shrink-0" />
+                    <span style={{
+                      marginTop: "4px", width: "8px", height: "8px", borderRadius: "50%",
+                      background: "#4A90D9", flexShrink: 0,
+                    }} />
                   )}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -529,64 +501,123 @@ function NotificationsTab({ companyId }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+/* ── Main Page ──────────────────────────────────────────────────────────────── */
 
 export default function AlertsPage() {
   const { activeCompany } = useAuth();
+  const { theme }         = useTheme();
+  const { t }             = useTranslation();
+  const isDark            = theme === "dark";
   const [activeTab, setActiveTab] = useState("rules");
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-white p-6 md:p-10" dir="rtl">
-      <div className="mx-auto max-w-3xl space-y-8">
+  const ui = {
+    bg:       isDark ? "#0A0A0A" : "#F7F6F2",
+    panel:    isDark ? "#111111" : "#FFFFFF",
+    border:   isDark ? "#1E1E1E" : "#E5E7EB",
+    muted:    isDark ? "#6B7280" : "#9CA3AF",
+    text:     isDark ? "#E5E7EB" : "#111111",
+    surface2: isDark ? "#161616" : "#F8FAFC",
+  };
 
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold">التنبيهات</h1>
-          {activeCompany && (
-            <p className="mt-1 text-sm text-sky-400">{activeCompany.name}</p>
-          )}
-          <p className="mt-1 text-sm text-slate-500">
-            أنشئ قواعد تنبيه تلقائية تُطلَق بعد كل عملية جمع بيانات
-          </p>
-        </div>
+  const TABS = [
+    { key: "rules",         label: t("alerts.tabs.rules",         "القواعد"),   icon: Shield   },
+    { key: "notifications", label: t("alerts.tabs.notifications", "الإشعارات"), icon: BellRing },
+  ];
+
+  return (
+    <div dir="rtl" style={{ minHeight: "100vh", background: ui.bg, color: ui.text }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
+      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+
+        {/* HERO */}
+        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+          style={{
+            position: "relative", overflow: "hidden", borderRadius: "28px",
+            border: `1px solid ${ui.border}`, background: ui.panel,
+            padding: "2rem 2.5rem", marginBottom: "2rem",
+          }}>
+          <div style={{ position: "absolute", left: "-60px", top: "-60px", width: "200px", height: "200px", borderRadius: "50%", background: "#E53E3E", opacity: 0.04, filter: "blur(48px)", pointerEvents: "none" }} />
+          <div style={{ position: "absolute", right: "-60px", bottom: "-60px", width: "200px", height: "200px", borderRadius: "50%", background: "#C9A84C", opacity: 0.04, filter: "blur(48px)", pointerEvents: "none" }} />
+
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              padding: "5px 14px", borderRadius: "999px",
+              border: `1px solid ${isDark ? "#2A2A2A" : "#E5E7EB"}`,
+              background: isDark ? "#E53E3E0D" : "#E53E3E10",
+              color: "#E53E3E", fontSize: "0.78rem", fontWeight: "600", marginBottom: "1rem",
+            }}>
+              <Sparkles size={13} />
+              {t("alerts.badge", "نظام التنبيهات")}
+            </div>
+
+            <h1 style={{ fontSize: "2rem", fontWeight: "900", margin: "0 0 0.75rem", letterSpacing: "-0.02em" }}>
+              {t("alerts.title", "التنبيهات")}
+            </h1>
+
+            <p style={{ fontSize: "0.88rem", lineHeight: "1.75", color: ui.muted, margin: 0, maxWidth: "550px" }}>
+              {t("alerts.description", "أنشئ قواعد تنبيه تلقائية تُطلَق بعد كل عملية جمع بيانات.")}
+            </p>
+
+            {activeCompany && (
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: "8px",
+                marginTop: "1rem", padding: "6px 14px", borderRadius: "999px",
+                background: ui.surface2, border: `1px solid ${ui.border}`,
+                color: "#C9A84C", fontSize: "0.8rem", fontWeight: "700",
+              }}>
+                {activeCompany.name}
+              </div>
+            )}
+          </div>
+        </motion.div>
 
         {!activeCompany ? (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900
-                          px-6 py-12 text-center">
-            <p className="text-slate-400">لم يتم تحديد شركة</p>
+          <div style={{
+            borderRadius: "24px", border: `1px solid ${ui.border}`,
+            background: ui.panel, padding: "4rem 2rem",
+            textAlign: "center", color: ui.muted,
+          }}>
+            {t("alerts.noCompany", "لم يتم تحديد شركة")}
           </div>
         ) : (
           <>
-            {/* Tabs */}
-            <div className="flex gap-1 rounded-xl border border-slate-800
-                            bg-slate-900 p-1 w-fit">
-              {[
-                { key: "rules",         label: "القواعد"    },
-                { key: "notifications", label: "الإشعارات"  },
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`rounded-lg px-5 py-2 text-sm font-medium transition ${
-                    activeTab === tab.key
-                      ? "bg-slate-700 text-white"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  {tab.label}
+            {/* TABS */}
+            <div style={{
+              display: "flex", gap: "6px", padding: "6px",
+              borderRadius: "18px", border: `1px solid ${ui.border}`,
+              background: ui.surface2, width: "fit-content", marginBottom: "1.5rem",
+            }}>
+              {TABS.map(({ key, label, icon: Icon }) => (
+                <button key={key} onClick={() => setActiveTab(key)}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "6px",
+                    padding: "8px 20px", borderRadius: "12px", fontSize: "0.85rem",
+                    fontWeight: "600", cursor: "pointer", transition: "all 0.2s",
+                    border: "none",
+                    background: activeTab === key ? (isDark ? "#1E1E1E" : "#FFFFFF") : "transparent",
+                    color: activeTab === key ? ui.text : ui.muted,
+                    boxShadow: activeTab === key
+                      ? (isDark ? "0 1px 4px rgba(0,0,0,0.4)" : "0 1px 4px rgba(0,0,0,0.08)")
+                      : "none",
+                  }}>
+                  <Icon size={15} />
+                  {label}
                 </button>
               ))}
             </div>
 
-            {/* Tab content */}
-            {activeTab === "rules" ? (
-              <RulesTab companyId={activeCompany.id} />
-            ) : (
-              <NotificationsTab companyId={activeCompany.id} />
-            )}
+            {/* TAB CONTENT */}
+            <motion.div key={activeTab}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}>
+              {activeTab === "rules"
+                ? <RulesTab         companyId={activeCompany.id} isDark={isDark} t={t} />
+                : <NotificationsTab companyId={activeCompany.id} isDark={isDark} t={t} />}
+            </motion.div>
           </>
         )}
-
       </div>
     </div>
   );

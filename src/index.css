@@ -4,13 +4,172 @@
   box-sizing: border-box;
 }
 
+/* ================= DARK THEME ================= */
+:root,
+[data-theme="dark"] {
+  --gold: #C9A84C;
+  --gold-hover: #E8C56A;
+  --gold-dim: #C9A84C22;
+
+  --emerald: #2E8B57;
+  --emerald-hover: #3DAA6A;
+
+  --blue: #4A90D9;
+
+  --bg: #0A0A0A;
+  --surface: #111111;
+  --surface-2: #161616;
+  --surface-3: #1A1A1A;
+
+  --border: #1E1E1E;
+  --border-gold: #C9A84C44;
+
+  --text: #E5E7EB;
+  --text-muted: #9CA3AF;
+  --text-dim: #6B7280;
+
+  --positive: #2E8B57;
+  --neutral: #4A90D9;
+  --negative: #E53E3E;
+
+  --shadow-card: 0 2px 16px #00000060;
+  --shadow-gold: 0 0 20px #C9A84C18;
+}
+
+/* ================= LIGHT THEME ================= */
+[data-theme="light"] {
+  --gold: #B8912E;
+  --gold-hover: #D4AA3A;
+  --gold-dim: #B8912E22;
+
+  --emerald: #1F8A55;
+  --emerald-hover: #2DA66A;
+
+  --blue: #2563EB;
+
+  --bg: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface-2: #F1F5F9;
+  --surface-3: #E2E8F0;
+
+  --border: #CBD5E1;
+  --border-gold: #B8912E44;
+
+  --text: #0F172A;
+  --text-muted: #475569;
+  --text-dim: #64748B;
+
+  --positive: #16A34A;
+  --neutral: #2563EB;
+  --negative: #DC2626;
+
+  --shadow-card: 0 2px 12px rgba(15, 23, 42, 0.08);
+  --shadow-gold: 0 0 20px rgba(184, 145, 46, 0.15);
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background: var(--bg);
+  color: var(--text);
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 #root {
   min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-dim);
+}
+
+/* Utility classes */
+
+.g-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.2s ease;
+}
+
+.g-card:hover {
+  border-color: var(--border-gold);
+  box-shadow: var(--shadow-gold);
+}
+
+.g-input {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 0.85rem 1rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.g-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-dim);
+}
+
+.g-input::placeholder {
+  color: var(--text-muted);
+}
+
+.g-btn {
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.g-btn-primary {
+  background: var(--gold);
+  color: #0A0A0A;
+  font-weight: 700;
+}
+
+.g-btn-primary:hover {
+  background: var(--gold-hover);
+  transform: translateY(-1px);
+}
+
+.g-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.g-btn-ghost:hover {
+  border-color: var(--border-gold);
+  color: var(--text);
 }

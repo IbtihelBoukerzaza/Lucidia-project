@@ -1,5 +1,9 @@
 import "./App.css";
-import { Routes, Route, NavLink } from "react-router-dom";
+import { Routes, Route, NavLink, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Sun, Moon } from "lucide-react";
+import i18n from "./i18n";
+
 import HomePage from "./pages/HomePage.jsx";
 import FaqPage from "./pages/FaqPage.jsx";
 import ContactPage from "./pages/ContactPage.jsx";
@@ -18,63 +22,43 @@ import SentimentPage from "./pages/SentimentPage.jsx";
 import AlertsPage from "./pages/AlertsPage.jsx";
 import TopicsPage from "./pages/TopicsPage.jsx";
 import SurveysPage from "./pages/SurveysPage.jsx";
+import EngagementPage from "./pages/EngagementPage";
 import PublicSurveyPage from "./pages/PublicSurveyPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LanguageSwitcher from "./components/LanguageSwitcher.jsx";
 import AppNavbar from "./components/AppNavbar.jsx";
+import GantraLogo from "./components/GantraLogo.jsx";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "./contexts/LanguageContext";
+import { useTheme } from "./contexts/ThemeContext";
 
-/* ================= LOGO ================= */
-function LogoSentivya() {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="relative inline-flex h-8 w-8 items-center justify-center rounded-2xl bg-slate-900 ring-1 ring-sky-500/60">
-        <span className="absolute inset-[3px] rounded-2xl bg-gradient-to-tr from-sky-500 via-teal-400 to-emerald-400 opacity-80" />
-        <svg viewBox="0 0 24 24" className="relative h-4 w-4 text-slate-950">
-          <path
-            d="M3 13c2-4 4-6 8-6s6 2 10 6"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M7 17c1.2-1.6 2.4-2.4 4-2.4s2.8.8 4 2.4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            opacity="0.7"
-          />
-        </svg>
-      </span>
-      <span className="text-sm font-semibold tracking-tight text-slate-50">
-        Sentivya<span className="text-sky-300">DZ</span>
-      </span>
-    </div>
-  );
-}
-
-/* ================= PUBLIC LAYOUT (marketing site) ================= */
+/* ================= PUBLIC LAYOUT ================= */
 function PublicLayout({ children }) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      background: "var(--bg)",
+      color: "var(--text)",
+    }}>
       <Header />
-      <main className="flex-1 pt-24 pb-16">
-        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-          {children}
-        </div>
+      <main style={{ flex: 1, paddingTop: "60px" }}>
+        {children}
       </main>
       <Footer />
     </div>
   );
 }
 
-/* ================= APP LAYOUT (internal pages) ================= */
+/* ================= APP LAYOUT ================= */
 function AppLayout({ children }) {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50">
+    <div style={{
+      minHeight: "100vh",
+      background: "var(--bg)",
+      color: "var(--text)",
+    }}>
       <AppNavbar />
       {children}
     </div>
@@ -83,106 +67,61 @@ function AppLayout({ children }) {
 
 /* ================= APP ================= */
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    i18n.changeLanguage(i18n.language);
+  }, [location.pathname]);
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50">
+    <div style={{
+      minHeight: "100vh",
+      background: "var(--bg)",
+      color: "var(--text)",
+    }}>
       <Routes>
         {/* Public marketing pages */}
-        <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
-        <Route path="/resources/faq" element={<PublicLayout><FaqPage /></PublicLayout>} />
-        <Route path="/contact-us" element={<PublicLayout><ContactPage /></PublicLayout>} />
+        <Route path="/"                          element={<PublicLayout><HomePage /></PublicLayout>} />
+        <Route path="/resources/faq"             element={<PublicLayout><FaqPage /></PublicLayout>} />
+        <Route path="/contact-us"                element={<PublicLayout><ContactPage /></PublicLayout>} />
         <Route path="/products/media-monitoring" element={<PublicLayout><MediaMonitoringPage /></PublicLayout>} />
-        <Route path="/products/profiles" element={<PublicLayout><ProfilesPage /></PublicLayout>} />
+        <Route path="/products/profiles"         element={<PublicLayout><ProfilesPage /></PublicLayout>} />
         <Route path="/products/social-listening" element={<PublicLayout><SocialListeningPage /></PublicLayout>} />
 
         {/* Auth pages — no header/footer */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login"          element={<Login />} />
         <Route path="/request-access" element={<RequestAccessPage />} />
-        <Route path="/set-password" element={<SetPasswordPage />} />
-        {/* After /set-password route — no auth, no layout */}
-        <Route path="/s/:token" element={<PublicSurveyPage />} />
+        <Route path="/set-password"   element={<SetPasswordPage />} />
+        <Route path="/s/:token"       element={<PublicSurveyPage />} />
 
-        {/* Internal app pages — protected, no public header/footer */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <AppLayout>
-                <Dashboard />
-              </AppLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/team"
-           element={
-           <ProtectedRoute adminOnly>
-             <AppLayout>
-              <TeamPage />
-             </AppLayout>
-           </ProtectedRoute>
-  }
-/>      <Route
-           path="/settings"
-           element={
-          <ProtectedRoute adminOnly>
-           <AppLayout>
-            <SettingsPage />
-           </AppLayout>
-          </ProtectedRoute>
-  }
-/>
-        <Route
-          path="/posts"
-          element={
-          <ProtectedRoute>
-           <AppLayout>
-            <PostsPage />
-           </AppLayout>
-          </ProtectedRoute>
-  }
-/>
-                <Route
-          path="/alerts"
-          element={
-            <ProtectedRoute>
-              <AppLayout>
-                <AlertsPage />
-              </AppLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/sentiment"
-          element={
-            <ProtectedRoute>
-              <AppLayout>
-                <SentimentPage />
-              </AppLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-           path="/topics"
-           element={
-             <ProtectedRoute>
-              <AppLayout>
-               <TopicsPage />
-              </AppLayout>
-             </ProtectedRoute>
-  }
-/>
-        {/* After /topics route */}
-<Route
-  path="/surveys"
-  element={
-    <ProtectedRoute adminOnly>
-      <AppLayout>
-        <SurveysPage />
-      </AppLayout>
-    </ProtectedRoute>
-  }
-/>
-
+        {/* Internal app pages */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>
+        } />
+        <Route path="/team" element={
+          <ProtectedRoute adminOnly><AppLayout><TeamPage /></AppLayout></ProtectedRoute>
+        } />
+        <Route path="/settings" element={
+          <ProtectedRoute adminOnly><AppLayout><SettingsPage /></AppLayout></ProtectedRoute>
+        } />
+        <Route path="/posts" element={
+          <ProtectedRoute><AppLayout><PostsPage /></AppLayout></ProtectedRoute>
+        } />
+        <Route path="/alerts" element={
+          <ProtectedRoute><AppLayout><AlertsPage /></AppLayout></ProtectedRoute>
+        } />
+        <Route path="/sentiment" element={
+          <ProtectedRoute><AppLayout><SentimentPage /></AppLayout></ProtectedRoute>
+        } />
+        <Route path="/topics" element={
+          <ProtectedRoute><AppLayout><TopicsPage /></AppLayout></ProtectedRoute>
+        } />
+        <Route path="/surveys" element={
+          <ProtectedRoute adminOnly><AppLayout><SurveysPage /></AppLayout></ProtectedRoute>
+        } />
+        <Route path="/engagement" element={
+          <ProtectedRoute><AppLayout><EngagementPage /></AppLayout></ProtectedRoute>
+        } />
 
         <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
       </Routes>
@@ -192,50 +131,71 @@ function App() {
 
 /* ================= HEADER ================= */
 function Header() {
-  const { t } = useTranslation();
-  const { currentLang } = useLanguage();
+  const { t }                      = useTranslation();
+  const { theme, toggleTheme }     = useTheme();
+  const isDark                     = theme === "dark";
 
-  const navLinkBase =
-    "inline-flex items-center rounded-full px-4 py-2 text-sm font-medium transition hover:bg-slate-800/60";
+  const ui = {
+    bg:     isDark ? "rgba(10,10,10,0.88)"  : "rgba(248,250,252,0.88)",
+    border: isDark ? "#1E1E1E" : "#E2E8F0",
+    muted:  isDark ? "#6B7280" : "#64748B",
+  };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <NavLink to="/" className="flex items-center gap-2">
-          <LogoSentivya />
+    <header style={{
+      position: "fixed", inset: "0 0 auto 0", zIndex: 40,
+      borderBottom: `1px solid ${ui.border}`,
+      background: ui.bg,
+      backdropFilter: "blur(16px)",
+    }}>
+      <div style={{
+        maxWidth: "1100px", margin: "0 auto",
+        display: "flex", alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 1.5rem", height: "60px",
+      }}>
+        {/* logo */}
+        <NavLink to="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+          <GantraLogo size="md" />
         </NavLink>
 
-        <nav className="hidden items-center gap-1 text-xs font-medium text-slate-200 sm:flex">
-          <NavLink to="/resources/faq" className={navLinkBase}>
-            {t("navigation.faq")}
-          </NavLink>
+        {/* right side */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
 
-          <NavLink to="/contact-us" className={navLinkBase}>
-            {t("navigation.contactUs")}
-          </NavLink>
+          {/* language switcher */}
+          <LanguageSwitcher />
 
-          <NavLink
-            to="/request-demo"
-            className="inline-flex items-center rounded-full bg-sky-400/90 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-sky-300"
+          {/* theme toggle */}
+          <button
+            onClick={toggleTheme}
+            title={isDark ? t("nav.lightMode") : t("nav.darkMode")}
+            style={{
+              width: "36px", height: "36px", borderRadius: "10px",
+              border: `1px solid ${ui.border}`,
+              background: "transparent", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: ui.muted, transition: "all 0.2s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = "#C9A84C"; e.currentTarget.style.color = "#C9A84C"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.color = ui.muted; }}
           >
-            {t("navigation.requestDemo")}
-          </NavLink>
+            {isDark ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
 
-          <NavLink
-            to="/login"
-            className="ml-4 inline-flex items-center rounded-full bg-green-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-green-400"
-          >
+          {/* login — only button, no request demo */}
+          <NavLink to="/login" style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            borderRadius: "10px", padding: "8px 18px",
+            fontSize: "0.83rem", fontWeight: "700",
+            background: "#2E8B57", color: "#fff",
+            textDecoration: "none", transition: "background 0.2s",
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = "#3DAA6A"}
+          onMouseLeave={e => e.currentTarget.style.background = "#2E8B57"}>
             {t("navigation.login")}
           </NavLink>
 
-          {currentLang === "ar" && <LanguageSwitcher className="ml-2" />}
-        </nav>
-
-        {currentLang === "en" && (
-          <div className="fixed top-3 right-4 z-50 flex items-center">
-            <LanguageSwitcher />
-          </div>
-        )}
+        </div>
       </div>
     </header>
   );
@@ -243,17 +203,30 @@ function Header() {
 
 /* ================= FOOTER ================= */
 function Footer() {
-  const { t } = useTranslation();
+  const { t }   = useTranslation();
+  const { theme } = useTheme();
+  const isDark  = theme === "dark";
 
   return (
-    <footer className="border-t border-slate-800/80 bg-slate-950/90">
-      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <p>© {new Date().getFullYear()} SentivyaDZ. جميع الحقوق محفوظة.</p>
-        <div className="flex flex-wrap items-center gap-4">
-          <NavLink to="/resources/faq" className="hover:text-slate-100">
+    <footer style={{
+      borderTop: `1px solid ${isDark ? "#1E1E1E" : "#E2E8F0"}`,
+      background: isDark ? "#111111" : "#FFFFFF",
+    }}>
+      <div style={{
+        maxWidth: "1100px", margin: "0 auto",
+        display: "flex", flexDirection: "row",
+        alignItems: "center", justifyContent: "space-between",
+        padding: "1.25rem 1.5rem",
+        fontSize: "0.75rem",
+        color: isDark ? "#6B7280" : "#94A3B8",
+        gap: "1rem", flexWrap: "wrap",
+      }}>
+        <p style={{ margin: 0 }}>© {new Date().getFullYear()} Gantra. جميع الحقوق محفوظة.</p>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+          <NavLink to="/resources/faq" style={{ color: isDark ? "#6B7280" : "#94A3B8", textDecoration: "none" }}>
             {t("footer.faq")}
           </NavLink>
-          <NavLink to="/contact-us" className="hover:text-slate-100">
+          <NavLink to="/contact-us" style={{ color: isDark ? "#6B7280" : "#94A3B8", textDecoration: "none" }}>
             {t("footer.contactUs")}
           </NavLink>
         </div>

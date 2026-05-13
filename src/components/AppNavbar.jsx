@@ -2,76 +2,95 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
-
-// ─── Logo ─────────────────────────────────────────────────────────────────────
-
-function LogoSentivya() {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="relative inline-flex h-8 w-8 items-center justify-center rounded-2xl bg-slate-900 ring-1 ring-sky-500/60">
-        <span className="absolute inset-[3px] rounded-2xl bg-gradient-to-tr from-sky-500 via-teal-400 to-emerald-400 opacity-80" />
-        <svg viewBox="0 0 24 24" className="relative h-4 w-4 text-slate-950">
-          <path
-            d="M3 13c2-4 4-6 8-6s6 2 10 6"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M7 17c1.2-1.6 2.4-2.4 4-2.4s2.8.8 4 2.4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            opacity="0.7"
-          />
-        </svg>
-      </span>
-      <span className="text-sm font-semibold tracking-tight text-slate-50">
-        Sentivya<span className="text-sky-300">DZ</span>
-      </span>
-    </div>
-  );
-}
-
-// ─── Severity colors ──────────────────────────────────────────────────────────
-
-const SEVERITY_STYLES = {
-  high:   { dot: "bg-red-400",     text: "text-red-400"     },
-  medium: { dot: "bg-amber-400",   text: "text-amber-400"   },
-  low:    { dot: "bg-emerald-400", text: "text-emerald-400" },
-};
-
-// ─── Nav links ────────────────────────────────────────────────────────────────
+import gantraLogo from "../assets/gantra-logo.png";
+import { Sun, Moon, Bell, LogOut } from "lucide-react";
+import { useTheme } from "../contexts/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 const NAV_LINKS = [
-  { path: "/dashboard", label: "الرئيسية" },
-  { path: "/posts",     label: "المنشورات" },
-  { path: "/sentiment", label: "المشاعر"   },
-  { path: "/topics",    label: "المواضيع"  },
-  { path: "/alerts",    label: "التنبيهات" },
+  { path: "/dashboard",  key: "navigation.home",       fallback: "الرئيسية"   },
+  { path: "/posts",      key: "navigation.posts",      fallback: "المنشورات"  },
+  { path: "/sentiment",  key: "navigation.sentiment",  fallback: "المشاعر"    },
+  { path: "/topics",     key: "navigation.topics",     fallback: "المواضيع"   },
+  { path: "/alerts",     key: "navigation.alerts",     fallback: "التنبيهات"  },
+  { path: "/engagement", key: "navigation.engagement", fallback: "التفاعل"    },
 ];
 
 const ADMIN_LINKS = [
-  { path: "/team",     label: "الفريق"    },
-  { path: "/settings", label: "الإعدادات" },
-  { path: "/surveys", label: "الاستطلاعات" },
+  { path: "/surveys",  key: "navigation.surveys",  fallback: "الاستطلاعات" },
+  { path: "/team",     key: "navigation.team",     fallback: "الفريق"      },
+  { path: "/settings", key: "navigation.settings", fallback: "الإعدادات"   },
 ];
 
-// ─── Main component ───────────────────────────────────────────────────────────
+/* ── Helpers ────────────────────────────────────────────────────────────────── */
+
+function formatDateTime(dateStr) {
+  if (!dateStr) return "";
+  const d     = new Date(dateStr);
+  const day   = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year  = d.getFullYear();
+  const hour  = String(d.getHours()).padStart(2, "0");
+  const min   = String(d.getMinutes()).padStart(2, "0");
+  return `${day}/${month}/${year} ${hour}:${min}`;
+}
+
+function buildAlertMessage(alert, t) {
+  if (!alert.rule_type) {
+    // fallback to stored message if rule_type missing
+    return alert.message || t("alerts.notifications.messages.unknown", "تنبيه");
+  }
+  return t(`alerts.notifications.messages.${alert.rule_type}`, {
+    threshold: alert.threshold ?? "",
+    keyword:   alert.keyword   ?? "",
+    value:     alert.threshold ?? "",
+    // always provide a readable fallback
+    defaultValue: alert.message || t("alerts.notifications.messages.unknown", "تنبيه"),
+  });
+}
+
+/* ── Component ──────────────────────────────────────────────────────────────── */
 
 export default function AppNavbar() {
-  const navigate             = useNavigate();
-  const location             = useLocation();
+  const navigate        = useNavigate();
+  const location        = useLocation();
+  const { t, i18n }    = useTranslation();
   const { activeCompany, isAdmin, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const [unreadCount,  setUnreadCount]  = useState(0);
   const [recentAlerts, setRecentAlerts] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // ── Fetch unread count ───────────────────────────────────────────────
+  const isDark = theme === "dark";
+
+  const nav = {
+    bg:           isDark ? "#0A0A0A"   : "#FAFAF8",
+    border:       isDark ? "#C9A84C22" : "#C9A84C44",
+    text:         isDark ? "#9CA3AF"   : "#6B7280",
+    activeText:   "#C9A84C",
+    activeBg:     isDark ? "#C9A84C14" : "#C9A84C18",
+    adminText:    "#2E8B57",
+    adminBg:      isDark ? "#2E8B5714" : "#2E8B5718",
+    divider:      isDark ? "#1E1E1E"   : "#E5E7EB",
+    iconBtn:      isDark ? "#1A1A1A"   : "#F0F0EC",
+    iconBorder:   isDark ? "#2A2A2A"   : "#E0DDD5",
+    iconColor:    isDark ? "#9CA3AF"   : "#6B7280",
+    dropBg:       isDark ? "#111111"   : "#FFFFFF",
+    dropBorder:   isDark ? "#1E1E1E"   : "#E5E7EB",
+    dropText:     isDark ? "#E5E7EB"   : "#111111",
+    dropMuted:    isDark ? "#6B7280"   : "#9CA3AF",
+    selectBg:     isDark ? "#161616"   : "#F5F4F0",
+    selectBorder: isDark ? "#2A2A2A"   : "#D5D2CA",
+    selectText:   isDark ? "#E5E7EB"   : "#111111",
+  };
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem("i18nextLng", lng);
+  };
+
   const fetchUnread = async () => {
     if (!activeCompany) return;
     try {
@@ -81,31 +100,26 @@ export default function AppNavbar() {
     } catch (_) {}
   };
 
-  // ── Fetch recent alerts for dropdown ────────────────────────────────
   const fetchRecent = async () => {
     if (!activeCompany) return;
     try {
       const res  = await api.getAlerts(activeCompany.id);
       const data = await res.json();
-      // Show only last 5 unread first, then read
       const sorted = [...data].sort((a, b) => a.is_read - b.is_read);
       setRecentAlerts(sorted.slice(0, 5));
     } catch (_) {}
   };
 
-  // Poll every 60 seconds
   useEffect(() => {
     fetchUnread();
-    const interval = setInterval(fetchUnread, 60_000);
-    return () => clearInterval(interval);
+    const id = setInterval(fetchUnread, 60000);
+    return () => clearInterval(id);
   }, [activeCompany]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
         setDropdownOpen(false);
-      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -114,25 +128,6 @@ export default function AppNavbar() {
   const handleBellClick = async () => {
     if (!dropdownOpen) await fetchRecent();
     setDropdownOpen((v) => !v);
-  };
-
-  const handleMarkAllRead = async () => {
-    if (!activeCompany) return;
-    await api.markAllAlertsRead(activeCompany.id);
-    setUnreadCount(0);
-    setRecentAlerts((prev) => prev.map((a) => ({ ...a, is_read: true })));
-  };
-
-  const handleAlertClick = async (alert) => {
-    if (!alert.is_read) {
-      await api.markAlertRead(alert.id);
-      setUnreadCount((c) => Math.max(0, c - 1));
-      setRecentAlerts((prev) =>
-        prev.map((a) => (a.id === alert.id ? { ...a, is_read: true } : a))
-      );
-    }
-    setDropdownOpen(false);
-    navigate("/alerts");
   };
 
   const handleLogout = async () => {
@@ -144,185 +139,288 @@ export default function AppNavbar() {
 
   return (
     <nav
-      className="sticky top-0 z-50 border-b border-slate-800/70
-                 bg-slate-950/90 backdrop-blur px-4 md:px-8"
       dir="rtl"
+      style={{
+        position:       "sticky",
+        top:            0,
+        zIndex:         50,
+        background:     nav.bg,
+        borderBottom:   `1px solid ${nav.border}`,
+        backdropFilter: "blur(14px)",
+        transition:     "background 0.3s, border-color 0.3s",
+      }}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between h-14 gap-4">
-
-        {/* Logo */}
-        <button onClick={() => navigate("/dashboard")} className="shrink-0">
-          <LogoSentivya />
+      <div
+        style={{
+          maxWidth:       "1400px",
+          margin:         "0 auto",
+          height:         "68px",
+          padding:        "0 1.75rem",
+          display:        "flex",
+          alignItems:     "center",
+          justifyContent: "space-between",
+          gap:            "1rem",
+        }}
+      >
+        {/* ── LOGO ── */}
+        <button
+          onClick={() => navigate("/dashboard")}
+          style={{
+            background: "none", border: "none", cursor: "pointer",
+            flexShrink: 0, display: "flex", alignItems: "center",
+          }}
+        >
+          <img
+            src={gantraLogo}
+            alt="Gantra"
+            style={{
+              height: "48px",
+              filter: isDark ? "none" : "brightness(0.85)",
+              transition: "filter 0.3s",
+            }}
+          />
         </button>
 
-        {/* Nav links */}
-        <div className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map((link) => (
-            <button
-              key={link.path}
-              onClick={() => navigate(link.path)}
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-                isActive(link.path)
-                  ? "bg-slate-800 text-white"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800/50"
-              }`}
-            >
-              {link.label}
-            </button>
-          ))}
-          {isAdmin &&
-            ADMIN_LINKS.map((link) => (
+        {/* ── NAV LINKS ── */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: "2px",
+          flex: 1, justifyContent: "center",
+        }}>
+          {NAV_LINKS.map((link) => {
+            const active = isActive(link.path);
+            return (
               <button
                 key={link.path}
                 onClick={() => navigate(link.path)}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-                  isActive(link.path)
-                    ? "bg-slate-800 text-white"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/50"
-                }`}
+                style={{
+                  position: "relative", padding: "6px 14px",
+                  borderRadius: "10px", border: "none", cursor: "pointer",
+                  fontSize: "0.84rem", fontWeight: active ? "700" : "500",
+                  background: active ? nav.activeBg : "transparent",
+                  color: active ? nav.activeText : nav.text,
+                  transition: "all 0.2s", whiteSpace: "nowrap",
+                }}
+                onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = nav.activeText; }}
+                onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = nav.text; }}
               >
-                {link.label}
+                {t(link.key, link.fallback)}
+                {active && (
+                  <span style={{
+                    position: "absolute", bottom: "3px", left: "50%",
+                    transform: "translateX(-50%)", width: "4px", height: "4px",
+                    borderRadius: "50%", background: "#C9A84C",
+                  }} />
+                )}
               </button>
-            ))}
+            );
+          })}
+
+          {isAdmin && (
+            <>
+              <span style={{
+                width: "1px", height: "20px", background: nav.divider,
+                margin: "0 6px", flexShrink: 0,
+              }} />
+              {ADMIN_LINKS.map((link) => {
+                const active = isActive(link.path);
+                return (
+                  <button
+                    key={link.path}
+                    onClick={() => navigate(link.path)}
+                    style={{
+                      position: "relative", padding: "6px 14px",
+                      borderRadius: "10px", border: "none", cursor: "pointer",
+                      fontSize: "0.84rem", fontWeight: active ? "700" : "500",
+                      background: active ? nav.adminBg : "transparent",
+                      color: active ? nav.adminText : nav.text,
+                      transition: "all 0.2s", whiteSpace: "nowrap",
+                    }}
+                    onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = nav.adminText; }}
+                    onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = nav.text; }}
+                  >
+                    {t(link.key, link.fallback)}
+                    {active && (
+                      <span style={{
+                        position: "absolute", bottom: "3px", left: "50%",
+                        transform: "translateX(-50%)", width: "4px", height: "4px",
+                        borderRadius: "50%", background: "#2E8B57",
+                      }} />
+                    )}
+                  </button>
+                );
+              })}
+            </>
+          )}
         </div>
 
-        {/* Right side: company name + bell + logout */}
-        <div className="flex items-center gap-3 shrink-0">
-          {activeCompany && (
-            <span className="hidden sm:block text-xs text-sky-400 font-medium">
-              {activeCompany.name}
-            </span>
-          )}
+        {/* ── RIGHT CONTROLS ── */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
 
-          {/* Bell */}
-          <div className="relative" ref={dropdownRef}>
+          {/* LANGUAGE SELECT */}
+          <select
+            onChange={(e) => changeLanguage(e.target.value)}
+            value={i18n.language?.slice(0, 2)}
+            style={{
+              background: nav.selectBg, color: nav.selectText,
+              border: `1px solid ${nav.selectBorder}`, borderRadius: "8px",
+              padding: "5px 8px", fontSize: "0.78rem", fontWeight: "600",
+              cursor: "pointer", outline: "none", transition: "all 0.2s",
+              letterSpacing: "0.03em",
+            }}
+          >
+            <option value="ar">AR</option>
+            <option value="en">EN</option>
+            <option value="fr">FR</option>
+          </select>
+
+          {/* THEME TOGGLE */}
+          <button
+            onClick={toggleTheme}
+            title={isDark ? "Switch to light" : "Switch to dark"}
+            style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              width: "36px", height: "36px", borderRadius: "10px",
+              border: `1px solid ${nav.iconBorder}`, background: nav.iconBtn,
+              color: isDark ? "#C9A84C" : "#6B7280", cursor: "pointer",
+              transition: "all 0.2s", flexShrink: 0,
+            }}
+          >
+            {isDark ? <Sun size={15} /> : <Moon size={15} />}
+          </button>
+
+          {/* BELL */}
+          <div style={{ position: "relative" }} ref={dropdownRef}>
             <button
               onClick={handleBellClick}
-              className="relative rounded-xl p-2 text-slate-400
-                         hover:text-white hover:bg-slate-800 transition"
-              title="الإشعارات"
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                width: "36px", height: "36px", borderRadius: "10px",
+                border: `1px solid ${nav.iconBorder}`, background: nav.iconBtn,
+                color: "#C9A84C", cursor: "pointer", position: "relative",
+                transition: "all 0.2s", flexShrink: 0,
+              }}
             >
-              {/* Bell icon */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.8}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6
-                     6 0 00-5-5.917V4a1 1 0 10-2 0v1.083A6 6 0 006
-                     11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6
-                     0v1a3 3 0 11-6 0v-1m6 0H9"
-                />
-              </svg>
-
-              {/* Badge */}
+              <Bell size={15} />
               {unreadCount > 0 && (
-                <span
-                  className="absolute -top-0.5 -right-0.5 flex h-4 w-4
-                             items-center justify-center rounded-full
-                             bg-red-500 text-white text-[10px] font-bold"
-                >
+                <span style={{
+                  position: "absolute", top: "-4px", left: "-4px",
+                  minWidth: "16px", height: "16px", borderRadius: "8px",
+                  background: "#2E8B57", color: "#fff",
+                  fontSize: "0.65rem", fontWeight: "700",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  padding: "0 3px", border: `2px solid ${nav.bg}`,
+                }}>
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
             </button>
 
-            {/* Dropdown */}
+            {/* BELL DROPDOWN */}
             {dropdownOpen && (
-              <div
-                className="absolute left-0 mt-2 w-80 rounded-2xl border
-                           border-slate-700 bg-slate-900 shadow-2xl
-                           overflow-hidden z-50"
-                dir="rtl"
-              >
-                {/* Dropdown header */}
-                <div className="flex items-center justify-between px-4 py-3
-                                border-b border-slate-800">
-                  <span className="text-sm font-semibold text-slate-100">
-                    الإشعارات
-                  </span>
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={handleMarkAllRead}
-                      className="text-xs text-sky-400 hover:text-sky-300 transition"
-                    >
-                      تحديد الكل كمقروء
-                    </button>
-                  )}
+              <div style={{
+                position: "absolute", top: "calc(100% + 10px)", left: 0,
+                minWidth: "300px", background: nav.dropBg,
+                border: `1px solid ${nav.dropBorder}`, borderRadius: "14px",
+                boxShadow: isDark
+                  ? "0 20px 40px rgba(0,0,0,0.5)"
+                  : "0 20px 40px rgba(0,0,0,0.12)",
+                overflow: "hidden", zIndex: 100,
+              }}>
+                {/* Header */}
+                <div style={{
+                  padding: "12px 16px", borderBottom: `1px solid ${nav.dropBorder}`,
+                  fontSize: "0.8rem", fontWeight: "700", color: "#C9A84C",
+                }}>
+                  {t("navigation.alerts", "التنبيهات")}
                 </div>
 
-                {/* Alert list */}
+                {/* Alert items */}
                 {recentAlerts.length === 0 ? (
-                  <div className="px-4 py-8 text-center text-slate-500 text-sm">
-                    لا توجد إشعارات
+                  <div style={{
+                    padding: "20px 16px", textAlign: "center",
+                    color: nav.dropMuted, fontSize: "0.8rem",
+                  }}>
+                    {t("alerts.empty", "لا توجد تنبيهات")}
                   </div>
                 ) : (
-                  <div className="divide-y divide-slate-800/60">
-                    {recentAlerts.map((alert) => {
-                      const style =
-                        SEVERITY_STYLES[alert.severity] || SEVERITY_STYLES.medium;
-                      const time = new Date(alert.triggered_at).toLocaleDateString(
-                        "ar-DZ",
-                        { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }
-                      );
-                      return (
-                        <button
-                          key={alert.id}
-                          onClick={() => handleAlertClick(alert)}
-                          className={`w-full text-right px-4 py-3 hover:bg-slate-800/50
-                                     transition flex gap-3 items-start
-                                     ${!alert.is_read ? "bg-slate-800/30" : ""}`}
-                        >
-                          {/* Severity dot */}
-                          <span
-                            className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${style.dot}`}
-                          />
-                          <div className="flex-1 min-w-0 space-y-0.5">
-                            <p className="text-xs text-slate-200 leading-relaxed line-clamp-2">
-                              {alert.message}
-                            </p>
-                            <p className="text-[11px] text-slate-500">{time}</p>
-                          </div>
-                          {!alert.is_read && (
-                            <span className="mt-1.5 h-2 w-2 rounded-full bg-sky-400 shrink-0" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  recentAlerts.map((alert) => (
+                    <div
+                      key={alert.id}
+                      onClick={() => { setDropdownOpen(false); navigate("/alerts"); }}
+                      style={{
+                        padding: "10px 16px",
+                        borderBottom: `1px solid ${nav.dropBorder}`,
+                        display: "flex", alignItems: "flex-start", gap: "8px",
+                        cursor: "pointer", transition: "background 0.2s",
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = isDark ? "#161616" : "#F8FAFC"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                    >
+                      <span style={{
+                        width: "7px", height: "7px", borderRadius: "50%",
+                        background: alert.is_read ? nav.dropMuted : "#C9A84C",
+                        marginTop: "5px", flexShrink: 0,
+                      }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{
+                          fontSize: "0.78rem",
+                          color: alert.is_read ? nav.dropMuted : nav.dropText,
+                          fontWeight: alert.is_read ? "400" : "600",
+                          margin: 0, lineHeight: "1.5",
+                          overflow: "hidden", display: "-webkit-box",
+                          WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+                        }}>
+                          {buildAlertMessage(alert, t)}
+                        </p>
+                        <p style={{ fontSize: "0.7rem", color: nav.dropMuted, margin: "3px 0 0" }}>
+                          {formatDateTime(alert.triggered_at)}
+                        </p>
+                      </div>
+                    </div>
+                  ))
                 )}
 
                 {/* Footer */}
-                <div className="border-t border-slate-800 px-4 py-2.5">
-                  <button
-                    onClick={() => { setDropdownOpen(false); navigate("/alerts"); }}
-                    className="w-full text-center text-xs text-sky-400
-                               hover:text-sky-300 transition"
-                  >
-                    عرض كل الإشعارات ←
-                  </button>
-                </div>
+                <button
+                  onClick={() => { setDropdownOpen(false); navigate("/alerts"); }}
+                  style={{
+                    width: "100%", padding: "10px", background: "transparent",
+                    border: "none", color: "#C9A84C", fontSize: "0.78rem",
+                    fontWeight: "600", cursor: "pointer", textAlign: "center",
+                  }}
+                >
+                  {t("alerts.viewAll", "عرض الكل")}
+                </button>
               </div>
             )}
           </div>
 
-          {/* Logout */}
+          {/* LOGOUT */}
           <button
             onClick={handleLogout}
-            className="rounded-lg border border-slate-700 px-3 py-1.5
-                       text-xs text-slate-400 hover:text-white
-                       hover:border-slate-500 transition"
+            title={t("navigation.logout", "خروج")}
+            style={{
+              display: "flex", alignItems: "center", gap: "6px",
+              padding: "6px 12px", borderRadius: "10px",
+              border: "1px solid rgba(239,68,68,0.25)",
+              background: "rgba(239,68,68,0.08)", color: "#F87171",
+              cursor: "pointer", fontSize: "0.8rem", fontWeight: "600",
+              transition: "all 0.2s", flexShrink: 0, whiteSpace: "nowrap",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background  = "rgba(239,68,68,0.15)";
+              e.currentTarget.style.borderColor = "rgba(239,68,68,0.4)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background  = "rgba(239,68,68,0.08)";
+              e.currentTarget.style.borderColor = "rgba(239,68,68,0.25)";
+            }}
           >
-            خروج
+            <LogOut size={14} />
+            {t("navigation.logout", "خروج")}
           </button>
-        </div>
 
+        </div>
       </div>
     </nav>
   );

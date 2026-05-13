@@ -1,3 +1,4 @@
+
 """Persist normalized rows into posts.Post with deduplication."""
 
 from posts.models import Post
@@ -31,3 +32,4 @@ def upsert_post(*, company_id: int, row: dict) -> tuple[Post | None, bool]:
         defaults=defaults,
     )
     return post, created
+

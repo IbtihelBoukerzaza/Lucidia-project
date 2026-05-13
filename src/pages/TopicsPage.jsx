@@ -1,432 +1,406 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { useTranslation } from "react-i18next";
 import { api } from "../services/api";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Legend,
-} from "recharts";
 import { motion } from "framer-motion";
-
-// ─── Constants ────────────────────────────────────────────────────────────────
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, LineChart, Line, Legend,
+} from "recharts";
+import { Sparkles, TrendingUp, Hash, Layers3, GitMerge } from "lucide-react";
 
 const SOURCE_LABELS = {
-  google_news: "Google News",
-  rss:         "RSS",
-  reddit:      "Reddit",
-  youtube:     "YouTube",
-  twitter:     "X / Twitter",
-  facebook:    "Facebook",
-  instagram:   "Instagram",
-  tiktok:      "TikTok",
-  manual:      "يدوي",
+  google_news: "Google News", rss: "RSS", reddit: "Reddit",
+  youtube: "YouTube", twitter: "X / Twitter", facebook: "Facebook",
+  instagram: "Instagram", tiktok: "TikTok", manual: "يدوي",
 };
 
 const SOURCE_COLORS = {
-  google_news: "#38bdf8",
-  rss:         "#fb923c",
-  reddit:      "#f87171",
-  youtube:     "#f43f5e",
-  twitter:     "#7dd3fc",
-  facebook:    "#818cf8",
-  instagram:   "#f472b6",
-  tiktok:      "#2dd4bf",
-  manual:      "#94a3b8",
+  google_news: "#4A90D9", rss: "#F59E0B", reddit: "#E53E3E",
+  youtube: "#FF0000", twitter: "#38BDF8", facebook: "#4F46E5",
+  instagram: "#EC4899", tiktok: "#14B8A6", manual: "#9CA3AF",
 };
 
 const TREND_COLORS = [
-  "#38bdf8", "#34d399", "#f87171", "#fb923c",
-  "#a78bfa", "#f472b6", "#2dd4bf", "#facc15",
-  "#94a3b8", "#6ee7b7",
+  "#C9A84C", "#2E8B57", "#4A90D9", "#E53E3E",
+  "#8B5CF6", "#EC4899", "#14B8A6", "#F59E0B",
 ];
 
-// ─── Shared small components ──────────────────────────────────────────────────
-
-function Spinner() {
-  return (
-    <div className="flex justify-center py-16">
-      <div className="w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-}
-
-function ErrorBox({ message }) {
-  return (
-    <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-6 py-4 text-red-400 text-sm text-right">
-      {message}
-    </div>
-  );
-}
-
-function Section({ title, children }) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 space-y-4">
-      <h2 className="text-lg font-semibold text-slate-100 text-right">{title}</h2>
-      {children}
-    </div>
-  );
-}
-
-// ─── Top Keywords Bar Chart ───────────────────────────────────────────────────
-
-const CustomBarTooltip = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm shadow-xl text-right">
-      <p className="text-slate-300 font-medium mb-1" dir="auto">{label}</p>
-      <p className="text-sky-400">{payload[0].value.toLocaleString("ar-DZ")} تكرار</p>
-    </div>
-  );
+const fadeUp = {
+  hidden:  { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
 };
 
-function TopKeywordsChart({ companyId }) {
-  const [data,    setData]    = useState([]);
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.06 } },
+};
+
+/* ── Shared UI helpers ──────────────────────────────────────────────────────── */
+
+function Spinner({ color }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "center", padding: "3rem 0" }}>
+      <div style={{
+        width: "32px", height: "32px", borderRadius: "50%",
+        border: `2px solid ${color || "#C9A84C"}`,
+        borderTopColor: "transparent",
+        animation: "spin 0.8s linear infinite",
+      }} />
+    </div>
+  );
+}
+
+function EmptyState({ label, isDark }) {
+  return (
+    <p style={{
+      textAlign: "center", padding: "3rem 0",
+      color: isDark ? "#6B7280" : "#9CA3AF",
+      fontSize: "0.875rem",
+    }}>
+      {label}
+    </p>
+  );
+}
+
+function SectionCard({ icon: Icon, title, accent, isDark, children }) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      style={{
+        borderRadius: "24px",
+        border: `1px solid ${isDark ? "#1E1E1E" : "#E5E7EB"}`,
+        background: isDark ? "#111111" : "#FFFFFF",
+        padding: "1.75rem",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* ambient blob */}
+      <div style={{
+        position: "absolute", top: "-40px", left: "-40px",
+        width: "160px", height: "160px", borderRadius: "50%",
+        background: accent, opacity: 0.04, filter: "blur(40px)",
+        pointerEvents: "none",
+      }} />
+
+      {/* top color bar */}
+      <div style={{
+        position: "absolute", top: 0, insetInline: 0,
+        height: "3px", background: accent, borderRadius: "3px 3px 0 0",
+      }} />
+
+      {/* header */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: "10px",
+        marginBottom: "1.5rem", position: "relative", zIndex: 1,
+      }}>
+        <div style={{
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          width: "38px", height: "38px", borderRadius: "12px",
+          background: `${accent}18`, border: `1px solid ${accent}30`,
+          color: accent, flexShrink: 0,
+        }}>
+          <Icon size={18} />
+        </div>
+        <h2 style={{
+          margin: 0, fontSize: "1rem", fontWeight: "700",
+          color: isDark ? "#E5E7EB" : "#111111",
+        }}>
+          {title}
+        </h2>
+      </div>
+
+      <div style={{ position: "relative", zIndex: 1 }}>
+        {children}
+      </div>
+    </motion.div>
+  );
+}
+
+function FilterBtn({ active, onClick, label, accent, isDark }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        padding: "5px 14px", borderRadius: "999px", fontSize: "0.78rem",
+        fontWeight: "600", cursor: "pointer", transition: "all 0.2s",
+        border: active ? `1px solid ${accent}50` : `1px solid ${isDark ? "#1E1E1E" : "#E5E7EB"}`,
+        background: active ? `${accent}15` : "transparent",
+        color: active ? accent : isDark ? "#6B7280" : "#9CA3AF",
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+/* ── Custom Tooltips ────────────────────────────────────────────────────────── */
+
+function BarTooltip({ active, payload, label, isDark }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      borderRadius: "14px", padding: "10px 14px",
+      background: isDark ? "#1A1A1A" : "#FFFFFF",
+      border: `1px solid ${isDark ? "#2A2A2A" : "#E5E7EB"}`,
+      fontSize: "0.82rem", textAlign: "right",
+    }}>
+      <p style={{ color: isDark ? "#9CA3AF" : "#6B7280", marginBottom: "4px" }} dir="auto">{label}</p>
+      <p style={{ color: "#C9A84C", fontWeight: "700" }}>{payload[0].value.toLocaleString("ar-DZ")}</p>
+    </div>
+  );
+}
+
+function TrendTooltip({ active, payload, label, isDark }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      borderRadius: "14px", padding: "10px 14px",
+      background: isDark ? "#1A1A1A" : "#FFFFFF",
+      border: `1px solid ${isDark ? "#2A2A2A" : "#E5E7EB"}`,
+      fontSize: "0.82rem", textAlign: "right",
+    }}>
+      <p style={{ color: isDark ? "#6B7280" : "#9CA3AF", marginBottom: "6px" }}>{label}</p>
+      {payload.map((p) => (
+        <p key={p.name} style={{ color: p.stroke, margin: "2px 0" }}>
+          <span dir="auto">{p.name}</span>: {p.value}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+/* ── Section 1: Top Keywords ────────────────────────────────────────────────── */
+
+function TopKeywordsChart({ companyId, isDark, t }) {
+  const [data, setData]     = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState("");
-  const [top,     setTop]     = useState(20);
+  const [error, setError]   = useState("");
+  const [top, setTop]       = useState(20);
+
+  const ui = {
+    muted:   isDark ? "#6B7280" : "#9CA3AF",
+    surface2: isDark ? "#161616" : "#F8FAFC",
+    track:   isDark ? "#1E1E1E" : "#E5E7EB",
+  };
 
   useEffect(() => {
     if (!companyId) return;
-    setLoading(true);
-    setError("");
-    api
-      .getTopKeywords(companyId, top)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.error) throw new Error(json.error);
-        setData(json.top || []);
-      })
-      .catch((err) => setError(err.message || "فشل التحميل"))
+    setLoading(true); setError("");
+    api.getTopKeywords(companyId, top)
+      .then((r) => r.json())
+      .then((json) => { if (json.error) throw new Error(json.error); setData(json.top || []); })
+      .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, [companyId, top]);
 
   const maxCount = data[0]?.count || 1;
 
   return (
-    <Section title="أبرز المواضيع والكلمات">
-      <div className="flex gap-2 justify-end flex-wrap">
+    <SectionCard icon={Hash} title={t("topics.topKeywords.title")} accent="#C9A84C" isDark={isDark}>
+      <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", marginBottom: "1.25rem" }}>
         {[10, 20, 30].map((n) => (
-          <button
-            key={n}
-            onClick={() => setTop(n)}
-            className={`rounded-lg px-3 py-1 text-xs font-medium border transition ${
-              top === n
-                ? "bg-sky-500/20 text-sky-400 border-sky-500/30"
-                : "text-slate-400 border-slate-700 hover:text-slate-200"
-            }`}
-          >
-            أعلى {n}
-          </button>
+          <FilterBtn key={n} active={top === n} onClick={() => setTop(n)}
+            label={`${t("topics.top")} ${n}`} accent="#C9A84C" isDark={isDark} />
         ))}
       </div>
 
-      {loading ? (
-        <Spinner />
-      ) : error ? (
-        <ErrorBox message={error} />
-      ) : data.length === 0 ? (
-        <p className="text-center text-slate-500 text-sm py-8">لا توجد بيانات</p>
-      ) : (
-        <div className="grid gap-6 xl:grid-cols-2">
-          {/* Horizontal bar list */}
-          <div className="space-y-2">
+      {loading ? <Spinner color="#C9A84C" /> : error ? (
+        <p style={{ color: "#F87171", fontSize: "0.85rem", textAlign: "center" }}>{error}</p>
+      ) : data.length === 0 ? <EmptyState label={t("topics.noData")} isDark={isDark} /> : (
+        <div style={{ display: "grid", gap: "1.5rem", gridTemplateColumns: "1fr 1fr" }}>
+          {/* Bar list */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             {data.slice(0, 15).map((item, i) => (
-              <motion.div
-                key={item.word}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
+              <motion.div key={item.word}
+                initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="flex items-center gap-3"
-              >
-                <span className="text-xs text-slate-600 w-5 shrink-0 text-left">
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <span style={{ fontSize: "0.7rem", color: ui.muted, width: "18px", flexShrink: 0, textAlign: "left" }}>
                   {i + 1}
                 </span>
-                <div className="flex-1 rounded-full bg-slate-800 h-2 overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-700"
-                    style={{
-                      width:           `${Math.round((item.count / maxCount) * 100)}%`,
-                      backgroundColor: "#38bdf8",
-                      opacity:         0.7 + (0.3 * (1 - i / data.length)),
-                    }}
-                  />
+                <div style={{ flex: 1, height: "6px", borderRadius: "999px", background: ui.track, overflow: "hidden" }}>
+                  <div style={{
+                    height: "100%", borderRadius: "999px", background: "#C9A84C",
+                    width: `${Math.round((item.count / maxCount) * 100)}%`,
+                    opacity: 0.7 + 0.3 * (1 - i / data.length),
+                    transition: "width 0.6s ease",
+                  }} />
                 </div>
-                <span
-                  className="text-sm font-medium w-36 text-right shrink-0 text-slate-200"
-                  dir="auto"
-                >
+                <span dir="auto" style={{ fontSize: "0.82rem", fontWeight: "600", width: "110px", textAlign: "right", flexShrink: 0, color: isDark ? "#E5E7EB" : "#111111" }}>
                   {item.word}
                 </span>
-                <span className="text-xs text-slate-500 w-12 text-right shrink-0">
+                <span style={{ fontSize: "0.72rem", color: ui.muted, width: "36px", textAlign: "right", flexShrink: 0 }}>
                   {item.count.toLocaleString("ar-DZ")}
                 </span>
               </motion.div>
             ))}
           </div>
 
-          {/* Recharts horizontal bar */}
-          <div className="h-96 w-full">
+          {/* Recharts bar */}
+          <div style={{ height: "380px" }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={data.slice(0, 15)}
-                layout="vertical"
-                margin={{ left: 8, right: 24, top: 4, bottom: 4 }}
-                barSize={10}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
-                <XAxis
-                  type="number"
-                  tick={{ fill: "#64748b", fontSize: 10 }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="word"
-                  tick={{ fill: "#cbd5e1", fontSize: 11 }}
-                  axisLine={false}
-                  tickLine={false}
-                  width={80}
-                />
-                <Tooltip content={<CustomBarTooltip />} cursor={{ fill: "#1e293b" }} />
-                <Bar dataKey="count" fill="#38bdf8" radius={[0, 4, 4, 0]} opacity={0.8} />
+              <BarChart data={data.slice(0, 15)} layout="vertical"
+                margin={{ left: 8, right: 20, top: 4, bottom: 4 }} barSize={8}>
+                <CartesianGrid strokeDasharray="3 3" stroke={ui.track} horizontal={false} />
+                <XAxis type="number" tick={{ fill: ui.muted, fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="word" tick={{ fill: isDark ? "#CBD5E1" : "#374151", fontSize: 11 }}
+                  axisLine={false} tickLine={false} width={80} />
+                <Tooltip content={(props) => <BarTooltip {...props} isDark={isDark} />} cursor={{ fill: isDark ? "#ffffff06" : "#00000006" }} />
+                <Bar dataKey="count" fill="#C9A84C" radius={[0, 4, 4, 0]} opacity={0.85} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
       )}
-    </Section>
+    </SectionCard>
   );
 }
 
-// ─── Keyword Trends Line Chart ────────────────────────────────────────────────
+/* ── Section 2: Keyword Trends ──────────────────────────────────────────────── */
 
-const CustomTrendTooltip = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm shadow-xl text-right space-y-1">
-      <p className="text-slate-400 text-xs mb-2">{label}</p>
-      {payload.map((p) => (
-        <p key={p.name} style={{ color: p.stroke }}>
-          <span dir="auto">{p.name}</span>: {p.value}
-        </p>
-      ))}
-    </div>
-  );
-};
-
-function KeywordTrends({ companyId }) {
-  const [data,     setData]     = useState({ keywords: [], timeline: [] });
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState("");
-  const [days,     setDays]     = useState(30);
+function KeywordTrends({ companyId, isDark, t }) {
+  const [data, setData]       = useState({ keywords: [], timeline: [] });
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState("");
+  const [days, setDays]       = useState(30);
   const [topCount, setTopCount] = useState(5);
+
+  const ui = { muted: isDark ? "#6B7280" : "#9CA3AF", track: isDark ? "#1E1E1E" : "#E5E7EB" };
 
   useEffect(() => {
     if (!companyId) return;
-    setLoading(true);
-    setError("");
-    api
-      .getKeywordTrends(companyId, days, topCount)
-      .then((res) => res.json())
+    setLoading(true); setError("");
+    api.getKeywordTrends(companyId, days, topCount)
+      .then((r) => r.json())
       .then((json) => {
         if (json.error) throw new Error(json.error);
         const formatted = (json.timeline || []).map((row) => ({
           ...row,
-          date: new Date(row.date).toLocaleDateString("ar-DZ", {
-            month: "short",
-            day:   "numeric",
-          }),
+          date: new Date(row.date).toLocaleDateString("ar-DZ", { month: "short", day: "numeric" }),
         }));
         setData({ keywords: json.keywords || [], timeline: formatted });
       })
-      .catch((err) => setError(err.message || "فشل التحميل"))
+      .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, [companyId, days, topCount]);
 
   return (
-    <Section title="تطور الكلمات عبر الزمن">
-      <div className="flex gap-2 justify-end flex-wrap">
-        <div className="flex rounded-lg border border-slate-700 overflow-hidden">
+    <SectionCard icon={TrendingUp} title={t("topics.trends.title")} accent="#2E8B57" isDark={isDark}>
+      <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", flexWrap: "wrap", marginBottom: "1.25rem" }}>
+        <div style={{ display: "flex", borderRadius: "12px", border: `1px solid ${ui.track}`, overflow: "hidden" }}>
           {[3, 5, 8].map((n) => (
-            <button
-              key={n}
-              onClick={() => setTopCount(n)}
-              className={`px-3 py-1 text-xs font-medium transition ${
-                topCount === n
-                  ? "bg-slate-700 text-white"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              أعلى {n}
+            <button key={n} onClick={() => setTopCount(n)}
+              style={{
+                padding: "5px 12px", fontSize: "0.78rem", fontWeight: "600", cursor: "pointer",
+                border: "none", background: topCount === n ? (isDark ? "#1E1E1E" : "#F1F5F9") : "transparent",
+                color: topCount === n ? "#2E8B57" : ui.muted, transition: "all 0.2s",
+              }}>
+              {t("topics.top")} {n}
             </button>
           ))}
         </div>
         {[7, 14, 30].map((d) => (
-          <button
-            key={d}
-            onClick={() => setDays(d)}
-            className={`rounded-lg px-3 py-1 text-xs font-medium border transition ${
-              days === d
-                ? "bg-sky-500/20 text-sky-400 border-sky-500/30"
-                : "text-slate-400 border-slate-700 hover:text-slate-200"
-            }`}
-          >
-            {d} يوم
-          </button>
+          <FilterBtn key={d} active={days === d} onClick={() => setDays(d)}
+            label={`${d} ${t("topics.days")}`} accent="#2E8B57" isDark={isDark} />
         ))}
       </div>
 
-      {loading ? (
-        <Spinner />
-      ) : error ? (
-        <ErrorBox message={error} />
-      ) : data.timeline.length === 0 ? (
-        <p className="text-center text-slate-500 text-sm py-8">لا توجد بيانات كافية</p>
-      ) : (
-        <div className="h-72 w-full">
+      {loading ? <Spinner color="#2E8B57" /> : error ? (
+        <p style={{ color: "#F87171", fontSize: "0.85rem", textAlign: "center" }}>{error}</p>
+      ) : data.timeline.length === 0 ? <EmptyState label={t("topics.noData")} isDark={isDark} /> : (
+        <div style={{ height: "280px" }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.timeline} margin={{ left: 0, right: 16, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-              <XAxis
-                dataKey="date"
-                tick={{ fill: "#64748b", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                interval="preserveStartEnd"
-              />
-              <YAxis
-                tick={{ fill: "#64748b", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                width={30}
-              />
-              <Tooltip content={<CustomTrendTooltip />} />
-              <Legend
-                formatter={(val) => (
-                  <span style={{ fontSize: 11, color: "#cbd5e1" }} dir="auto">{val}</span>
-                )}
-              />
+              <CartesianGrid strokeDasharray="3 3" stroke={ui.track} vertical={false} />
+              <XAxis dataKey="date" tick={{ fill: ui.muted, fontSize: 11 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis tick={{ fill: ui.muted, fontSize: 11 }} axisLine={false} tickLine={false} width={28} />
+              <Tooltip content={(props) => <TrendTooltip {...props} isDark={isDark} />} />
+              <Legend formatter={(val) => <span style={{ fontSize: 11, color: isDark ? "#CBD5E1" : "#374151" }} dir="auto">{val}</span>} />
               {data.keywords.map((word, i) => (
-                <Line
-                  key={word}
-                  type="monotone"
-                  dataKey={word}
+                <Line key={word} type="monotone" dataKey={word}
                   stroke={TREND_COLORS[i % TREND_COLORS.length]}
-                  strokeWidth={2}
-                  dot={false}
-                  activeDot={{ r: 4 }}
-                />
+                  strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
               ))}
             </LineChart>
           </ResponsiveContainer>
         </div>
       )}
-    </Section>
+    </SectionCard>
   );
 }
 
-// ─── Keywords by Source (tabs) ────────────────────────────────────────────────
+/* ── Section 3: Keywords by Source ──────────────────────────────────────────── */
 
-function KeywordsBySource({ companyId }) {
-  const [bySource,  setBySource]  = useState({});
-  const [loading,   setLoading]   = useState(true);
-  const [error,     setError]     = useState("");
+function KeywordsBySource({ companyId, isDark, t }) {
+  const [bySource, setBySource]   = useState({});
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState("");
   const [activeTab, setActiveTab] = useState(null);
+
+  const ui = { muted: isDark ? "#6B7280" : "#9CA3AF", track: isDark ? "#1E1E1E" : "#E5E7EB" };
 
   useEffect(() => {
     if (!companyId) return;
-    setLoading(true);
-    setError("");
-    api
-      .getKeywordsBySource(companyId, 10)
-      .then((res) => res.json())
+    setLoading(true); setError("");
+    api.getKeywordsBySource(companyId, 10)
+      .then((r) => r.json())
       .then((json) => {
         if (json.error) throw new Error(json.error);
         const src = json.by_source || {};
-        const firstKey = Object.keys(src)[0] || null;
         setBySource(src);
-        setActiveTab(firstKey);
+        setActiveTab(Object.keys(src)[0] || null);
       })
-      .catch((err) => setError(err.message || "فشل التحميل"))
+      .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, [companyId]);
 
   const sources  = Object.keys(bySource);
   const list     = activeTab ? (bySource[activeTab] || []) : [];
   const maxCount = list[0]?.count || 1;
-  const color    = SOURCE_COLORS[activeTab] || "#94a3b8";
+  const accent   = SOURCE_COLORS[activeTab] || "#C9A84C";
 
   return (
-    <Section title="الكلمات حسب المصدر">
-      {loading ? (
-        <Spinner />
-      ) : error ? (
-        <ErrorBox message={error} />
-      ) : sources.length === 0 ? (
-        <p className="text-center text-slate-500 text-sm py-8">لا توجد بيانات</p>
-      ) : (
+    <SectionCard icon={Layers3} title={t("topics.bySource.title")} accent="#4A90D9" isDark={isDark}>
+      {loading ? <Spinner color="#4A90D9" /> : error ? (
+        <p style={{ color: "#F87171", fontSize: "0.85rem", textAlign: "center" }}>{error}</p>
+      ) : sources.length === 0 ? <EmptyState label={t("topics.noData")} isDark={isDark} /> : (
         <>
-          <div className="flex gap-2 flex-wrap justify-end">
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "flex-end", marginBottom: "1.25rem" }}>
             {sources.map((src) => (
-              <button
-                key={src}
-                onClick={() => setActiveTab(src)}
-                className="rounded-lg px-3 py-1.5 text-xs font-medium border transition"
-                style={
-                  activeTab === src
-                    ? {
-                        color:           SOURCE_COLORS[src] || "#94a3b8",
-                        backgroundColor: `${SOURCE_COLORS[src] || "#94a3b8"}18`,
-                        borderColor:     `${SOURCE_COLORS[src] || "#94a3b8"}40`,
-                      }
-                    : { color: "#94a3b8", borderColor: "#334155" }
-                }
-              >
+              <button key={src} onClick={() => setActiveTab(src)}
+                style={{
+                  padding: "5px 14px", borderRadius: "999px", fontSize: "0.78rem",
+                  fontWeight: "600", cursor: "pointer", transition: "all 0.2s",
+                  border: activeTab === src ? `1px solid ${SOURCE_COLORS[src] || "#C9A84C"}50` : `1px solid ${ui.track}`,
+                  background: activeTab === src ? `${SOURCE_COLORS[src] || "#C9A84C"}15` : "transparent",
+                  color: activeTab === src ? SOURCE_COLORS[src] || "#C9A84C" : ui.muted,
+                }}>
                 {SOURCE_LABELS[src] || src}
               </button>
             ))}
           </div>
 
-          {list.length === 0 ? (
-            <p className="text-center text-slate-500 text-sm py-4">لا توجد كلمات</p>
-          ) : (
-            <div className="grid gap-2 sm:grid-cols-2">
+          {list.length === 0 ? <EmptyState label={t("topics.noData")} isDark={isDark} /> : (
+            <div style={{ display: "grid", gap: "10px", gridTemplateColumns: "1fr 1fr" }}>
               {list.map((item, i) => (
-                <motion.div
-                  key={item.word}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
+                <motion.div key={item.word}
+                  initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04 }}
-                  className="flex items-center gap-3"
-                >
-                  <span className="text-xs text-slate-600 w-4 shrink-0 text-left">{i + 1}</span>
-                  <div className="flex-1 rounded-full bg-slate-800 h-1.5 overflow-hidden">
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width:           `${Math.round((item.count / maxCount) * 100)}%`,
-                        backgroundColor: color,
-                        opacity:         0.75,
-                      }}
-                    />
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span style={{ fontSize: "0.7rem", color: ui.muted, width: "16px", flexShrink: 0 }}>{i + 1}</span>
+                  <div style={{ flex: 1, height: "5px", borderRadius: "999px", background: ui.track, overflow: "hidden" }}>
+                    <div style={{
+                      height: "100%", borderRadius: "999px", background: accent,
+                      width: `${Math.round((item.count / maxCount) * 100)}%`, opacity: 0.8,
+                    }} />
                   </div>
-                  <span
-                    className="text-sm font-medium w-36 text-right shrink-0"
-                    dir="auto"
-                    style={{ color }}
-                  >
+                  <span dir="auto" style={{ fontSize: "0.82rem", fontWeight: "600", width: "100px", textAlign: "right", flexShrink: 0, color: accent }}>
                     {item.word}
                   </span>
-                  <span className="text-xs text-slate-500 w-10 text-right shrink-0">
+                  <span style={{ fontSize: "0.72rem", color: ui.muted, width: "32px", textAlign: "right", flexShrink: 0 }}>
                     {item.count.toLocaleString("ar-DZ")}
                   </span>
                 </motion.div>
@@ -435,127 +409,159 @@ function KeywordsBySource({ companyId }) {
           )}
         </>
       )}
-    </Section>
+    </SectionCard>
   );
 }
 
-// ─── Co-occurrence Pairs ──────────────────────────────────────────────────────
+/* ── Section 4: Co-occurrence ───────────────────────────────────────────────── */
 
-function CoOccurrence({ companyId }) {
-  const [pairs,   setPairs]   = useState([]);
+function CoOccurrence({ companyId, isDark, t }) {
+  const [pairs, setPairs]     = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState("");
+  const [error, setError]     = useState("");
+
+  const ui = { muted: isDark ? "#6B7280" : "#9CA3AF", surface2: isDark ? "#161616" : "#F8FAFC", track: isDark ? "#1E1E1E" : "#E5E7EB" };
 
   useEffect(() => {
     if (!companyId) return;
-    setLoading(true);
-    setError("");
-    api
-      .getCoOccurrence(companyId, 15)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.error) throw new Error(json.error);
-        setPairs(json.pairs || []);
-      })
-      .catch((err) => setError(err.message || "فشل التحميل"))
+    setLoading(true); setError("");
+    api.getCoOccurrence(companyId, 15)
+      .then((r) => r.json())
+      .then((json) => { if (json.error) throw new Error(json.error); setPairs(json.pairs || []); })
+      .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, [companyId]);
 
   const maxCount = pairs[0]?.count || 1;
 
   return (
-    <Section title="الكلمات الأكثر ظهوراً معاً">
-      <p className="text-xs text-slate-500 text-right">
-        أزواج الكلمات التي تظهر معاً بشكل متكرر في نفس المنشور
+    <SectionCard icon={GitMerge} title={t("topics.coOccurrence.title")} accent="#8B5CF6" isDark={isDark}>
+      <p style={{ fontSize: "0.78rem", color: ui.muted, textAlign: "right", marginBottom: "1.25rem", marginTop: 0 }}>
+        {t("topics.coOccurrence.description")}
       </p>
 
-      {loading ? (
-        <Spinner />
-      ) : error ? (
-        <ErrorBox message={error} />
-      ) : pairs.length === 0 ? (
-        <p className="text-center text-slate-500 text-sm py-8">لا توجد بيانات</p>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {loading ? <Spinner color="#8B5CF6" /> : error ? (
+        <p style={{ color: "#F87171", fontSize: "0.85rem", textAlign: "center" }}>{error}</p>
+      ) : pairs.length === 0 ? <EmptyState label={t("topics.noData")} isDark={isDark} /> : (
+        <div style={{ display: "grid", gap: "12px", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}>
           {pairs.map((pair, i) => {
             const pct = Math.round((pair.count / maxCount) * 100);
             return (
-              <motion.div
-                key={`${pair.word_a}-${pair.word_b}`}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
+              <motion.div key={`${pair.word_a}-${pair.word_b}`}
+                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.04 }}
-                className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-2"
-              >
-                <div className="flex items-center justify-center gap-2 flex-wrap">
-                  <span className="text-sm font-semibold text-sky-300" dir="auto">
-                    {pair.word_a}
-                  </span>
-                  <span className="text-slate-600 text-xs">+</span>
-                  <span className="text-sm font-semibold text-purple-300" dir="auto">
-                    {pair.word_b}
-                  </span>
+                style={{
+                  borderRadius: "18px", padding: "1rem",
+                  background: ui.surface2, border: `1px solid ${ui.track}`,
+                }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", flexWrap: "wrap", marginBottom: "10px" }}>
+                  <span dir="auto" style={{ fontSize: "0.85rem", fontWeight: "700", color: "#C9A84C" }}>{pair.word_a}</span>
+                  <span style={{ color: ui.muted, fontSize: "0.75rem" }}>+</span>
+                  <span dir="auto" style={{ fontSize: "0.85rem", fontWeight: "700", color: "#8B5CF6" }}>{pair.word_b}</span>
                 </div>
-
-                <div className="rounded-full bg-slate-800 h-1.5 overflow-hidden">
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width:      `${pct}%`,
-                      background: "linear-gradient(to left, #a78bfa, #38bdf8)",
-                    }}
-                  />
+                <div style={{ height: "5px", borderRadius: "999px", background: ui.track, overflow: "hidden", marginBottom: "8px" }}>
+                  <div style={{
+                    height: "100%", borderRadius: "999px", width: `${pct}%`,
+                    background: "linear-gradient(to left, #8B5CF6, #C9A84C)",
+                  }} />
                 </div>
-
-                <p className="text-xs text-slate-500 text-center">
-                  {pair.count.toLocaleString("ar-DZ")} منشور مشترك
+                <p style={{ fontSize: "0.72rem", color: ui.muted, textAlign: "center", margin: 0 }}>
+                  {pair.count.toLocaleString("ar-DZ")} {t("topics.coOccurrence.sharedPosts")}
                 </p>
               </motion.div>
             );
           })}
         </div>
       )}
-    </Section>
+    </SectionCard>
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+/* ── Main Page ──────────────────────────────────────────────────────────────── */
 
 export default function TopicsPage() {
-  const navigate          = useNavigate();
   const { activeCompany } = useAuth();
+  const { theme } = useTheme();
+  const { t } = useTranslation();
+  const isDark = theme === "dark";
+
+  const ui = {
+    bg:      isDark ? "#0A0A0A" : "#F7F6F2",
+    panel:   isDark ? "#111111" : "#FFFFFF",
+    border:  isDark ? "#1E1E1E" : "#E5E7EB",
+    muted:   isDark ? "#6B7280" : "#9CA3AF",
+    text:    isDark ? "#E5E7EB" : "#111111",
+  };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-6 md:p-10" dir="rtl">
-      <div className="mx-auto max-w-5xl space-y-8">
+    <div dir="rtl" style={{ minHeight: "100vh", background: ui.bg, color: ui.text }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
-        {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="mb-2 text-sm text-slate-400 hover:text-sky-400 transition"
-            >
-              → لوحة التحكم
-            </button>
-            <h1 className="text-3xl font-bold">تحليل المواضيع</h1>
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+
+        {/* ── HERO ── */}
+        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+          style={{
+            position: "relative", overflow: "hidden", borderRadius: "28px",
+            border: `1px solid ${ui.border}`, background: ui.panel,
+            padding: "2rem 2.5rem", marginBottom: "2rem",
+          }}>
+          {/* blobs */}
+          <div style={{ position: "absolute", left: "-60px", top: "-60px", width: "200px", height: "200px", borderRadius: "50%", background: "#C9A84C", opacity: 0.04, filter: "blur(48px)", pointerEvents: "none" }} />
+          <div style={{ position: "absolute", right: "-60px", bottom: "-60px", width: "200px", height: "200px", borderRadius: "50%", background: "#4A90D9", opacity: 0.04, filter: "blur(48px)", pointerEvents: "none" }} />
+
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              padding: "5px 14px", borderRadius: "999px",
+              border: `1px solid ${isDark ? "#2A2A2A" : "#E5E7EB"}`,
+              background: isDark ? "#C9A84C0D" : "#C9A84C10",
+              color: "#C9A84C", fontSize: "0.78rem", fontWeight: "600",
+              marginBottom: "1rem",
+            }}>
+              <Sparkles size={13} />
+              {t("topics.badge")}
+            </div>
+
+            <h1 style={{ fontSize: "2rem", fontWeight: "900", margin: "0 0 0.75rem", letterSpacing: "-0.02em" }}>
+              {t("topics.title")}
+            </h1>
+
+            <p style={{ fontSize: "0.88rem", lineHeight: "1.75", color: ui.muted, margin: 0, maxWidth: "600px" }}>
+              {t("topics.description")}
+            </p>
+
             {activeCompany && (
-              <p className="mt-1 text-sm text-sky-400">{activeCompany.name}</p>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: "8px",
+                marginTop: "1rem", padding: "6px 14px", borderRadius: "999px",
+                background: isDark ? "#161616" : "#F5F4F0",
+                border: `1px solid ${ui.border}`, color: "#C9A84C",
+                fontSize: "0.8rem", fontWeight: "700",
+              }}>
+                {activeCompany.name}
+              </div>
             )}
           </div>
-        </div>
+        </motion.div>
 
+        {/* ── SECTIONS ── */}
         {!activeCompany ? (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 px-6 py-12 text-center">
-            <p className="text-slate-400">لم يتم تحديد شركة</p>
+          <div style={{
+            borderRadius: "24px", border: `1px solid ${ui.border}`,
+            background: ui.panel, padding: "4rem 2rem", textAlign: "center",
+            color: ui.muted,
+          }}>
+            {t("topics.noCompany")}
           </div>
         ) : (
-          <>
-            <TopKeywordsChart  companyId={activeCompany.id} />
-            <KeywordTrends     companyId={activeCompany.id} />
-            <KeywordsBySource  companyId={activeCompany.id} />
-            <CoOccurrence      companyId={activeCompany.id} />
-          </>
+          <motion.div variants={containerVariants} initial="hidden" animate="visible"
+            style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <TopKeywordsChart companyId={activeCompany.id} isDark={isDark} t={t} />
+            <KeywordTrends    companyId={activeCompany.id} isDark={isDark} t={t} />
+            <KeywordsBySource companyId={activeCompany.id} isDark={isDark} t={t} />
+            <CoOccurrence     companyId={activeCompany.id} isDark={isDark} t={t} />
+          </motion.div>
         )}
 
       </div>

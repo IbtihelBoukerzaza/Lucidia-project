@@ -3,6 +3,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from django.db.models import Q
 from .models import Post
 from .serializers import PostCreateSerializer, PostSerializer
 from .services import company_ids_for_user, user_is_admin_of_company
@@ -47,6 +48,14 @@ class PostListCreateView(generics.ListCreateAPIView):
         platform_param = self.request.query_params.get("platform")
         if platform_param:
             qs = qs.filter(platform=platform_param)
+
+        # Search in text and author
+        search_param = self.request.query_params.get("search", "").strip()
+        if search_param:
+            qs = qs.filter(
+                Q(text__icontains=search_param) |
+                Q(author__icontains=search_param)
+            )
 
         return qs
 

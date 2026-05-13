@@ -3,7 +3,7 @@ from .models import AlertRule, Alert
 
 
 class AlertRuleSerializer(serializers.ModelSerializer):
-    created_by_name = serializers.SerializerMethodField()
+    created_by_name   = serializers.SerializerMethodField()
     rule_type_display = serializers.CharField(source="get_rule_type_display", read_only=True)
     severity_display  = serializers.CharField(source="get_severity_display",  read_only=True)
 
@@ -24,13 +24,16 @@ class AlertRuleSerializer(serializers.ModelSerializer):
 
 
 class AlertSerializer(serializers.ModelSerializer):
-    rule_type    = serializers.CharField(source="rule.rule_type",    read_only=True, default="")
+    rule_type        = serializers.CharField(source="rule.rule_type",  read_only=True, default="")
+    threshold        = serializers.FloatField(source="rule.threshold", read_only=True, default=None)
+    keyword          = serializers.CharField(source="rule.keyword",    read_only=True, default="")
     severity_display = serializers.CharField(source="get_severity_display", read_only=True)
 
     class Meta:
         model  = Alert
         fields = [
             "id", "message", "severity", "severity_display",
-            "is_read", "triggered_at", "rule_type",
+            "is_read", "triggered_at",
+            "rule_type", "threshold", "keyword",
         ]
         read_only_fields = fields

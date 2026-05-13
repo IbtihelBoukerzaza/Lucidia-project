@@ -1,0 +1,690 @@
+{
+  "navigation": {
+    "home": "Accueil",
+    "posts": "Publications",
+    "sentiment": "Sentiment",
+    "topics": "Sujets",
+    "alerts": "Alertes",
+    "engagement": "Engagement",
+    "surveys": "Enquêtes",
+    "team": "Équipe",
+    "settings": "Paramètres",
+    "login": "Connexion",
+    "faq": "FAQ",
+    "contactUs": "Contact",
+    "logout": "Déconnexion"
+  },
+
+"alerts": {
+  "empty": "Aucune alerte",
+  "viewAll": "Voir tout",
+  "badge": "Système d'Alertes",
+  "title": "Alertes",
+  "description": "Créez des règles d'alerte automatiques déclenchées après chaque collecte de données.",
+  "noCompany": "Aucune entreprise sélectionnée",
+  "tabs": { "rules": "Règles", "notifications": "Notifications" },
+  "rules": {
+    "count": "{{count}} règle(s) définie(s)",
+    "none": "Aucune règle pour l'instant",
+    "add": "Ajouter une règle",
+    "cancel": "Annuler",
+    "newRule": "Nouvelle règle",
+    "ruleType": "Type de règle",
+    "keyword": "Mot-clé",
+    "keywordPlaceholder": "ex. problème",
+    "threshold": "Seuil",
+    "severity": "Gravité",
+    "saving": "Enregistrement...",
+    "save": "Enregistrer la règle",
+    "createdBy": "Créé par",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "delete": "Supprimer",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette règle ?",
+    "emptyTitle": "Aucune règle d'alerte",
+    "emptyDesc": "Ajoutez une règle pour recevoir des alertes automatiques après chaque collecte",
+    "errorNumeric": "Veuillez entrer une valeur numérique valide.",
+    "errorKeyword": "Veuillez entrer un mot-clé pour ce type de règle.",
+    "threshold_label": "Seuil ({{unit}})",
+    "types": {
+      "negative_pct_above":   { "label": "Taux négatif dépasse le seuil",              "unit": "%",      "hint": "ex. 40 — déclenche si le taux négatif dépasse 40%" },
+      "positive_pct_below":   { "label": "Taux positif descend sous le seuil",         "unit": "%",      "hint": "ex. 30 — déclenche si le taux positif descend sous 30%" },
+      "negative_count_above": { "label": "Nombre de posts négatifs dépasse la limite", "unit": "posts",  "hint": "ex. 100 — déclenche si les posts négatifs dépassent 100/jour" },
+      "volume_spike":         { "label": "Volume de posts journalier dépasse la limite","unit": "posts",  "hint": "ex. 500 — déclenche si le total dépasse 500 posts/jour" },
+      "keyword_spike":        { "label": "Mot-clé dépasse le seuil d'apparition",      "unit": "fois",   "hint": "ex. 50 — déclenche si le mot apparaît plus de 50 fois/jour" },
+      "sentiment_drop":       { "label": "Chute du positif par rapport à hier",        "unit": "points", "hint": "ex. 20 — déclenche si le positif chute de plus de 20 points" },
+      "negative_streak":      { "label": "Sentiment négatif dominant pendant N jours", "unit": "jours",  "hint": "ex. 3 — déclenche si le négatif domine pendant 3 jours consécutifs" }
+    },
+    "severityOptions": {
+      "low": "Faible", "medium": "Moyen", "high": "Élevé"
+    }
+  },
+  "notifications": {
+    "unread": "{{count}} non lu(s)",
+    "allRead": "Toutes les notifications sont lues",
+    "markAll": "Tout marquer comme lu",
+    "marking": "En cours...",
+    "emptyTitle": "Aucune notification",
+    "emptyDesc": "Les notifications apparaîtront ici automatiquement après chaque collecte de données",
+    "messages": {
+      "negative_pct_above":   "Le sentiment négatif a atteint le seuil de {{threshold}}%",
+      "positive_pct_below":   "Le sentiment positif est descendu sous {{threshold}}%",
+      "negative_count_above": "Le nombre de posts négatifs a dépassé {{threshold}} posts/jour",
+      "volume_spike":         "Le volume de posts journalier a dépassé {{threshold}} posts",
+      "keyword_spike":        "Le mot-clé «{{keyword}}» a dépassé {{threshold}} occurrences/jour",
+      "sentiment_drop":       "Le sentiment positif a chuté de plus de {{threshold}} points vs hier",
+      "negative_streak":      "Le sentiment négatif est dominant depuis {{threshold}} jours consécutifs",
+      "unknown":              "Une alerte a été déclenchée"
+    }
+  }
+},
+
+  "footer": {
+    "copyright": "© {{year}} SentivyaDZ. Tous droits réservés.",
+    "faq": "FAQ",
+    "contactUs": "Contact"
+  },
+
+"home": {
+  "tagline": "Écoute sociale et analyse des sentiments algériens",
+  "title": "Comprenez ce que dit",
+  "subtitle": "votre audience algérienne",
+  "description": "Gantra surveille le contenu des réseaux sociaux et des actualités, analysant les sentiments avec une grande précision et un support complet du dialecte algérien et de l'Arabizi.",
+  "requestTrial": "Demander un essai gratuit",
+  "getStarted": "En savoir plus",
+  "trust": {
+    "brands": "Marques",
+    "accuracy": "Précision d'analyse",
+    "monitoring": "Surveillance continue"
+  },
+  "features": {
+    "aiAnalysis":      { "title": "Analyse par IA",                  "description": "Les modèles DziriBERT et MARBERT entraînés sur le dialecte algérien classifient les sentiments avec plus de 98% de précision." },
+    "multiPlatform":   { "title": "Surveillance multi-plateformes",  "description": "Facebook, Instagram, TikTok, YouTube, Reddit, X — tout en un seul endroit." },
+    "realTimeAlerts":  { "title": "Alertes en temps réel",           "description": "Soyez notifié dès qu'un indicateur dépasse votre seuil, pour agir avant qu'une crise ne s'aggrave." },
+    "brandProtection": { "title": "Protection de la réputation",     "description": "Surveillez l'image de votre marque quotidiennement et suivez tout changement dans les sentiments de votre audience." }
+  },
+  "analytics": {
+    "title": "Tableau de bord analytique en direct",
+    "description": "Données réelles mises à jour après chaque opération de surveillance",
+    "liveData": "Données en direct",
+    "sentimentEvolution": "Évolution des sentiments dans le temps",
+    "positive": "Positif",
+    "neutral": "Neutre",
+    "negative": "Négatif",
+    "totalComments": "Total des commentaires",
+    "thisMonth": "Ce mois-ci",
+    "positiveRate": "Taux positif",
+    "ofTotalComments": "Du total des commentaires",
+    "lastUpdate": "Dernière mise à jour",
+    "realTime": "Temps réel",
+    "now": "Maintenant"
+  },
+  "howItWorks": {
+    "title": "Comment ça fonctionne ?",
+    "description": "Trois étapes simples pour obtenir des insights précis sur votre marque",
+    "step1": { "title": "Ajoutez votre marque",          "description": "Enregistrez les mots-clés et les comptes de réseaux sociaux de votre entreprise." },
+    "step2": { "title": "Surveillance automatique",      "description": "La plateforme collecte automatiquement tous les posts et commentaires liés à votre marque sur toutes les plateformes." },
+    "step3": { "title": "Analyse et alertes instantanées","description": "Les sentiments sont analysés automatiquement et vous recevez des alertes dès qu'un changement significatif est détecté." }
+  },
+  "whatWeOffer": {
+    "title": "Que proposons-nous ?",
+    "description": "Des outils intégrés pour comprendre l'opinion publique algérienne sur votre marque",
+    "sentimentAnalysis":   { "title": "Analyse des sentiments",           "description": "Classification automatique de chaque post et commentaire en positif, négatif ou neutre." },
+    "dialectAnalysis":     { "title": "Support du dialecte algérien",     "description": "Modèles spécifiquement entraînés sur le dialecte algérien, l'Arabizi et le contenu multilingue." },
+    "reputationIndicator": { "title": "Indicateur de réputation digitale","description": "Suivi quotidien de l'image de votre marque avec des alertes en cas de détérioration soudaine." }
+  },
+  "platforms": {
+    "title": "Plateformes supportées",
+    "description": "Nous surveillons le contenu de toutes les plateformes les plus utilisées en Algérie",
+    "twitter": "X / Twitter",
+    "facebook": "Facebook",
+    "instagram": "Instagram"
+  },
+  "whoWeServe": {
+    "title": "Qui servons-nous ?",
+    "description": "Gantra sert les entreprises et institutions qui souhaitent comprendre l'opinion du public algérien",
+    "localBrands": "Marques algériennes",
+    "smes": "PME",
+    "customerService": "Équipes service client",
+    "agencies": "Agences de marketing digital"
+  },
+  "cta": {
+    "title": "Prêt à comprendre votre audience algérienne ?",
+    "description": "Rejoignez les entreprises qui s'appuient sur Gantra pour surveiller leur réputation digitale et comprendre les sentiments de leurs clients.",
+    "contactUs": "Nous contacter"
+  }
+},
+
+  "dashboard": {
+    "brand": "Plateforme IA",
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue",
+    "admin": "Admin",
+    "analyst": "Analyste",
+    "logout": "Déconnexion",
+    "posts": "Publications",
+    "sentiment": "Sentiment",
+    "topics": "Sujets",
+    "alerts": "Alertes",
+    "team": "Équipe",
+    "settings": "Paramètres",
+    "surveys": "Enquêtes",
+    "engagement": "Engagement",
+    "administration": "Administration",
+    "services": "Services",
+    "modules": "Modules"
+  },
+  "posts": {
+    "badge": "Surveillance Sociale",
+    "title": "Publications",
+    "description": "Suivez toutes les publications et commentaires liés à votre marque sur différentes plateformes.",
+    "totalPosts": "Total des publications",
+    "searchResults": "Résultats de recherche",
+    "searchFor": "Recherche pour :",
+    "search": "Rechercher dans les publications...",
+    "clearFilters": "Effacer les filtres",
+    "viewSource": "Voir la source",
+    "noResults": "Aucun résultat",
+    "noResultsFor": "Aucune publication contenant",
+    "emptyTitle": "Aucune publication",
+    "emptyDescription": "Essayez de modifier les filtres ou d'activer l'écoute sociale.",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "platforms": {
+      "social": "Social",
+      "news": "Actualités"
+    },
+    "filters": {
+      "allSources": "Toutes les sources",
+      "allPlatforms": "Toutes les plateformes"
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement des publications"
+    }
+  },"sentiment": {
+  "badge": "Analyse des sentiments",
+  "title": "Analyse des sentiments",
+  "description": "Comprenez ce que ressent votre audience envers votre marque sur toutes les plateformes.",
+  "backToDashboard": "Tableau de bord",
+  "distribution": {
+    "title": "Distribution des sentiments",
+    "total": "Total des publications analysées",
+    "positive": "Positif",
+    "neutral": "Neutre",
+    "negative": "Négatif"
+  },
+  "timeline": {
+    "title": "Évolution des sentiments",
+    "line": "Ligne",
+    "bar": "Barres",
+    "days7": "7 jours",
+    "days14": "14 jours",
+    "days30": "30 jours",
+    "noData": "Aucune donnée"
+  },
+  "stats": {
+    "totalPosts": "Total publications",
+    "totalPostsSub": "analysées",
+    "positiveRate": "Taux positif",
+    "positiveRateSub": "du total des publications",
+    "lastUpdate": "Dernière mise à jour",
+    "lastUpdateSub": "dernières données"
+  },
+  "wordCloud": {
+    "title": "Nuage de mots",
+    "hint": "La taille du mot reflète sa fréquence — survolez pour les détails",
+    "noData": "Aucune donnée"
+  },
+  "feed": {
+    "title": "Publications par sentiment",
+    "all": "Tout",
+    "positive": "Positif",
+    "neutral": "Neutre",
+    "negative": "Négatif",
+    "posts": "publication(s)",
+    "confidence": "confiance",
+    "viewSource": "Voir la source",
+    "noData": "Aucune publication",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "page": "Page",
+    "of": "sur"
+  },
+  "keywords": {
+    "title": "Mots clés par sentiment",
+    "positive": "Positif",
+    "neutral": "Neutre",
+    "negative": "Négatif",
+    "noData": "Aucune donnée"
+  },
+  "errors": {
+    "loadFailed": "Échec du chargement",
+    "noCompany": "Aucune entreprise sélectionnée"
+  }
+},
+"topics": {
+  "badge": "Analyse des Sujets",
+  "title": "Sujets",
+  "description": "Découvrez les mots-clés et sujets les plus discutés autour de votre marque.",
+  "noCompany": "Aucune entreprise sélectionnée",
+  "noData": "Données insuffisantes",
+  "top": "Top",
+  "days": "jours",
+  "topKeywords": { "title": "Principaux Mots-clés" },
+  "trends": { "title": "Évolution des Mots-clés" },
+  "bySource": { "title": "Mots-clés par Source" },
+  "coOccurrence": {
+    "title": "Mots les Plus Co-occurents",
+    "description": "Paires de mots apparaissant fréquemment ensemble dans le même post",
+    "sharedPosts": "posts communs"
+  }
+},
+"login": {
+  "title": "Connexion",
+  "welcome": "Bienvenue sur Gantra",
+  "emailLabel": "Adresse e-mail",
+  "emailPlaceholder": "user@company.dz",
+  "passwordLabel": "Mot de passe",
+  "passwordPlaceholder": "••••••••",
+  "submit": "Accéder à la plateforme",
+  "loading": "Connexion en cours...",
+  "noAccount": "Pas encore de compte ?",
+  "createAccount": "Demander l'accès",
+  "secureNote": "🔒 Connexion chiffrée et sécurisée",
+  "services": {
+    "sentiment": "Analyse des sentiments",
+    "opinion": "Surveillance des opinions",
+    "reports": "Rapports intelligents",
+    "intelligence": "Intelligence concurrentielle"
+  },
+  "stats": {
+    "accuracy": "Précision des modèles",
+    "sources": "Sources de données",
+    "realtime": "Mises à jour en direct"
+  },
+  "panel": {
+    "headline": "Écoutez votre marque grâce à l'IA",
+    "subheadline": "Analyse des sentiments • Surveillance sociale • Rapports en temps réel",
+    "quote": "Gantra a transformé notre façon de gérer l'opinion publique digitale.",
+    "quoteAuthor": "Équipe Marketing, Mobilis"
+  },
+  "errors": {
+    "emailRequired": "L'e-mail est requis",
+    "emailInvalid": "Format d'e-mail invalide",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères"
+  }
+},
+"requestAccess": {
+  "title": "Demander l'accès à la plateforme",
+  "subtitle": "Complétez les étapes pour rejoindre Gantra",
+  "haveAccount": "Vous avez déjà un compte ?",
+  "backToLogin": "Se connecter",
+  "secureNote": "Vos informations sont entièrement protégées et chiffrées",
+  "employees": "employés",
+  "steps": {
+    "personal": "Vos informations personnelles",
+    "company": "Informations sur l'entreprise",
+    "goal": "Votre objectif sur la plateforme"
+  },
+  "fields": {
+    "fullName": "Nom complet",
+    "email": "Email professionnel",
+    "companyName": "Nom de l'entreprise",
+    "sector": "Secteur d'activité",
+    "companySize": "Taille de l'entreprise",
+    "goal": "Quel est votre objectif d'utilisation de la plateforme ?"
+  },
+  "placeholders": {
+    "fullName": "Entrez votre nom complet",
+    "companyName": "Nom de votre entreprise",
+    "sector": "Sélectionner le secteur",
+    "companySize": "Sélectionner la taille",
+    "goal": "Ex : Surveiller la réputation de la marque et analyser le sentiment des clients..."
+  },
+  "sectors": {
+    "ecommerce": "E-commerce",
+    "finance": "Banque / Finance",
+    "telecom": "Télécom",
+    "services": "Services",
+    "other": "Autre"
+  },
+  "nav": {
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Envoyer la demande",
+    "sending": "Envoi en cours..."
+  },
+  "errors": {
+    "nameRequired": "Le nom complet est requis",
+    "emailRequired": "L'email est requis",
+    "emailInvalid": "Adresse email invalide",
+    "companyRequired": "Le nom de l'entreprise est requis",
+    "sectorRequired": "Le secteur est requis",
+    "sizeRequired": "La taille de l'entreprise est requise",
+    "goalRequired": "L'objectif est requis",
+    "failed": "Échec de l'envoi de la demande",
+    "unexpected": "Une erreur inattendue s'est produite"
+  },
+  "success": {
+    "title": "Demande envoyée !",
+    "message": "Merci de votre intérêt pour Gantra. Notre équipe vous contactera dans les 24–48 heures.",
+    "backToLogin": "Retour à la connexion"
+  },
+  "services": {
+    "sentiment": "Analyse des sentiments",
+    "listening": "Écoute sociale",
+    "reputation": "Réputation de marque",
+    "reports": "Rapports intelligents",
+    "dialect": "Dialecte algérien"
+  },
+  "panel": {
+    "headline": "Plateforme d'écoute intelligente pour le marché algérien",
+    "subheadline": "Analyse sentimentale en dialecte, surveillance de réputation, rapports exécutifs",
+    "quote": "\"Nous transformons chaque commentaire, réaction et mot dans l'espace numérique en information actionnable.\"",
+    "quoteAuthor": "L'équipe Gantra"
+  },
+  "trust": {
+    "accuracy": "94% précision",
+    "sources": "8+ sources",
+    "dialect": "Dialecte algérien",
+    "realtime": "En direct 24/7"
+  }
+},
+"engagement": {
+  "badge": "Analyse d'engagement",
+  "title": "Engagement du public",
+  "description": "Suivez les performances des publications sur les plateformes sociales et mesurez l'engagement de votre audience.",
+  "stats": {
+    "posts":    "Publication",
+    "likes":    "J'aime",
+    "comments": "Commentaire",
+    "shares":   "Partage",
+    "views":    "Vue"
+  },
+  "metrics": {
+    "likes":    "J'aime",
+    "comments": "Commentaires",
+    "shares":   "Partages",
+    "views":    "Vues"
+  },
+  "topPosts": {
+    "title":  "Publications les plus engagées",
+    "noData": "Aucune donnée disponible"
+  },
+  "platformBreakdown": {
+    "title":  "Répartition par plateforme",
+    "noData": "Aucune donnée disponible"
+  },
+  "table": {
+    "title":        "Toutes les publications",
+    "platform":     "Plateforme",
+    "link":         "Lien",
+    "date":         "Date",
+    "allPlatforms": "Toutes les plateformes",
+    "noData":       "Aucune publication trouvée",
+    "prev":         "Précédent",
+    "next":         "Suivant",
+    "page":         "Page",
+    "of":           "sur"
+  },
+  "errors": {
+    "loadFailed": "Échec du chargement des données d'engagement",
+    "noCompany":  "Veuillez sélectionner une entreprise pour afficher les données d'engagement"
+  }
+},
+"surveys": {
+  "badge": "Gestion des Enquêtes",
+  "title": "Enquêtes",
+  "description": "Créez des enquêtes d'opinion et collectez les avis clients avec une analyse de sentiment automatique.",
+  "noCompany": "Aucune entreprise sélectionnée",
+  "types": {
+    "mixed": "Mixte", "nps": "NPS", "csat": "CSAT", "feedback": "Retour libre"
+  },
+  "questionTypes": {
+    "text": "Texte libre", "rating": "Note (1–5)",
+    "nps": "NPS (0–10)", "multiple_choice": "Choix multiple"
+  },
+  "card": {
+    "active": "Actif", "inactive": "Inactif",
+    "questions": "question(s)", "responses": "réponse(s)",
+    "manage": "Gérer", "delete": "Supprimer",
+    "deleteConfirm": "Voulez-vous vraiment supprimer cette enquête ?"
+  },
+  "create": {
+    "button": "Nouvelle enquête", "title": "Nouvelle enquête",
+    "titleLabel": "Titre", "titlePlaceholder": "ex. Enquête de satisfaction client",
+    "descLabel": "Description (optionnel)", "descPlaceholder": "Brève description...",
+    "typeLabel": "Type d'enquête",
+    "saving": "Création...", "submit": "Créer l'enquête"
+  },
+  "detail": {
+    "share": "Partager l'enquête",
+    "copyLink": "Copier le lien", "copied": "Copié !",
+    "analytics": "Voir les résultats et analyses",
+    "activate": "Activer", "deactivate": "Désactiver"
+  },
+  "questions": {
+    "count": "Questions ({{count}})",
+    "add": "Ajouter une question", "cancel": "Annuler",
+    "typeLabel": "Type de question", "textLabel": "Texte de la question",
+    "textPlaceholder": "Tapez votre question ici...",
+    "choicesLabel": "Choix (séparés par une virgule)",
+    "choicesPlaceholder": "Option 1, Option 2, Option 3",
+    "saving": "Ajout...", "save": "Ajouter la question",
+    "empty": "Aucune question — ajoutez la première",
+    "deleteConfirm": "Supprimer cette question ?",
+    "errorText": "Le texte de la question est requis.",
+    "errorChoices": "Veuillez entrer des choix séparés par des virgules."
+  },
+  "analytics": {
+    "title": "Résultats de l'enquête",
+    "totalResponses": "Total des réponses",
+    "answers": "réponse(s)", "avgRating": "Note moyenne"
+  },
+  "empty": {
+    "title": "Aucune enquête pour l'instant",
+    "desc": "Cliquez sur «Nouvelle enquête» pour créer votre première enquête"
+  },
+  "errors": {
+    "loadFailed": "Échec du chargement",
+    "createFailed": "Échec de la création",
+    "titleRequired": "Le titre est requis."
+  }
+},
+"team": {
+  "badge": "Gestion d'équipe",
+  "title": "Équipe",
+  "description": "Gérez les membres de l'équipe et invitez des analystes à accéder au tableau de bord.",
+  "roles": {
+    "admin":   "Administrateur",
+    "analyst": "Analyste"
+  },
+  "members": {
+    "title": "Membres de l'équipe",
+    "count": "membres",
+    "empty": "Aucun membre pour l'instant"
+  },
+  "invite": {
+    "button":              "Inviter un analyste",
+    "title":               "Inviter un nouvel analyste",
+    "firstName":           "Prénom",
+    "firstNamePlaceholder":"ex: Ahmed",
+    "email":               "Email",
+    "emailPlaceholder":    "analyst@company.dz",
+    "submit":              "Envoyer l'invitation",
+    "sending":             "Envoi en cours...",
+    "success":             "Invitation envoyée avec succès",
+    "errorFields":         "Veuillez remplir tous les champs",
+    "errorFailed":         "Échec de l'envoi de l'invitation"
+  },
+  "errors": {
+    "loadFailed": "Échec du chargement des membres",
+    "noCompany":  "Veuillez sélectionner une entreprise pour voir l'équipe"
+  }
+},
+"publicSurvey": {
+  "badge": "Enquête",
+  "questionsCount": "question(s)",
+  "anonymous": "Vos réponses sont anonymes",
+  "textPlaceholder": "Écrivez votre réponse ici...",
+  "answered": "Répondu",
+  "submit": "Envoyer les réponses",
+  "submitting": "Envoi en cours...",
+  "poweredBy": "Propulsé par",
+  "nps": { "notAtAll": "Pas du tout probable", "definitely": "Extrêmement probable" },
+  "submitted": {
+    "title": "Merci !",
+    "message": "Vos réponses ont été envoyées avec succès. Nous apprécions votre participation.",
+    "poweredBy": "Propulsé par Gantra"
+  },
+  "errors": {
+    "title": "Enquête indisponible",
+    "notAvailable": "Cette enquête n'est pas disponible ou a expiré.",
+    "loadError": "Une erreur s'est produite lors du chargement.",
+    "submitFailed": "Échec de l'envoi. Veuillez réessayer."
+  }
+},
+"settings": {
+  "badge": "Paramètres de l'entreprise",
+  "title": "Paramètres",
+  "description": "Gérez vos mots-clés, profils sociaux et collectes de données.",
+  "ingest": {
+    "title": "Écoute sociale",
+    "desc": "Récupérez les dernières publications et commentaires de toutes les sources ajoutées",
+    "button": "Lancer l'écoute",
+    "running": "Collecte en cours...",
+    "success": "Collecte terminée avec succès ✓",
+    "new": "Nouveau", "existing": "Existant", "skipped": "Ignoré",
+    "statusSkipped": "Ignoré", "statusError": "Erreur",
+    "errorFailed": "Échec de la collecte",
+    "errorUnexpected": "Erreur inattendue"
+  },
+  "keywords": {
+    "title": "Mots-clés",
+    "desc": "Utilisés pour rechercher sur Google News, Reddit et YouTube",
+    "placeholder": "Ajouter un mot-clé...",
+    "add": "Ajouter",
+    "empty": "Aucun mot-clé pour l'instant",
+    "addSuccess": "Mot-clé ajouté avec succès",
+    "errorLoad": "Échec du chargement des mots-clés",
+    "errorAdd": "Échec de l'ajout du mot-clé",
+    "errorDelete": "Échec de la suppression"
+  },
+  "profiles": {
+    "title": "Profils sociaux",
+    "desc": "Liens des pages dont les données sont collectées",
+    "add": "Ajouter",
+    "empty": "Aucun profil ajouté",
+    "addSuccess": "Profil ajouté avec succès",
+    "errorLoad": "Échec du chargement des profils",
+    "errorAdd": "Échec de l'ajout du profil",
+    "errorDelete": "Échec de la suppression"
+  }
+},
+"contact": {
+  "tagline": "Contactez-nous",
+  "title": "Nous serions ravis de vous entendre",
+  "description": "Vous avez une question ou souhaitez en savoir plus sur Gantra ? Notre équipe est prête à vous aider.",
+  "form": {
+    "title": "Envoyez-nous un message",
+    "fullName": "Nom complet",
+    "fullNamePlaceholder": "Votre nom complet",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "example@company.dz",
+    "company": "Entreprise",
+    "companyPlaceholder": "Nom de votre entreprise",
+    "phone": "Numéro de téléphone",
+    "phonePlaceholder": "+213 ...",
+    "message": "Message",
+    "messagePlaceholder": "Écrivez votre message ici...",
+    "sendMessage": "Envoyer le message",
+    "sending": "Envoi en cours...",
+    "success": "Votre message a été envoyé avec succès ! Nous vous répondrons bientôt.",
+    "error": "Une erreur s'est produite lors de l'envoi. Veuillez réessayer."
+  },
+  "contactInfo": {
+    "title": "Informations de contact",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "addressValue": "Alger, Algérie"
+  },
+  "whyChooseUs": {
+    "title": "Pourquoi Gantra ?",
+    "deepUnderstanding": "Compréhension approfondie du marché algérien et du dialecte local",
+    "support247": "Support technique disponible 24h/24, 7j/7",
+    "customSolutions": "Solutions personnalisées pour chaque entreprise et secteur",
+    "competitivePrices": "Prix compétitifs avec garantie de qualité"
+  }
+},
+"faq": {
+  "tagline": "FAQ",
+  "title": "Tout ce que vous devez savoir sur Gantra",
+  "description": "Réponses aux questions les plus fréquentes sur la plateforme, son fonctionnement et ses fonctionnalités techniques.",
+  "stats": {
+    "questions": "{{count}} questions",
+    "support": "Support disponible 24/7",
+    "updated": "Continuellement mis à jour"
+  },
+  "questions": {
+    "q1": "Qu'est-ce que Gantra et quel est son objectif ?",
+    "a1": "Gantra est une plateforme algérienne spécialisée dans la surveillance et l'analyse des sentiments dans l'espace numérique. Elle collecte les publications et commentaires liés à votre marque depuis les réseaux sociaux et les actualités, puis les analyse à l'aide de modèles d'IA spécifiquement entraînés sur le dialecte algérien pour vous donner une compréhension précise de ce que dit votre audience.",
+
+    "q2": "Quelles plateformes Gantra prend-elle en charge ?",
+    "a2": "Gantra prend actuellement en charge : Facebook, Instagram, TikTok, YouTube, Reddit, X (Twitter), Google News et les flux RSS. La plateforme élargit continuellement sa liste de sources pour couvrir le maximum de contenu numérique algérien.",
+
+    "q3": "Comment la plateforme gère-t-elle le dialecte algérien et l'Arabizi ?",
+    "a3": "Gantra s'appuie sur deux modèles spécialisés : DziriBERT et MARBERT, tous deux entraînés sur des données arabes algériennes réelles incluant le dialecte, l'Arabizi et le contenu mixte arabe-français. Cela donne à la plateforme une grande capacité à comprendre le contexte local par rapport aux solutions générales.",
+
+    "q4": "Comment fonctionnent les alertes automatiques ?",
+    "a4": "Les administrateurs de l'entreprise peuvent créer des règles d'alerte personnalisées telles que : alerte lorsque le sentiment négatif dépasse 40%, ou lorsqu'un mot-clé apparaît plus de 50 fois par jour. Ces alertes sont déclenchées automatiquement après chaque opération de surveillance et parviennent aux utilisateurs dans la plateforme instantanément.",
+
+    "q5": "Qui peut accéder aux données au sein de l'entreprise ?",
+    "a5": "La plateforme utilise un système de contrôle d'accès basé sur les rôles. Les administrateurs ont un accès complet incluant les paramètres, la gestion d'équipe, les sondages et le déclenchement de la surveillance. Les analystes ont un accès en lecture seule aux données et rapports sans possibilité de modifier les paramètres ou d'inviter de nouveaux membres.",
+
+    "q6": "Que sont les sondages et comment fonctionnent-ils ?",
+    "a6": "Gantra permet de créer des sondages personnalisés et de les envoyer aux clients via un lien direct ou un QR code. Vous pouvez ajouter différents types de questions tels que l'échelle NPS, les évaluations de satisfaction et les questions ouvertes. Les réponses textuelles sont automatiquement analysées et classifiées par sentiment sans aucune intervention manuelle.",
+
+    "q7": "Faut-il une expertise technique pour utiliser la plateforme ?",
+    "a7": "Non, Gantra est conçue pour être facile à utiliser par tous les membres de l'équipe quelle que soit leur formation technique. L'interface utilisateur est claire et simple, et le processus de surveillance et de collecte de données fonctionne automatiquement. L'administrateur n'a besoin d'ajouter les mots-clés et les comptes de réseaux sociaux qu'une seule fois."
+  },
+  "cta": {
+    "title": "Vous n'avez pas trouvé de réponse à votre question ?",
+    "subtitle": "Notre équipe est prête à vous aider à tout moment.",
+    "button": "Contacter le support"
+  }
+},
+"setPassword": {
+  "title":               "Activer le compte",
+  "subtitle":            "Créez un mot de passe fort pour finaliser l'activation de votre compte",
+  "verifying":           "Vérification du lien d'activation...",
+  "invalidToken":        "Le lien d'activation est invalide ou expiré",
+  "verifyFailed":        "Impossible de vérifier le token d'activation",
+  "accountLabel":        "Compte",
+  "newUser":             "Nouvel utilisateur",
+  "passwordLabel":       "Nouveau mot de passe",
+  "passwordPlaceholder": "Entrez un mot de passe fort",
+  "confirmLabel":        "Confirmer le mot de passe",
+  "confirmPlaceholder":  "Ressaisissez votre mot de passe",
+  "submit":              "Enregistrer le mot de passe",
+  "saving":              "Enregistrement...",
+  "successMessage":      "Mot de passe défini avec succès, redirection...",
+  "backTo":              "Retour à",
+  "loginLink":           "Connexion",
+  "strength": {
+    "weak":   "Faible",
+    "fair":   "Acceptable",
+    "good":   "Bon",
+    "strong": "Fort"
+  },
+  "errors": {
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordShort":    "Le mot de passe doit contenir au moins 8 caractères",
+    "confirmRequired":  "Veuillez confirmer votre mot de passe",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "saveFailed":       "Échec de la définition du mot de passe"
+  }
+}
+
+}

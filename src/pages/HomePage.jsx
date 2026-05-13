@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Pie, Line } from 'react-chartjs-2'
+import { Line } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,490 +11,535 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js'
-import { TrendingUp, Users, MessageSquare, AlertCircle, ChevronLeft, ChevronRight, Brain, Globe, Zap, Shield, BarChart3, Clock, Target } from 'lucide-react'
+import {
+  TrendingUp, MessageSquare, Clock, Target,
+  Brain, Globe, Zap, Shield, ChevronLeft, ChevronRight,
+} from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLanguage } from '../contexts/LanguageContext'
+import { useTheme } from '../contexts/ThemeContext'
+import gantraLogo from '../assets/gantra-logo.png'
 
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
+  CategoryScale, LinearScale, PointElement, LineElement,
+  Title, Tooltip, Legend, ArcElement
 )
 
-function Stat({ label, value }) {
-  return (
-    <div className="rounded-2xl border border-slate-800/70 bg-slate-900/50 px-4 py-3 text-center shadow-sm shadow-slate-950/60">
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-sky-300">{value}</p>
-    </div>
-  )
-}
-
 export default function HomePage() {
-  const { t } = useTranslation()
+  const { t }           = useTranslation()
   const { currentLang } = useLanguage()
+  const { theme }       = useTheme()
+  const isDark          = theme === 'dark'
+
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [isVisible, setIsVisible] = useState(false)
-  const [statsVisible, setStatsVisible] = useState(false)
-  
+  const [isVisible, setIsVisible]       = useState(false)
+
+  const ui = {
+    bg:       isDark ? '#0A0A0A' : '#F8FAFC',
+    surface:  isDark ? '#111111' : '#FFFFFF',
+    surface2: isDark ? '#161616' : '#F1F5F9',
+    border:   isDark ? '#1E1E1E' : '#E2E8F0',
+    text:     isDark ? '#E5E7EB' : '#0F172A',
+    muted:    isDark ? '#6B7280' : '#64748B',
+    subtle:   isDark ? '#9CA3AF' : '#475569',
+  }
+
   const slides = [
     {
-      id: 1,
-      icon: Brain,
+      id: 1, icon: Brain,
       title: t('home.features.aiAnalysis.title'),
       description: t('home.features.aiAnalysis.description'),
-      gradient: "from-sky-500/20 to-emerald-500/20",
-      iconColor: "text-sky-400"
+      accent: '#2E8B57', bg: 'rgba(46,139,87,0.12)',
     },
     {
-      id: 2,
-      icon: Globe,
+      id: 2, icon: Globe,
       title: t('home.features.multiPlatform.title'),
       description: t('home.features.multiPlatform.description'),
-      gradient: "from-emerald-500/20 to-amber-500/20",
-      iconColor: "text-emerald-400"
+      accent: '#4A90D9', bg: 'rgba(74,144,217,0.12)',
     },
     {
-      id: 3,
-      icon: Zap,
+      id: 3, icon: Zap,
       title: t('home.features.realTimeAlerts.title'),
       description: t('home.features.realTimeAlerts.description'),
-      gradient: "from-amber-500/20 to-rose-500/20",
-      iconColor: "text-amber-400"
+      accent: '#C9A84C', bg: 'rgba(201,168,76,0.12)',
     },
     {
-      id: 4,
-      icon: Shield,
+      id: 4, icon: Shield,
       title: t('home.features.brandProtection.title'),
       description: t('home.features.brandProtection.description'),
-      gradient: "from-rose-500/20 to-violet-500/20",
-      iconColor: "text-rose-400"
-    }
+      accent: '#2E8B57', bg: 'rgba(46,139,87,0.12)',
+    },
   ]
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length)
-    }, 4000)
+    const timer = setInterval(() => setCurrentSlide(p => (p + 1) % slides.length), 4000)
     return () => clearInterval(timer)
   }, [slides.length])
 
-  useEffect(() => {
-    setIsVisible(true)
-    const statsTimer = setTimeout(() => setStatsVisible(true), 800)
-    return () => clearTimeout(statsTimer)
-  }, [])
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length)
-  }
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
-  }
+  useEffect(() => { setIsVisible(true) }, [])
 
   return (
-    <div className="space-y-16">
-      <section className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-center">
-        <div className="space-y-6">
-          <p className={`inline-flex items-center rounded-full border border-sky-500/40 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold text-sky-200 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
-             style={{ transitionDelay: '200ms' }}>
-             {t('home.tagline')}
-          </p>
-          <h1 className={`text-3xl font-bold leading-relaxed text-slate-50 sm:text-4xl lg:text-[2.7rem] transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'}`}
-              style={{ transitionDelay: '400ms' }}>
-            {t('home.title')}
-            <span className="text-sky-300"> {t('home.subtitle')}</span>
-          </h1>
-          <p className={`max-w-xl text-sm leading-relaxed text-slate-300 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
-             style={{ transitionDelay: '600ms' }}>
-            {t('home.description')}
-          </p>
-          <div className={`flex flex-wrap items-center gap-3 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
-               style={{ transitionDelay: '800ms' }}>
-            <NavLink
-              to="/products/social-listening"
-              className="inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-950/60 px-5 py-2.5 text-sm font-semibold text-slate-100 hover:border-sky-500/60 hover:text-sky-200 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-sky-500/20"
-            >
-              {t('home.getStarted')}
-            </NavLink>
-          </div>
-        </div>
+    <div dir="rtl" style={{ background: ui.bg, color: ui.text, minHeight: '100vh' }}>
+      <style>{`
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+      `}</style>
 
-        {/* Dynamic Feature Carousel */}
-        <div className={`relative h-80 overflow-hidden rounded-3xl border border-slate-800/80 bg-gradient-to-b from-slate-900/90 to-slate-950/90 p-6 shadow-xl shadow-slate-950/70 transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-95 translate-x-8'}`}
-             style={{ transitionDelay: '1000ms' }}>
-          <div className="relative h-full">
+      <div style={{
+        maxWidth: '1100px', margin: '0 auto', padding: '0 1.5rem',
+        display: 'flex', flexDirection: 'column', gap: '5rem',
+        paddingTop: '3rem', paddingBottom: '5rem',
+      }}>
+
+        {/* ── HERO ──────────────────────────────────────────────────── */}
+        <section style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '3rem', alignItems: 'center',
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
+          transition: 'all 0.8s ease',
+        }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+            {/* Badge */}
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              padding: '5px 14px', borderRadius: '999px', width: 'fit-content',
+              border: '1px solid rgba(46,139,87,0.4)',
+              background: 'rgba(46,139,87,0.08)', color: '#2E8B57',
+              fontSize: '0.75rem', fontWeight: '600',
+            }}>
+              <span style={{
+                width: '6px', height: '6px', borderRadius: '50%',
+                background: '#2E8B57', animation: 'pulse 2s infinite',
+              }} />
+              {t('home.tagline')}
+            </span>
+
+            {/* Headline */}
+            <h1 style={{
+              fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
+              fontWeight: '900', lineHeight: '1.25',
+              margin: 0, color: ui.text, letterSpacing: '-0.02em',
+            }}>
+              {t('home.title')}
+              <span style={{ color: '#2E8B57' }}> {t('home.subtitle')}</span>
+            </h1>
+
+            <p style={{ fontSize: '0.9rem', lineHeight: '1.8', color: ui.muted, margin: 0, maxWidth: '520px' }}>
+              {t('home.description')}
+            </p>
+
+            {/* CTAs */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
+              <NavLink to="/login" style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                borderRadius: '999px', padding: '10px 28px',
+                fontSize: '0.875rem', fontWeight: '700',
+                background: '#2E8B57', color: '#fff',
+                textDecoration: 'none', transition: 'all 0.2s', border: 'none',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#3DAA6A'}
+              onMouseLeave={e => e.currentTarget.style.background = '#2E8B57'}>
+                {t('navigation.login')}
+              </NavLink>
+              <NavLink to="/request-access" style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                borderRadius: '999px', padding: '10px 22px',
+                fontSize: '0.875rem', fontWeight: '600',
+                border: `1px solid ${ui.border}`, color: ui.subtle,
+                textDecoration: 'none', transition: 'all 0.2s', background: 'transparent',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#C9A84C'; e.currentTarget.style.color = '#C9A84C'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.color = ui.subtle; }}>
+                {t('home.requestTrial')}
+              </NavLink>
+            </div>
+
+            {/* Trust bar */}
+            <div style={{ display: 'flex', gap: '2rem', paddingTop: '0.5rem' }}>
+              {[
+                { value: '+50',  label: t('home.trust.brands') },
+                { value: '98%',  label: t('home.trust.accuracy') },
+                { value: '24/7', label: t('home.trust.monitoring') },
+              ].map(s => (
+                <div key={s.label} style={{ textAlign: 'center' }}>
+                  <p style={{ fontSize: '1.25rem', fontWeight: '800', color: '#C9A84C', margin: 0 }}>{s.value}</p>
+                  <p style={{ fontSize: '0.7rem', color: ui.muted, margin: 0, marginTop: '2px' }}>{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Feature carousel */}
+          <div style={{
+            position: 'relative', height: '320px', overflow: 'hidden',
+            borderRadius: '24px', border: `1px solid ${ui.border}`,
+            background: ui.surface, padding: '1.5rem',
+          }}>
             {slides.map((slide, index) => {
-              const Icon = slide.icon
-              const isActive = index === currentSlide
-              const isPrev = index === (currentSlide - 1 + slides.length) % slides.length
-              const isNext = index === (currentSlide + 1) % slides.length
-              
+              const Icon   = slide.icon
+              const active = index === currentSlide
               return (
-                <div
-                  key={slide.id}
-                  className={`absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-700 ease-in-out ${
-                    isActive 
-                      ? 'opacity-100 scale-100 translate-x-0' 
-                      : isPrev 
-                      ? 'opacity-0 scale-95 translate-x-full'
-                      : isNext
-                      ? 'opacity-0 scale-95 -translate-x-full'
-                      : 'opacity-0 scale-90 translate-x-full'
-                  }`}
-                >
-                  <div className={`rounded-2xl bg-gradient-to-br ${slide.gradient} p-4 mb-4`}>
-                    <Icon className={`h-12 w-12 ${slide.iconColor}`} />
+                <div key={slide.id} style={{
+                  position: 'absolute', inset: 0, padding: '1.5rem',
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center',
+                  opacity: active ? 1 : 0,
+                  transform: active ? 'scale(1)' : 'scale(0.95)',
+                  transition: 'all 0.6s ease',
+                  pointerEvents: active ? 'auto' : 'none',
+                }}>
+                  <div style={{ borderRadius: '20px', padding: '1rem', marginBottom: '1rem', background: slide.bg }}>
+                    <Icon style={{ width: '48px', height: '48px', color: slide.accent }} />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-100 text-center mb-2">
+                  <h3 style={{ fontSize: '1rem', fontWeight: '700', color: ui.text, textAlign: 'center', margin: '0 0 8px' }}>
                     {slide.title}
                   </h3>
-                  <p className="text-sm text-slate-300 text-center leading-relaxed">
+                  <p style={{ fontSize: '0.82rem', color: ui.muted, textAlign: 'center', lineHeight: '1.7', margin: 0 }}>
                     {slide.description}
                   </p>
                 </div>
               )
             })}
+
+            <button onClick={() => setCurrentSlide(p => (p - 1 + slides.length) % slides.length)}
+              style={{
+                position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
+                borderRadius: '50%', width: '32px', height: '32px',
+                background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                border: 'none', cursor: 'pointer', color: ui.muted,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+              <ChevronLeft style={{ width: '16px', height: '16px' }} />
+            </button>
+            <button onClick={() => setCurrentSlide(p => (p + 1) % slides.length)}
+              style={{
+                position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
+                borderRadius: '50%', width: '32px', height: '32px',
+                background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                border: 'none', cursor: 'pointer', color: ui.muted,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+              <ChevronRight style={{ width: '16px', height: '16px' }} />
+            </button>
+
+            <div style={{ position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '6px' }}>
+              {slides.map((_, i) => (
+                <button key={i} onClick={() => setCurrentSlide(i)}
+                  style={{
+                    height: '6px', borderRadius: '999px', border: 'none', cursor: 'pointer',
+                    width: i === currentSlide ? '24px' : '6px',
+                    background: i === currentSlide ? '#2E8B57' : ui.border,
+                    transition: 'all 0.3s',
+                  }} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── ANALYTICS ─────────────────────────────────────────────── */}
+        <section style={{
+          borderRadius: '24px', border: `1px solid ${ui.border}`,
+          background: ui.surface, padding: '1.75rem',
+          position: 'relative', overflow: 'hidden',
+        }}>
+          <div style={{
+            position: 'absolute', top: 0, insetInline: 0, height: '3px',
+            background: 'linear-gradient(to left, #4A90D9, #2E8B57, #C9A84C)',
+            borderRadius: '3px 3px 0 0',
+          }} />
+
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+            marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem',
+          }}>
+            <div>
+              <h2 style={{
+                fontSize: '1.1rem', fontWeight: '700', color: ui.text,
+                margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '8px',
+              }}>
+                <TrendingUp style={{ width: '18px', height: '18px', color: '#2E8B57' }} />
+                {t('home.analytics.title')}
+              </h2>
+              <p style={{ fontSize: '0.82rem', color: ui.muted, margin: 0 }}>
+                {t('home.analytics.description')}
+              </p>
+            </div>
+            <span style={{
+              padding: '4px 12px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: '600',
+              border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C',
+              background: 'rgba(201,168,76,0.08)',
+            }}>
+              {t('home.analytics.liveData')}
+            </span>
           </div>
 
-          {/* Navigation Arrows */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-slate-800/80 p-2 text-slate-300 backdrop-blur-sm transition-all hover:bg-slate-700/80 hover:scale-110"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-slate-800/80 p-2 text-slate-300 backdrop-blur-sm transition-all hover:bg-slate-700/80 hover:scale-110"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr)',
+            gap: '1.25rem', alignItems: 'start',
+          }}>
+            {/* Chart */}
+            <div style={{
+              borderRadius: '18px', border: `1px solid ${ui.border}`,
+              background: ui.surface2, padding: '1.25rem',
+            }}>
+              <p style={{ fontSize: '0.82rem', fontWeight: '600', color: ui.text, margin: '0 0 1rem' }}>
+                {t('home.analytics.sentimentEvolution')}
+              </p>
+              <div style={{ height: '220px' }}>
+                <Line
+                  data={{
+                    labels: currentLang === 'ar'
+                      ? ['جانفي', 'فيفري', 'مارس', 'أفريل', 'ماي', 'جوان']
+                      : currentLang === 'fr'
+                      ? ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin']
+                      : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                      { label: t('home.analytics.positive'), data: [45,52,58,62,65,68], borderColor: '#2E8B57', backgroundColor: 'rgba(46,139,87,0.07)',  tension: 0.4, fill: true },
+                      { label: t('home.analytics.neutral'),  data: [30,28,25,23,22,22], borderColor: '#C9A84C', backgroundColor: 'rgba(201,168,76,0.07)', tension: 0.4, fill: true },
+                      { label: t('home.analytics.negative'), data: [25,20,17,15,13,10], borderColor: '#E53E3E', backgroundColor: 'rgba(229,62,62,0.07)',  tension: 0.4, fill: true },
+                    ],
+                  }}
+                  options={{
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                      legend: { position: 'top', labels: { color: ui.muted, font: { size: 11 }, padding: 12 } },
+                      tooltip: {
+                        backgroundColor: isDark ? 'rgba(17,17,17,0.95)' : 'rgba(255,255,255,0.98)',
+                        titleColor: ui.text, bodyColor: ui.muted,
+                        borderColor: ui.border, borderWidth: 1,
+                        callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y + '%' },
+                      },
+                    },
+                    scales: {
+                      x: { grid: { color: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }, ticks: { color: ui.muted, font: { size: 10 } } },
+                      y: { grid: { color: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }, ticks: { color: ui.muted, font: { size: 10 }, callback: v => v + '%' } },
+                    },
+                  }}
+                />
+              </div>
+            </div>
 
-          {/* Slide Indicators */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentSlide 
-                    ? 'w-8 bg-sky-400' 
-                    : 'w-2 bg-slate-600 hover:bg-slate-500'
-                }`}
-              />
+            {/* Metric cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {[
+                { icon: MessageSquare, label: t('home.analytics.totalComments'), value: '12,450', sub: t('home.analytics.thisMonth'),       accent: '#4A90D9', bg: 'rgba(74,144,217,0.1)'  },
+                { icon: Target,        label: t('home.analytics.positiveRate'),  value: '68%',    sub: t('home.analytics.ofTotalComments'), accent: '#2E8B57', bg: 'rgba(46,139,87,0.1)'   },
+                { icon: Clock,         label: t('home.analytics.lastUpdate'),    value: t('home.analytics.now'), sub: t('home.analytics.realTime'), accent: '#C9A84C', bg: 'rgba(201,168,76,0.1)' },
+              ].map(({ icon: Icon, label, value, sub, accent, bg }) => (
+                <div key={label} style={{
+                  borderRadius: '16px', border: `1px solid ${ui.border}`,
+                  background: ui.surface2, padding: '1rem',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ borderRadius: '12px', padding: '8px', background: bg, flexShrink: 0 }}>
+                      <Icon style={{ width: '18px', height: '18px', color: accent }} />
+                    </div>
+                    <div>
+                      <p style={{ fontSize: '0.7rem', color: ui.muted, margin: 0 }}>{label}</p>
+                      <p style={{ fontSize: '1.1rem', fontWeight: '700', color: ui.text, margin: '2px 0' }}>{value}</p>
+                      <p style={{ fontSize: '0.68rem', color: accent, margin: 0 }}>{sub}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── HOW IT WORKS ──────────────────────────────────────────── */}
+        <section>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: ui.text, margin: '0 0 6px' }}>
+            {t('home.howItWorks.title')}
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: ui.muted, margin: '0 0 1.5rem', maxWidth: '560px' }}>
+            {t('home.howItWorks.description')}
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+            {[
+              { num: '1', title: t('home.howItWorks.step1.title'), desc: t('home.howItWorks.step1.description'), accent: '#2E8B57', bg: 'rgba(46,139,87,0.1)'  },
+              { num: '2', title: t('home.howItWorks.step2.title'), desc: t('home.howItWorks.step2.description'), accent: '#4A90D9', bg: 'rgba(74,144,217,0.1)' },
+              { num: '3', title: t('home.howItWorks.step3.title'), desc: t('home.howItWorks.step3.description'), accent: '#C9A84C', bg: 'rgba(201,168,76,0.1)' },
+            ].map(({ num, title, desc, accent, bg }) => (
+              <div key={num} style={{
+                borderRadius: '20px', border: `1px solid ${ui.border}`,
+                background: ui.surface, padding: '1.5rem',
+                transition: 'all 0.2s', cursor: 'default',
+                position: 'relative', overflow: 'hidden',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.transform = 'translateY(-4px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.transform = 'translateY(0)'; }}>
+                <div style={{ position: 'absolute', top: 0, insetInline: 0, height: '3px', background: accent, borderRadius: '3px 3px 0 0' }} />
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  width: '40px', height: '40px', borderRadius: '14px',
+                  background: bg, color: accent,
+                  fontSize: '1.1rem', fontWeight: '800', marginBottom: '1rem',
+                }}>
+                  {num}
+                </span>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: '700', color: ui.text, margin: '0 0 6px' }}>{title}</h3>
+                <p style={{ fontSize: '0.78rem', color: ui.muted, margin: 0, lineHeight: '1.7' }}>{desc}</p>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Analytics Section with Line Chart */}
-      <section className={`rounded-3xl border border-slate-800/80 bg-slate-900/40 p-6 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-               style={{ transitionDelay: '1200ms' }}>
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-slate-50 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-sky-400" />
-            {t('home.analytics.title')}
+        {/* ── WHAT WE OFFER ─────────────────────────────────────────── */}
+        <section>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: ui.text, margin: '0 0 6px' }}>
+            {t('home.whatWeOffer.title')}
           </h2>
-          <p className="mt-2 text-sm text-slate-300">
-            {t('home.analytics.description')}
-          </p>
-        </div>
-        
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Line Chart - Sentiment Trends */}
-          <div className={`lg:col-span-2 rounded-2xl border border-slate-800/70 bg-slate-950/60 p-5 transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-               style={{ transitionDelay: '1400ms' }}>
-            <p className="text-sm font-semibold text-slate-200 mb-4">
-              {t('home.analytics.sentimentEvolution')}
-            </p>
-            <div className="h-64">
-              <Line
-                data={{
-                  labels: currentLang === 'ar' ? ['جانفي', 'فيفري', 'مارس', 'أفريل', 'ماي', 'جوان'] : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                  datasets: [
-                    {
-                      label: t('home.analytics.positive'),
-                      data: [45, 52, 58, 62, 65, 68],
-                      borderColor: 'rgba(16, 185, 129, 1)',
-                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                      tension: 0.4,
-                      fill: true,
-                    },
-                    {
-                      label: t('home.analytics.neutral'),
-                      data: [30, 28, 25, 23, 22, 22],
-                      borderColor: 'rgba(251, 191, 36, 1)',
-                      backgroundColor: 'rgba(251, 191, 36, 0.1)',
-                      tension: 0.4,
-                      fill: true,
-                    },
-                    {
-                      label: t('home.analytics.negative'),
-                      data: [25, 20, 17, 15, 13, 10],
-                      borderColor: 'rgba(239, 68, 68, 1)',
-                      backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                      tension: 0.4,
-                      fill: true,
-                    },
-                  ],
-                }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  interaction: {
-                    mode: 'index',
-                    intersect: false,
-                  },
-                  plugins: {
-                    legend: {
-                      position: 'top',
-                      labels: {
-                        color: '#cbd5e1',
-                        font: {
-                          size: 12,
-                        },
-                        padding: 15,
-                      },
-                    },
-                    tooltip: {
-                      backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                      titleColor: '#f1f5f9',
-                      bodyColor: '#cbd5e1',
-                      borderColor: '#475569',
-                      borderWidth: 1,
-                      callbacks: {
-                        label: function(context) {
-                          return context.dataset.label + ': ' + context.parsed.y + '%'
-                        }
-                      }
-                    },
-                  },
-                  scales: {
-                    x: {
-                      grid: {
-                        color: 'rgba(71, 85, 105, 0.3)',
-                      },
-                      ticks: {
-                        color: '#cbd5e1',
-                        font: {
-                          size: 11,
-                        },
-                      },
-                    },
-                    y: {
-                      grid: {
-                        color: 'rgba(71, 85, 105, 0.3)',
-                      },
-                      ticks: {
-                        color: '#cbd5e1',
-                        font: {
-                          size: 11,
-                        },
-                        callback: function(value) {
-                          return value + '%'
-                        }
-                      },
-                    },
-                  },
-                }}
-              />
-            </div>
-          </div>
-          
-          {/* Model Output Metrics Cards */}
-          <div className="space-y-4">
-            <div className={`rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4 transition-all duration-1000 ${statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                 style={{ transitionDelay: '1600ms' }}>
-              <div className="flex items-center gap-3">
-                <div className="rounded-xl bg-sky-500/20 p-2">
-                  <MessageSquare className="h-5 w-5 text-sky-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">{t('home.analytics.totalComments')}</p>
-                  <p className="text-lg font-semibold text-slate-100" id="total-comments">0</p>
-                  <p className="text-xs text-sky-400">{t('home.analytics.thisMonth')}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className={`rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4 transition-all duration-1000 ${statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                 style={{ transitionDelay: '1700ms' }}>
-              <div className="flex items-center gap-3">
-                <div className="rounded-xl bg-emerald-500/20 p-2">
-                  <Target className="h-5 w-5 text-emerald-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">{t('home.analytics.positiveRate')}</p>
-                  <p className="text-lg font-semibold text-slate-100" id="positive-rate">0%</p>
-                  <p className="text-xs text-emerald-400">{t('home.analytics.ofTotalComments')}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className={`rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4 transition-all duration-1000 ${statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                 style={{ transitionDelay: '1800ms' }}>
-              <div className="flex items-center gap-3">
-                <div className="rounded-xl bg-amber-500/20 p-2">
-                  <Clock className="h-5 w-5 text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">{t('home.analytics.lastUpdate')}</p>
-                  <p className="text-lg font-semibold text-slate-100" id="last-update">--:--</p>
-                  <p className="text-xs text-amber-400">{t('home.analytics.realTime')}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* كيفاش تخدم SentivyaDZ */}
-      <section className={`rounded-3xl border border-slate-800/80 bg-slate-900/40 p-6 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-               style={{ transitionDelay: '2000ms' }}>
-        <h2 className="text-xl font-bold text-slate-50">
-        {t('home.howItWorks.title')}        </h2>
-        <p className="mt-2 max-w-2xl text-sm text-slate-300">
-          {t('home.howItWorks.description')}        </p>
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <div className={`flex flex-col rounded-2xl border border-slate-800/70 bg-slate-950/60 p-5 transition-all duration-1000 hover:scale-105 hover:border-sky-500/50 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-               style={{ transitionDelay: '2200ms' }}>
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-500/20 text-lg font-bold text-sky-300">1</span>
-            <h3 className="mt-3 text-sm font-semibold text-slate-50">{t('home.howItWorks.step1.title')}</h3>
-            <p className="mt-1 text-xs text-slate-300">
-              {t('home.howItWorks.step1.description')}
-            </p>
-          </div>
-          <div className={`flex flex-col rounded-2xl border border-slate-800/70 bg-slate-950/60 p-5 transition-all duration-1000 hover:scale-105 hover:border-emerald-500/50 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-               style={{ transitionDelay: '2400ms' }}>
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/20 text-lg font-bold text-emerald-300">2</span>
-            <h3 className="mt-3 text-sm font-semibold text-slate-50">{t('home.howItWorks.step2.title')}</h3>
-            <p className="mt-1 text-xs text-slate-300">
-              {t('home.howItWorks.step2.description')}
-            </p>
-          </div>
-          <div className={`flex flex-col rounded-2xl border border-slate-800/70 bg-slate-950/60 p-5 transition-all duration-1000 hover:scale-105 hover:border-amber-500/50 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-               style={{ transitionDelay: '2600ms' }}>
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/20 text-lg font-bold text-amber-300">3</span>
-            <h3 className="mt-3 text-sm font-semibold text-slate-50">{t('home.howItWorks.step3.title')}</h3>
-            <p className="mt-1 text-xs text-slate-300">
-{t('home.howItWorks.step3.description')}            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ماذا نقدم */}
-      <section className="space-y-6">
-        <div>
-          <h2 className="text-xl font-bold text-slate-50">{t('home.whatWeOffer.title')}</h2>
-          <p className="mt-1 text-sm text-slate-300">
+          <p style={{ fontSize: '0.85rem', color: ui.muted, margin: '0 0 1.5rem' }}>
             {t('home.whatWeOffer.description')}
           </p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          <NavLink
-            to="/products/social-listening"
-            className="group flex flex-col rounded-2xl border border-slate-800/70 bg-slate-900/50 p-5 transition hover:border-sky-500/50"
-          >
-            <span className="text-2xl">📊</span>
-            <h3 className="mt-3 text-sm font-semibold text-slate-50">{t('home.whatWeOffer.sentimentAnalysis.title')}</h3>
-            <p className="mt-1 text-xs text-slate-300">
-              {t('home.whatWeOffer.sentimentAnalysis.description')}
-            </p>
-            <span className="mt-3 text-[11px] font-semibold text-sky-300 group-hover:translate-x-1">{t('home.getStarted')} →</span>
-          </NavLink>
-          <div className="flex flex-col rounded-2xl border border-slate-800/70 bg-slate-900/50 p-5">
-            <span className="text-2xl">🇩🇿</span>
-            <h3 className="mt-3 text-sm font-semibold text-slate-50">{t('home.whatWeOffer.dialectAnalysis.title')}</h3>
-            <p className="mt-1 text-xs text-slate-300">
-              {t('home.whatWeOffer.dialectAnalysis.description')}
-            </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+            {[
+              { emoji: '📊', title: t('home.whatWeOffer.sentimentAnalysis.title'),    desc: t('home.whatWeOffer.sentimentAnalysis.description'),    accent: '#2E8B57' },
+              { emoji: '🇩🇿', title: t('home.whatWeOffer.dialectAnalysis.title'),     desc: t('home.whatWeOffer.dialectAnalysis.description'),     accent: '#4A90D9' },
+              { emoji: '⚡',  title: t('home.whatWeOffer.reputationIndicator.title'), desc: t('home.whatWeOffer.reputationIndicator.description'), accent: '#C9A84C' },
+            ].map(({ emoji, title, desc, accent }) => (
+              <div key={title} style={{
+                borderRadius: '20px', border: `1px solid ${ui.border}`,
+                background: ui.surface, padding: '1.5rem',
+                display: 'flex', flexDirection: 'column',
+                transition: 'all 0.2s', position: 'relative', overflow: 'hidden',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.transform = 'scale(1.02)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.transform = 'scale(1)'; }}>
+                <div style={{ position: 'absolute', top: 0, insetInline: 0, height: '3px', background: accent, borderRadius: '3px 3px 0 0' }} />
+                <span style={{ fontSize: '1.75rem' }}>{emoji}</span>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: '700', color: ui.text, margin: '12px 0 6px' }}>{title}</h3>
+                <p style={{ fontSize: '0.78rem', color: ui.muted, margin: 0, lineHeight: '1.7', flex: 1 }}>{desc}</p>
+              </div>
+            ))}
           </div>
-          <div className="flex flex-col rounded-2xl border border-slate-800/70 bg-slate-900/50 p-5">
-            <span className="text-2xl">⚠</span>
-            <h3 className="mt-3 text-sm font-semibold text-slate-50">{t('home.whatWeOffer.reputationIndicator.title')}</h3>
-            <p className="mt-1 text-xs text-slate-300">
-{t('home.whatWeOffer.reputationIndicator.description')}            </p>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* لمن نقدّم خدماتنا؟ */}
-      <section className="rounded-3xl border border-slate-800/80 bg-slate-950/60 p-6">
-        <h2 className="text-xl font-bold text-slate-50">{t('home.whoWeServe.title')}</h2>
-        <p className="mt-2 text-sm text-slate-300">
-          {t('home.whoWeServe.description')}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-3">
-          <span className="rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-xs font-medium text-slate-200">
-            {t('home.whoWeServe.localBrands')}
-          </span>
-          <span className="rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-xs font-medium text-slate-200">
-            {t('home.whoWeServe.smes')}
-          </span>
-          <span className="rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-xs font-medium text-slate-200">
-            {t('home.whoWeServe.customerService')}
-          </span>
-          <span className="rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-xs font-medium text-slate-200">
-            {t('home.whoWeServe.agencies')}
-          </span>
-        </div>
-      </section>
-      {/* Connected to the platforms you use - Lucidya-style */}
-      <section className="rounded-3xl border border-slate-800/80 bg-slate-900/40 p-6">
-        <h2 className="text-lg font-bold text-slate-50">
-          {t('home.platforms.title')}
-        </h2>
-        <p className="mt-1 text-sm text-slate-300">
-          {t('home.platforms.description')}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-4">
-          <div className="group flex flex-col items-center justify-center rounded-2xl border border-slate-700 bg-slate-950/60 px-6 py-4 transition-all duration-300 hover:border-sky-500/60 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-sky-500/20">
-            <svg className="h-8 w-8 text-slate-200 transition-colors duration-300 group-hover:text-sky-400" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-            <span className="mt-2 text-sm font-medium text-slate-200 transition-colors duration-300 group-hover:text-sky-300">{t('home.platforms.twitter')}</span>
+        {/* ── PLATFORMS ─────────────────────────────────────────────── */}
+        <section style={{
+          borderRadius: '24px', border: `1px solid ${ui.border}`,
+          background: ui.surface, padding: '1.75rem',
+        }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: ui.text, margin: '0 0 4px' }}>
+            {t('home.platforms.title')}
+          </h2>
+          <p style={{ fontSize: '0.82rem', color: ui.muted, margin: '0 0 1.25rem' }}>
+            {t('home.platforms.description')}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+            {[
+              { name: t('home.platforms.twitter'),   color: '#94A3B8',
+                icon: <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /> },
+              { name: t('home.platforms.facebook'),  color: '#60A5FA',
+                icon: <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /> },
+              { name: t('home.platforms.instagram'), color: '#F472B6',
+                icon: <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.405a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z" /> },
+              { name: 'TikTok',  color: '#34D399',
+                icon: <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.77a4.85 4.85 0 01-1.01-.08z" /> },
+              { name: 'YouTube', color: '#F87171',
+                icon: <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /> },
+              { name: 'Reddit',  color: '#FCA5A5',
+                icon: <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" /> },
+            ].map(({ name, color, icon }) => (
+              <div key={name} style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                borderRadius: '16px', border: `1px solid ${ui.border}`,
+                background: ui.surface2, padding: '16px 24px',
+                transition: 'all 0.2s', cursor: 'default', gap: '8px',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.transform = 'translateY(-3px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.transform = 'translateY(0)'; }}>
+                <svg style={{ width: '28px', height: '28px', fill: color }} viewBox="0 0 24 24">
+                  {icon}
+                </svg>
+                <span style={{ fontSize: '0.72rem', fontWeight: '600', color: ui.muted }}>{name}</span>
+              </div>
+            ))}
           </div>
-          <div className="group flex flex-col items-center justify-center rounded-2xl border border-slate-700 bg-slate-950/60 px-6 py-4 transition-all duration-300 hover:border-blue-500/60 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20">
-            <svg className="h-8 w-8 text-slate-200 transition-colors duration-300 group-hover:text-blue-400" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
-            <span className="mt-2 text-sm font-medium text-slate-200 transition-colors duration-300 group-hover:text-blue-300">{t('home.platforms.facebook')}</span>
+        </section>
+
+        {/* ── WHO WE SERVE ──────────────────────────────────────────── */}
+        <section style={{
+          borderRadius: '24px', border: `1px solid ${ui.border}`,
+          background: ui.surface2, padding: '1.75rem',
+        }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: ui.text, margin: '0 0 4px' }}>
+            {t('home.whoWeServe.title')}
+          </h2>
+          <p style={{ fontSize: '0.82rem', color: ui.muted, margin: '0 0 1.25rem' }}>
+            {t('home.whoWeServe.description')}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            {[
+              { label: t('home.whoWeServe.localBrands'),     accent: '#2E8B57', bg: 'rgba(46,139,87,0.08)',   border: 'rgba(46,139,87,0.3)'   },
+              { label: t('home.whoWeServe.smes'),            accent: '#4A90D9', bg: 'rgba(74,144,217,0.08)', border: 'rgba(74,144,217,0.3)'  },
+              { label: t('home.whoWeServe.customerService'), accent: '#C9A84C', bg: 'rgba(201,168,76,0.08)', border: 'rgba(201,168,76,0.3)'  },
+              { label: t('home.whoWeServe.agencies'),        accent: '#8B5CF6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.3)'  },
+            ].map(({ label, accent, bg, border }) => (
+              <span key={label} style={{
+                padding: '8px 18px', borderRadius: '999px',
+                fontSize: '0.8rem', fontWeight: '600',
+                border: `1px solid ${border}`, color: accent, background: bg,
+              }}>
+                {label}
+              </span>
+            ))}
           </div>
-          <div className="group flex flex-col items-center justify-center rounded-2xl border border-slate-700 bg-slate-950/60 px-6 py-4 transition-all duration-300 hover:border-pink-500/60 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/20">
-            <svg className="h-8 w-8 text-slate-200 transition-colors duration-300 group-hover:text-pink-400" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.405a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z"/>
-            </svg>
-            <span className="mt-2 text-sm font-medium text-slate-200 transition-colors duration-300 group-hover:text-pink-300">{t('home.platforms.instagram')}</span>
+        </section>
+
+        {/* ── CTA ───────────────────────────────────────────────────── */}
+        <section style={{
+          borderRadius: '24px', padding: '2.5rem',
+          textAlign: 'center', position: 'relative', overflow: 'hidden',
+          border: '1px solid rgba(46,139,87,0.25)',
+          background: isDark
+            ? 'linear-gradient(135deg, rgba(46,139,87,0.07) 0%, rgba(74,144,217,0.07) 100%)'
+            : 'linear-gradient(135deg, rgba(46,139,87,0.05) 0%, rgba(74,144,217,0.05) 100%)',
+        }}>
+          <div style={{ position: 'absolute', top: '-60px', left: '-60px', width: '200px', height: '200px', borderRadius: '50%', background: '#2E8B57', opacity: 0.04, filter: 'blur(48px)' }} />
+          <div style={{ position: 'absolute', bottom: '-60px', right: '-60px', width: '200px', height: '200px', borderRadius: '50%', background: '#4A90D9', opacity: 0.04, filter: 'blur(48px)' }} />
+
+          <img src={gantraLogo} alt="Gantra"
+            style={{ height: '56px', width: 'auto', objectFit: 'contain', margin: '0 auto 1.25rem', display: 'block', opacity: 0.9 }}
+          />
+          <h2 style={{ fontSize: '1.3rem', fontWeight: '800', color: ui.text, margin: '0 0 8px' }}>
+            {t('home.cta.title')}
+          </h2>
+          <p style={{ fontSize: '0.875rem', color: ui.muted, margin: '0 auto 1.75rem', maxWidth: '420px', lineHeight: '1.7' }}>
+            {t('home.cta.description')}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center' }}>
+            <NavLink to="/request-access" style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: '999px', padding: '11px 28px',
+              fontSize: '0.875rem', fontWeight: '700',
+              background: '#2E8B57', color: '#fff',
+              textDecoration: 'none', transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = '#3DAA6A'}
+            onMouseLeave={e => e.currentTarget.style.background = '#2E8B57'}>
+              {t('home.requestTrial')}
+            </NavLink>
+            <NavLink to="/login" style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: '999px', padding: '11px 26px',
+              fontSize: '0.875rem', fontWeight: '600',
+              border: `1px solid ${ui.border}`, color: ui.subtle,
+              textDecoration: 'none', transition: 'all 0.2s', background: 'transparent',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#C9A84C'; e.currentTarget.style.color = '#C9A84C'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.color = ui.subtle; }}>
+              {t('navigation.login')}
+            </NavLink>
           </div>
-        </div>
-      </section>
-      {/* CTA final */}
-      <section className="rounded-3xl border border-sky-500/30 bg-gradient-to-l from-sky-500/10 to-slate-950 p-6 text-center">
-        <h2 className="text-lg font-bold text-slate-50">
-          {t('home.cta.title')}
-        </h2>
-        <p className="mx-auto mt-2 max-w-md text-sm text-slate-300">
-         {t('home.cta.description')}
-        </p>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-          <NavLink
-            to="/contact-us"
-            className="inline-flex items-center justify-center rounded-full bg-sky-500 px-6 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-sky-700/30 hover:bg-sky-400"
-          >
-            {t('home.cta.contactUs')}
-          </NavLink>
-        </div>
-      </section>
-    
+        </section>
+
+      </div>
     </div>
   )
 }
-

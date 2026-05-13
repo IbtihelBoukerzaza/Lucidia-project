@@ -1,3 +1,8 @@
-2026/05/03-15:20:17.280 5e94 Reusing MANIFEST C:\Users\hp\Lucidia-project\backend\playwright_instagram_session\Default\Session Storage/MANIFEST-000001
-2026/05/03-15:20:17.281 5e94 Recovering log #4
-2026/05/03-15:20:17.283 5e94 Reusing old log C:\Users\hp\Lucidia-project\backend\playwright_instagram_session\Default\Session Storage/000004.log 
+2026/05/13-11:14:37.972 4124 Reusing MANIFEST C:\Users\hp\Lucidia-project\backend\playwright_instagram_session\Default\Session Storage/MANIFEST-000001
+2026/05/13-11:14:37.980 4124 Recovering log #4
+2026/05/13-11:14:37.982 4124 Level-0 table #6: started
+2026/05/13-11:14:38.012 4124 Level-0 table #6: 14140 bytes OK
+2026/05/13-11:14:38.013 4124 Recovering log #6
+2026/05/13-11:14:38.015 4124 Reusing old log C:\Users\hp\Lucidia-project\backend\playwright_instagram_session\Default\Session Storage/000006.log 
+2026/05/13-11:14:38.026 4124 Delete type=0 #4
+2026/05/13-11:14:38.027 4124 Delete type=2 #7

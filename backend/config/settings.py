@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "alerts",
     "topics",
     "surveys",
+    "engagement",
 ]
 
 MIDDLEWARE = [

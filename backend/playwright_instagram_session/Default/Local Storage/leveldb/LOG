@@ -1,17 +1,6 @@
-2026/05/03-15:20:15.008 5e94 Reusing MANIFEST C:\Users\hp\Lucidia-project\backend\playwright_instagram_session\Default\Local Storage\leveldb/MANIFEST-000001
-2026/05/03-15:20:15.091 5e94 Recovering log #65
-2026/05/03-15:20:15.095 5e94 Reusing old log C:\Users\hp\Lucidia-project\backend\playwright_instagram_session\Default\Local Storage\leveldb/000065.log 
-2026/05/03-15:20:41.295 5630 Level-0 table #69: started
-2026/05/03-15:20:41.316 5630 Level-0 table #69: 17914 bytes OK
-2026/05/03-15:20:41.321 5630 Delete type=0 #65
-2026/05/03-15:20:41.327 5630 Compacting 4@0 + 1@1 files
-2026/05/03-15:20:41.338 5630 Generated table #70@0: 1435 keys, 92720 bytes
-2026/05/03-15:20:41.338 5630 Compacted 4@0 + 1@1 files => 92720 bytes
-2026/05/03-15:20:41.344 5630 compacted to: files[ 0 1 1 0 0 0 0 ]
-2026/05/03-15:20:41.345 5630 Delete type=2 #57
-2026/05/03-15:20:41.345 5630 Delete type=2 #60
-2026/05/03-15:20:41.345 5630 Delete type=2 #63
-2026/05/03-15:20:41.345 5630 Delete type=2 #66
-2026/05/03-15:20:41.345 5630 Delete type=2 #69
-2026/05/03-15:21:36.002 5a20 Level-0 table #72: started
-2026/05/03-15:21:36.103 5a20 Level-0 table #72: 19263 bytes OK
+2026/05/13-11:14:34.274 3194 Reusing MANIFEST C:\Users\hp\Lucidia-project\backend\playwright_instagram_session\Default\Local Storage\leveldb/MANIFEST-000001
+2026/05/13-11:14:34.405 3194 Recovering log #113
+2026/05/13-11:14:34.411 3194 Reusing old log C:\Users\hp\Lucidia-project\backend\playwright_instagram_session\Default\Local Storage\leveldb/000113.log 
+2026/05/13-11:15:31.117 30a4 Level-0 table #117: started
+2026/05/13-11:15:31.320 30a4 Level-0 table #117: 21896 bytes OK
+2026/05/13-11:15:31.467 30a4 Delete type=0 #113
