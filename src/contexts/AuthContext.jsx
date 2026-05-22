@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => getUser());
   const [companies, setCompanies] = useState([]);
   const [activeCompany, setActiveCompany] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(() => !!getAccessToken());
 
   const fetchMe = useCallback(async () => {
     const token = getAccessToken();

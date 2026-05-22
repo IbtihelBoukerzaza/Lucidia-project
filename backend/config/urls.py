@@ -12,4 +12,7 @@ urlpatterns = [
     path("api/topics/",    include("topics.urls")),
     path("api/surveys/", include("surveys.urls")),
     path("api/engagement/", include("engagement.urls")),
+    path("api/feedback/", include("feedback.urls")),
+    path("api/insights/", include("insights.urls")),
+    path("api/chatbot/", include("chatbot.urls")),
 ]

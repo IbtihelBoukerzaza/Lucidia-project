@@ -90,6 +90,15 @@ const CARDS = [
 
 const ADMIN_CARDS = [
   {
+  path:        "/insights",
+  key:         "insights",
+  icon:        Sparkles,
+  color:       "#C9A84C",
+  colorDim:    "#C9A84C10",
+  colorBorder: "#C9A84C30",
+  colorGlow:   "#C9A84C20",
+},
+  {
     path:       "/team",
     key:        "team",
     icon:       Users,

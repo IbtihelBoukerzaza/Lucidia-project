@@ -27,7 +27,10 @@ import PublicSurveyPage from "./pages/PublicSurveyPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LanguageSwitcher from "./components/LanguageSwitcher.jsx";
 import AppNavbar from "./components/AppNavbar.jsx";
+import InsightsPage from "./pages/InsightsPage";
+import FeedbackPage from "./pages/FeedbackPage";
 import GantraLogo from "./components/GantraLogo.jsx";
+import ChatWidget from "./components/ChatWidget";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "./contexts/LanguageContext";
 import { useTheme } from "./contexts/ThemeContext";
@@ -61,6 +64,7 @@ function AppLayout({ children }) {
     }}>
       <AppNavbar />
       {children}
+      <ChatWidget />
     </div>
   );
 }
@@ -122,7 +126,8 @@ function App() {
         <Route path="/engagement" element={
           <ProtectedRoute><AppLayout><EngagementPage /></AppLayout></ProtectedRoute>
         } />
-
+        <Route path="/feedback" element={<ProtectedRoute><AppLayout><FeedbackPage /></AppLayout></ProtectedRoute>} />
+        <Route path="/insights" element={<ProtectedRoute adminOnly><AppLayout><InsightsPage /></AppLayout></ProtectedRoute>} />
         <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
       </Routes>
     </div>

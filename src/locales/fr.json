@@ -12,7 +12,9 @@
     "login": "Connexion",
     "faq": "FAQ",
     "contactUs": "Contact",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "feedback": "Votre avis",
+    "insights": "Rapports"
   },
 
 "alerts": {
@@ -152,7 +154,22 @@
     "title": "Prêt à comprendre votre audience algérienne ?",
     "description": "Rejoignez les entreprises qui s'appuient sur Gantra pour surveiller leur réputation digitale et comprendre les sentiments de leurs clients.",
     "contactUs": "Nous contacter"
+  },
+  
+  "testimonials": {
+    "title": "Ce que disent nos clients",
+    "description": "Retours réels des équipes marketing et communication utilisant Gantra quotidiennement.",
+    "badge": "Avis clients",
+    "verifiedClient": "Client vérifié",
+    "stats": {
+      "nps": "Score NPS",
+      "accuracy": "Précision sentiments",
+      "usability": "Facilité d'utilisation",
+      "coverage": "Couverture sources",
+      "from": "sur {{count}} avis"
+    }
   }
+
 },
 
   "dashboard": {
@@ -172,7 +189,9 @@
     "engagement": "Engagement",
     "administration": "Administration",
     "services": "Services",
-    "modules": "Modules"
+    "modules": "Modules",
+    "feedback": "Votre avis",
+    "insights": "Rapports"
   },
   "posts": {
     "badge": "Surveillance Sociale",
@@ -431,7 +450,14 @@
   "errors": {
     "loadFailed": "Échec du chargement des données d'engagement",
     "noCompany":  "Veuillez sélectionner une entreprise pour afficher les données d'engagement"
-  }
+  },
+  "scrape": {
+  "button": "Actualiser les données d'engagement",
+  "loading": "Récupération...",
+  "success": "Terminé",
+  "posts": "publications mises à jour",
+  "error": "Échec de la récupération"
+}
 },
 "surveys": {
   "badge": "Gestion des Enquêtes",
@@ -685,6 +711,47 @@
     "passwordMismatch": "Les mots de passe ne correspondent pas",
     "saveFailed":       "Échec de la définition du mot de passe"
   }
+},
+"feedback": {
+  "badge": "Avis clients",
+  "title": "Partagez votre avis sur Gantra",
+  "description": "Vos réponses nous aident à améliorer la plateforme. Moins de 2 minutes.",
+  "editMode": "Modification des réponses",
+  "submit": "Envoyer l'avis",
+  "update": "Mettre à jour",
+  "submitting": "Envoi en cours...",
+  "privacy": "Vos réponses sont confidentielles — certains commentaires peuvent apparaître sur la page d'accueil sous votre nom choisi uniquement.",
+  "q1": { "label": "Quelle est la probabilité que vous recommandiez Gantra à un collègue ?", "hint": "0 = pas du tout — 10 = très probable" },
+  "q2": { "label": "Comment évaluez-vous la précision de l'analyse des sentiments ?", "hint": "Dans quelle mesure les publications sont correctement classifiées" },
+  "q3": { "label": "Comment évaluez-vous la facilité d'utilisation du tableau de bord ?", "hint": "Interface, navigation, clarté des données" },
+  "q4": { "label": "Comment évaluez-vous la couverture des sources et plateformes ?", "hint": "Facebook, Instagram, TikTok, Actualités..." },
+  "q5": { "label": "Avez-vous des commentaires ou suggestions ?", "hint": "Optionnel — dites-nous autre chose", "placeholder": "Écrivez votre commentaire ici..." },
+  "q6": { "label": "Nom affiché avec votre commentaire", "hint": "Optionnel — ex. Ahmed, Mobilis", "placeholder": "ex. Ahmed, Mobilis" },
+  "submitted": { "title": "Merci !", "message": "Votre avis a été enregistré avec succès.", "edit": "Modifier les réponses" },
+  "errors": {
+    "npsRequired": "Veuillez sélectionner un score NPS.",
+    "accuracyRequired": "Veuillez noter la précision des sentiments.",
+    "usabilityRequired": "Veuillez noter la facilité d'utilisation.",
+    "coverageRequired": "Veuillez noter la couverture des sources.",
+    "submitFailed": "Échec de l'envoi. Veuillez réessayer."
+  }
+},
+"insights": {
+  "title": "Rapports IA",
+  "subtitle": "Rapports d'analyse de sentiment générés par IA",
+  "generate": "Générer un nouveau rapport",
+  "generating": "Génération en cours...",
+  "history": "Historique",
+  "reportLabel": "Rapport",
+  "days": "jours",
+  "period7": "7 derniers jours",
+  "period30": "30 derniers jours",
+  "period90": "90 derniers jours",
+  "empty": "Aucun rapport pour l'instant. Cliquez sur «Générer un nouveau rapport» pour commencer.",
+  "noCompany": "Aucune entreprise liée à votre compte.",
+  "fetchError": "Impossible de charger les rapports.",
+  "generateError": "Échec de la génération du rapport.",
+  "insightsHeading": "Rapports IA",
+  "insightsDesc": "Rapports de sentiment en arabe générés par IA"
 }
-
 }

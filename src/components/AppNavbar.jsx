@@ -14,9 +14,11 @@ const NAV_LINKS = [
   { path: "/topics",     key: "navigation.topics",     fallback: "المواضيع"   },
   { path: "/alerts",     key: "navigation.alerts",     fallback: "التنبيهات"  },
   { path: "/engagement", key: "navigation.engagement", fallback: "التفاعل"    },
+  { path: "/feedback", key: "navigation.feedback", fallback: "ملاحظاتك" },
 ];
 
 const ADMIN_LINKS = [
+  { path: "/insights", key: "navigation.insights", fallback: "التقارير الذكية" },
   { path: "/surveys",  key: "navigation.surveys",  fallback: "الاستطلاعات" },
   { path: "/team",     key: "navigation.team",     fallback: "الفريق"      },
   { path: "/settings", key: "navigation.settings", fallback: "الإعدادات"   },

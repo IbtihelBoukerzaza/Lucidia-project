@@ -218,4 +218,28 @@ getEngagementStats: (companyId) =>
 
 getEngagementTop: (companyId, metric = "like_count", limit = 10, platform = "") =>
   request(`/api/engagement/top/?company=${companyId}&metric=${metric}&limit=${limit}&platform=${platform}`),
+
+triggerEngagementScrape: (companyId) =>
+  request(`/api/engagement/scrape/?company=${companyId}`, { method: "POST" }),
+// Feedback
+getMyFeedback:      ()     => request("/api/feedback/mine/"),
+submitFeedback:     (data) => request("/api/feedback/mine/", { method: "POST", body: JSON.stringify(data) }),
+getTestimonials:    ()     => request("/api/feedback/testimonials/"),
+getFeedbackStats:   ()     => request("/api/feedback/stats/"),
+
+// Insights
+  generateInsight: (companyId, periodDays = 30, lang = "ar") =>
+  request(`/api/insights/generate/?company=${companyId}&period_days=${periodDays}&lang=${lang}`, { method: "POST" }),
+
+  getLatestInsight: (companyId) =>
+    request(`/api/insights/latest/?company=${companyId}`),
+
+  getInsightHistory: (companyId) =>
+    request(`/api/insights/history/?company=${companyId}`),
+  // Chatbot
+  chatMessage: (data) =>
+    request("/api/chatbot/message/", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };
