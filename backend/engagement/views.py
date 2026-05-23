@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from companies.models import Membership, CompanySocialProfile
+from posts.models import Post
 from .models import EngagedPost
 from .serializers import EngagedPostSerializer
 
@@ -100,10 +101,10 @@ class EngagementStatsView(APIView):
                 "view_count": 0,
             }
             for ep in pqs:
-                row["like_count"]    += ep.like_count    or 0
-                row["share_count"]   += ep.share_count   or 0
+                row["like_count"]    += ep.like_count or 0
+                row["share_count"]   += ep.share_count or 0
                 row["comment_count"] += ep.comment_count or 0
-                row["view_count"]    += ep.view_count    or 0
+                row["view_count"]    += ep.view_count or 0
 
             breakdown[platform] = row
             for key in ["like_count", "share_count", "comment_count",
@@ -139,7 +140,7 @@ class EngagementTopView(APIView):
                 status=400,
             )
 
-        limit = min(int(request.query_params.get("limit", 10)), 50)
+        limit    = min(int(request.query_params.get("limit", 10)), 50)
         platform = request.query_params.get("platform")
 
         qs = EngagedPost.objects.filter(company_id=company_id)
@@ -156,23 +157,13 @@ class EngagementScrapeView(APIView):
     POST /api/engagement/scrape/?company=<id>
     Admin only.
 
-    For Facebook and Instagram:
-        Reads distinct post URLs from the Post model (source=facebook/instagram).
-        Scrapes engagement counts for each individual post URL.
+    Facebook & Instagram: reads distinct post URLs from the Post model
+    (source=facebook / source=instagram) and scrapes each individually.
 
-    For TikTok:
-        Reads distinct post URLs from the Post model (source=tiktok).
-        Scrapes engagement counts for each video URL.
-
-    For YouTube:
-        Reads the youtube_channel URL from CompanySocialProfile.
-        Uses YouTube Data API to fetch stats for recent videos.
-        (YouTube post URLs are not stored in Post model — API is used instead.)
+    TikTok & YouTube: reads profile/channel URLs from CompanySocialProfile
+    and returns a list of videos per profile.
     """
     permission_classes = [IsAuthenticated]
-
-    # Max posts to scrape per platform — keeps the request from timing out
-    POST_LIMIT = 10
 
     def post(self, request):
         company_id, err = _get_company_id(request)
@@ -187,32 +178,32 @@ class EngagementScrapeView(APIView):
 
         from django.conf import settings as django_settings
         from pathlib import Path
-        # Post model lives in the posts app
-        from posts.models import Post
 
-        from .scrapers.facebook_engagement import scrape_facebook_engagement
+        from .scrapers.facebook_engagement  import scrape_facebook_engagement
         from .scrapers.instagram_engagement import scrape_instagram_engagement
-        from .scrapers.tiktok_engagement import scrape_tiktok_engagement
-        from .scrapers.youtube_engagement import scrape_youtube_engagement
+        from .scrapers.tiktok_engagement    import scrape_tiktok_engagement
+        from .scrapers.youtube_engagement   import scrape_youtube_engagement
 
         backend_dir         = Path(django_settings.BASE_DIR)
         fb_session_path     = str(backend_dir / "fb_session.json")
         tiktok_cookies_path = str(backend_dir / "tiktok_cookies.json")
         youtube_api_key     = django_settings.YOUTUBE_API_KEY
 
-        summary = {"scraped": {}, "errors": []}
+        summary = {
+            "scraped": {},
+            "errors":  [],
+        }
 
-        # ── Facebook ──────────────────────────────────────────────────────
-        # Get distinct post URLs stored by the ingestion pipeline
+        # ── Facebook — post URLs from Post model ──────────────────────────
         fb_urls = (
             Post.objects
-            .filter(company_id=company_id, source="facebook")
+            .filter(company_id=company_id, source=Post.Source.FACEBOOK)
             .exclude(url__isnull=True)
             .exclude(url="")
             .values_list("url", flat=True)
             .distinct()
-            [:self.POST_LIMIT]
         )
+
         for url in fb_urls:
             try:
                 data = scrape_facebook_engagement(url, fb_session_path)
@@ -225,25 +216,27 @@ class EngagementScrapeView(APIView):
                         "like_count":    data.get("like_count"),
                         "comment_count": data.get("comment_count"),
                         "share_count":   data.get("share_count"),
-                        "view_count":    None,
+                        "view_count":    data.get("view_count"),
                     },
                 )
                 summary["scraped"]["facebook"] = summary["scraped"].get("facebook", 0) + 1
             except Exception as exc:
                 summary["errors"].append({
-                    "platform": "facebook", "url": url, "error": str(exc)
+                    "platform": "facebook",
+                    "url":      url,
+                    "error":    str(exc),
                 })
 
-        # ── Instagram ─────────────────────────────────────────────────────
+        # ── Instagram — post URLs from Post model ─────────────────────────
         ig_urls = (
             Post.objects
-            .filter(company_id=company_id, source="instagram")
+            .filter(company_id=company_id, source=Post.Source.INSTAGRAM)
             .exclude(url__isnull=True)
             .exclude(url="")
             .values_list("url", flat=True)
             .distinct()
-            [:self.POST_LIMIT]
         )
+
         for url in ig_urls:
             try:
                 data = scrape_instagram_engagement(url)
@@ -262,81 +255,57 @@ class EngagementScrapeView(APIView):
                 summary["scraped"]["instagram"] = summary["scraped"].get("instagram", 0) + 1
             except Exception as exc:
                 summary["errors"].append({
-                    "platform": "instagram", "url": url, "error": str(exc)
+                    "platform": "instagram",
+                    "url":      url,
+                    "error":    str(exc),
                 })
 
-        # ── TikTok ────────────────────────────────────────────────────────
-        tt_urls = (
-            Post.objects
-            .filter(company_id=company_id, source="tiktok")
-            .exclude(url__isnull=True)
-            .exclude(url="")
-            .values_list("url", flat=True)
-            .distinct()
-            [:self.POST_LIMIT]
+        # ── TikTok — profile URL from CompanySocialProfile ────────────────
+        tiktok_profiles = CompanySocialProfile.objects.filter(
+            company_id=company_id,
+            is_active=True,
+            platform="tiktok",
         )
-        for url in tt_urls:
+
+        for profile in tiktok_profiles:
             try:
-                # TikTok scraper accepts a single video URL directly
-                # We call it per-URL unlike the profile-based approach
-                from .scrapers.tiktok_engagement import _load_cookies, _scrape_video_metrics
-                from playwright.sync_api import sync_playwright
-
-                cookies = _load_cookies(tiktok_cookies_path)
-                if not cookies:
-                    raise RuntimeError("TikTok cookies not found or empty")
-
-                with sync_playwright() as pw:
-                    browser = pw.chromium.launch(
-                        headless=True,
-                        args=["--disable-blink-features=AutomationControlled"],
+                results = scrape_tiktok_engagement(profile.url, tiktok_cookies_path)
+                count = 0
+                for item in results:
+                    video_url = item.get("url")
+                    if not video_url:
+                        continue
+                    EngagedPost.objects.update_or_create(
+                        company_id=company_id,
+                        url=video_url,
+                        defaults={
+                            "platform":      "tiktok",
+                            "title":         item.get("title", ""),
+                            "like_count":    item.get("like_count"),
+                            "comment_count": item.get("comment_count"),
+                            "share_count":   item.get("share_count"),
+                            "view_count":    item.get("view_count"),
+                        },
                     )
-                    context = browser.new_context(
-                        viewport={"width": 1280, "height": 900},
-                        locale="en-US",
-                        user_agent=(
-                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                            "AppleWebKit/537.36 (KHTML, like Gecko) "
-                            "Chrome/123.0.0.0 Safari/537.36"
-                        ),
-                    )
-                    context.add_cookies(cookies)
-                    page = pw.chromium.launch().new_page()  # reuse browser
-                    page = context.new_page()
-                    data = _scrape_video_metrics(page, url)
-                    context.close()
-                    browser.close()
-
-                EngagedPost.objects.update_or_create(
-                    company_id=company_id,
-                    url=url,
-                    defaults={
-                        "platform":      "tiktok",
-                        "title":         data.get("title", ""),
-                        "like_count":    data.get("like_count"),
-                        "comment_count": data.get("comment_count"),
-                        "share_count":   data.get("share_count"),
-                        "view_count":    data.get("view_count"),
-                    },
-                )
-                summary["scraped"]["tiktok"] = summary["scraped"].get("tiktok", 0) + 1
+                    count += 1
+                summary["scraped"]["tiktok"] = summary["scraped"].get("tiktok", 0) + count
             except Exception as exc:
                 summary["errors"].append({
-                    "platform": "tiktok", "url": url, "error": str(exc)
+                    "platform": "tiktok",
+                    "url":      profile.url,
+                    "error":    str(exc),
                 })
 
-        # ── YouTube ───────────────────────────────────────────────────────
-        # YouTube posts are not in the Post model — use the channel URL from
-        # CompanySocialProfile and fetch via YouTube Data API
-        yt_profile = CompanySocialProfile.objects.filter(
+        # ── YouTube — channel URL from CompanySocialProfile ───────────────
+        youtube_profiles = CompanySocialProfile.objects.filter(
             company_id=company_id,
             is_active=True,
             platform="youtube_channel",
-        ).first()
+        )
 
-        if yt_profile:
+        for profile in youtube_profiles:
             try:
-                results = scrape_youtube_engagement(yt_profile.url, youtube_api_key)
+                results = scrape_youtube_engagement(profile.url, youtube_api_key)
                 count = 0
                 for item in results:
                     video_url = item.get("url")
@@ -355,19 +324,13 @@ class EngagementScrapeView(APIView):
                         },
                     )
                     count += 1
-                summary["scraped"]["youtube"] = count
+                summary["scraped"]["youtube"] = summary["scraped"].get("youtube", 0) + count
             except Exception as exc:
                 summary["errors"].append({
-                    "platform": "youtube_channel",
-                    "url":      yt_profile.url,
+                    "platform": "youtube",
+                    "url":      profile.url,
                     "error":    str(exc),
                 })
-        else:
-            summary["errors"].append({
-                "platform": "youtube",
-                "url":      "",
-                "error":    "No active youtube_channel profile found. Add one in Settings.",
-            })
 
         return Response(
             {

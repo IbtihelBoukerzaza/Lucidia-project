@@ -163,8 +163,10 @@ def scrape_facebook_engagement(post_url: str, session_path: str) -> dict:
                 lambda route: route.abort(),
             )
 
-            page.goto(post_url, wait_until="domcontentloaded", timeout=30_000)
-
+            from urllib.parse import urlparse, urlunparse
+            parsed = urlparse(post_url)
+            clean_url = urlunparse(parsed._replace(query=""))
+            page.goto(clean_url, wait_until="domcontentloaded", timeout=30_000)
             # Wait for engagement bar to appear in the DOM
             try:
                 page.wait_for_selector(
@@ -179,7 +181,7 @@ def scrape_facebook_engagement(post_url: str, session_path: str) -> dict:
                     post_url,
                 )
 
-            result["title"]         = _title_from_url(post_url)
+            result["title"]         = _title_from_url(clean_url)
             result["like_count"]    = _extract_count_near_role(page, "like_button")
             result["comment_count"] = _extract_count_near_role(page, "comment_button")
             result["share_count"]   = _extract_count_near_role(page, "share_button")

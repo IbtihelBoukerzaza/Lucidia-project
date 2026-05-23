@@ -752,6 +752,7 @@
   "fetchError": "Impossible de charger les rapports.",
   "generateError": "Échec de la génération du rapport.",
   "insightsHeading": "Rapports IA",
-  "insightsDesc": "Rapports de sentiment en arabe générés par IA"
+  "insightsDesc": "Rapports de sentiment en arabe générés par IA",
+  "download": "Télécharger PDF"
 }
 }

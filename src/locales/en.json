@@ -190,6 +190,7 @@
     "modules": "Modules",
     "feedback": "Your Feedback",
     "insights": "Insights"
+
   },
 
   "posts": {
@@ -763,6 +764,7 @@
   "fetchError": "Failed to load reports.",
   "generateError": "Failed to generate report.",
   "insightsHeading": "AI Insights",
-  "insightsDesc": "AI-generated Arabic sentiment reports"
+  "insightsDesc": "AI-generated Arabic sentiment reports",
+  "download": "Download PDF"
 }
 }

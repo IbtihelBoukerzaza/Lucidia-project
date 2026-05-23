@@ -9,6 +9,134 @@ function formatDateTime(dateStr) {
   return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
 }
 
+function handlePrint(report, companyName) {
+  const printWindow = window.open("", "_blank");
+
+  const lines = report.content.split("\n");
+  let html = "";
+
+  for (const line of lines) {
+    if (line.startsWith("# ")) {
+      html += `<h1>${line.replace("# ", "")}</h1>`;
+    } else if (line.startsWith("## ")) {
+      html += `<h2>${line.replace("## ", "")}</h2>`;
+    } else if (line.startsWith("- ")) {
+      html += `<li>${line.replace("- ", "")}</li>`;
+    } else if (line.trim() === "") {
+      html += `<br/>`;
+    } else {
+      html += `<p>${line}</p>`;
+    }
+  }
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+      <meta charset="UTF-8" />
+      <title>Gantra — ${companyName} — ${formatDateTime(report.generated_at)}</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+          font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+          font-size: 14px;
+          line-height: 1.9;
+          color: #111;
+          background: #fff;
+          padding: 48px 56px;
+          direction: rtl;
+        }
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 2px solid #C9A84C;
+          padding-bottom: 16px;
+          margin-bottom: 32px;
+        }
+        .brand {
+          font-size: 22px;
+          font-weight: 900;
+          color: #C9A84C;
+          letter-spacing: -0.5px;
+        }
+        .meta {
+          font-size: 12px;
+          color: #9CA3AF;
+          text-align: left;
+        }
+        h1 {
+          font-size: 20px;
+          font-weight: 800;
+          color: #C9A84C;
+          margin: 0 0 16px;
+        }
+        h2 {
+          font-size: 15px;
+          font-weight: 700;
+          color: #B8912E;
+          margin: 28px 0 10px;
+          padding-bottom: 6px;
+          border-bottom: 1px solid #C9A84C33;
+        }
+        p {
+          margin-bottom: 8px;
+          color: #222;
+        }
+        li {
+          margin: 6px 0 6px 0;
+          padding-right: 16px;
+          color: #222;
+          list-style: none;
+          position: relative;
+        }
+        li::before {
+          content: "•";
+          color: #C9A84C;
+          position: absolute;
+          right: 0;
+        }
+        .footer {
+          margin-top: 48px;
+          padding-top: 16px;
+          border-top: 1px solid #E5E7EB;
+          font-size: 11px;
+          color: #9CA3AF;
+          display: flex;
+          justify-content: space-between;
+        }
+        @media print {
+          body { padding: 32px 40px; }
+          h2 { page-break-after: avoid; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="brand">✦ Gantra AI</div>
+        <div class="meta">
+          <div>${companyName}</div>
+          <div>${formatDateTime(report.generated_at)}</div>
+          <div>${report.period_days} يوم / jours / days</div>
+        </div>
+      </div>
+      ${html}
+      <div class="footer">
+        <span>Gantra — منصة تحليل المشاعر</span>
+        <span>gantra.dz</span>
+      </div>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+    printWindow.close();
+  }, 400);
+}
+
 function MarkdownReport({ content, ui }) {
   const lines = content.split("\n");
 
@@ -45,28 +173,28 @@ function MarkdownReport({ content, ui }) {
 }
 
 export default function InsightsPage() {
-  const { t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const { theme } = useTheme();
-  const { user, companies } = useAuth();
+  const { companies } = useAuth();
   const isDark = theme === "dark";
 
   const ui = {
-    bg:      isDark ? "#0A0A0A" : "#F7F6F2",
-    panel:   isDark ? "#111111" : "#FFFFFF",
-    border:  isDark ? "#1E1E1E" : "#E5E7EB",
-    muted:   isDark ? "#6B7280" : "#9CA3AF",
-    text:    isDark ? "#E5E7EB" : "#111111",
-    surface2:isDark ? "#161616" : "#F8FAFC",
+    bg:       isDark ? "#0A0A0A" : "#F7F6F2",
+    panel:    isDark ? "#111111" : "#FFFFFF",
+    border:   isDark ? "#1E1E1E" : "#E5E7EB",
+    muted:    isDark ? "#6B7280" : "#9CA3AF",
+    text:     isDark ? "#E5E7EB" : "#111111",
+    surface2: isDark ? "#161616" : "#F8FAFC",
   };
 
   const company = companies?.[0];
 
-  const [latest, setLatest]       = useState(null);
-  const [history, setHistory]     = useState([]);
-  const [selected, setSelected]   = useState(null); // report shown in panel
-  const [loading, setLoading]     = useState(true);
+  const [latest, setLatest]         = useState(null);
+  const [history, setHistory]       = useState([]);
+  const [selected, setSelected]     = useState(null);
+  const [loading, setLoading]       = useState(true);
   const [generating, setGenerating] = useState(false);
-  const [error, setError]         = useState("");
+  const [error, setError]           = useState("");
   const [periodDays, setPeriodDays] = useState(30);
 
   useEffect(() => {
@@ -132,7 +260,9 @@ export default function InsightsPage() {
   return (
     <div dir="rtl" style={{ minHeight: "100vh", background: ui.bg, color: ui.text, padding: "32px 24px" }}>
 
-      {/* Header */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
+      {/* ── HEADER ── */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginBottom: "32px" }}>
         <div>
           <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#C9A84C", marginBottom: "4px" }}>
@@ -150,7 +280,8 @@ export default function InsightsPage() {
             onChange={e => setPeriodDays(Number(e.target.value))}
             style={{
               background: ui.surface2, border: `1px solid ${ui.border}`,
-              color: ui.text, borderRadius: "8px", padding: "8px 12px", fontSize: "14px", cursor: "pointer"
+              color: ui.text, borderRadius: "8px", padding: "8px 12px",
+              fontSize: "14px", cursor: "pointer",
             }}
           >
             <option value={7}>{t("insights.period7", "آخر 7 أيام")}</option>
@@ -173,7 +304,11 @@ export default function InsightsPage() {
           >
             {generating ? (
               <>
-                <span style={{ display: "inline-block", width: "14px", height: "14px", border: "2px solid #9CA3AF", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                <span style={{
+                  display: "inline-block", width: "14px", height: "14px",
+                  border: "2px solid #9CA3AF", borderTopColor: "transparent",
+                  borderRadius: "50%", animation: "spin 0.8s linear infinite",
+                }} />
                 {t("insights.generating", "جارٍ الإنشاء...")}
               </>
             ) : (
@@ -183,26 +318,44 @@ export default function InsightsPage() {
         </div>
       </div>
 
-      {/* Spinner CSS */}
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-
+      {/* ── ERROR ── */}
       {error && (
-        <div style={{ background: "#E53E3E22", border: "1px solid #E53E3E55", borderRadius: "8px", padding: "12px 16px", color: "#E53E3E", marginBottom: "24px", fontSize: "14px" }}>
+        <div style={{
+          background: "#E53E3E22", border: "1px solid #E53E3E55",
+          borderRadius: "8px", padding: "12px 16px",
+          color: "#E53E3E", marginBottom: "24px", fontSize: "14px",
+        }}>
           {error}
         </div>
       )}
 
+      {/* ── LOADING ── */}
       {loading ? (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "300px" }}>
-          <div style={{ width: "36px", height: "36px", border: "3px solid #C9A84C33", borderTopColor: "#C9A84C", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+          <div style={{
+            width: "36px", height: "36px",
+            border: "3px solid #C9A84C33", borderTopColor: "#C9A84C",
+            borderRadius: "50%", animation: "spin 0.8s linear infinite",
+          }} />
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: history.length > 1 ? "260px 1fr" : "1fr", gap: "24px", alignItems: "start" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: history.length > 1 ? "260px 1fr" : "1fr",
+          gap: "24px",
+          alignItems: "start",
+        }}>
 
-          {/* History sidebar — only shown if more than 1 report */}
+          {/* ── HISTORY SIDEBAR ── */}
           {history.length > 1 && (
-            <div style={{ background: ui.panel, border: `1px solid ${ui.border}`, borderRadius: "12px", overflow: "hidden" }}>
-              <div style={{ padding: "14px 16px", borderBottom: `1px solid ${ui.border}`, fontSize: "13px", fontWeight: "700", color: ui.muted }}>
+            <div style={{
+              background: ui.panel, border: `1px solid ${ui.border}`,
+              borderRadius: "12px", overflow: "hidden",
+            }}>
+              <div style={{
+                padding: "14px 16px", borderBottom: `1px solid ${ui.border}`,
+                fontSize: "13px", fontWeight: "700", color: ui.muted,
+              }}>
                 {t("insights.history", "السجل")}
               </div>
               {history.map(r => (
@@ -228,20 +381,50 @@ export default function InsightsPage() {
             </div>
           )}
 
-          {/* Report panel */}
-          <div style={{ background: ui.panel, border: `1px solid ${ui.border}`, borderRadius: "12px", padding: "28px 32px" }}>
+          {/* ── REPORT PANEL ── */}
+          <div style={{
+            background: ui.panel, border: `1px solid ${ui.border}`,
+            borderRadius: "12px", padding: "28px 32px",
+          }}>
             {selected ? (
               <>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+                {/* Report meta + download button */}
+                <div style={{
+                  display: "flex", justifyContent: "space-between",
+                  alignItems: "center", marginBottom: "24px",
+                  flexWrap: "wrap", gap: "12px",
+                }}>
                   <div style={{ fontSize: "13px", color: ui.muted }}>
                     🕐 {formatDateTime(selected.generated_at)} &nbsp;·&nbsp;
                     📅 {selected.period_days} {t("insights.days", "يوم")}
                   </div>
+
+                  <button
+                    onClick={() => handlePrint(selected, company.name)}
+                    style={{
+                      display: "flex", alignItems: "center", gap: "7px",
+                      padding: "7px 16px", borderRadius: "8px",
+                      border: "1px solid #C9A84C44",
+                      background: "#C9A84C11",
+                      color: "#C9A84C",
+                      fontSize: "13px", fontWeight: "600",
+                      cursor: "pointer", transition: "all 0.2s",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "#C9A84C22"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "#C9A84C11"; }}
+                  >
+                    ⬇ {t("insights.download", "تحميل PDF")}
+                  </button>
                 </div>
+
                 <MarkdownReport content={selected.content} ui={ui} />
               </>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "300px", gap: "16px" }}>
+              <div style={{
+                display: "flex", flexDirection: "column",
+                alignItems: "center", justifyContent: "center",
+                height: "300px", gap: "16px",
+              }}>
                 <div style={{ fontSize: "48px" }}>✨</div>
                 <p style={{ color: ui.muted, fontSize: "15px", textAlign: "center" }}>
                   {t("insights.empty", "لا توجد تقارير بعد. اضغط على «إنشاء تقرير جديد» للبدء.")}

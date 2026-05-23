@@ -397,30 +397,28 @@ export default function AppNavbar() {
             )}
           </div>
 
-          {/* LOGOUT */}
-          <button
-            onClick={handleLogout}
-            title={t("navigation.logout", "خروج")}
-            style={{
-              display: "flex", alignItems: "center", gap: "6px",
-              padding: "6px 12px", borderRadius: "10px",
-              border: "1px solid rgba(239,68,68,0.25)",
-              background: "rgba(239,68,68,0.08)", color: "#F87171",
-              cursor: "pointer", fontSize: "0.8rem", fontWeight: "600",
-              transition: "all 0.2s", flexShrink: 0, whiteSpace: "nowrap",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background  = "rgba(239,68,68,0.15)";
-              e.currentTarget.style.borderColor = "rgba(239,68,68,0.4)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background  = "rgba(239,68,68,0.08)";
-              e.currentTarget.style.borderColor = "rgba(239,68,68,0.25)";
-            }}
-          >
-            <LogOut size={14} />
-            {t("navigation.logout", "خروج")}
-          </button>
+     {/* LOGOUT */}
+<button
+  onClick={handleLogout}
+  title={t("navigation.logout", "خروج")}
+  style={{
+    display: "flex", alignItems: "center", justifyContent: "center",
+    width: "36px", height: "36px", borderRadius: "10px",
+    border: "1px solid rgba(239,68,68,0.25)",
+    background: "rgba(239,68,68,0.08)", color: "#F87171",
+    cursor: "pointer", transition: "all 0.2s", flexShrink: 0,
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.background  = "rgba(239,68,68,0.15)";
+    e.currentTarget.style.borderColor = "rgba(239,68,68,0.4)";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.background  = "rgba(239,68,68,0.08)";
+    e.currentTarget.style.borderColor = "rgba(239,68,68,0.25)";
+  }}
+>
+  <LogOut size={15} />
+</button>
 
         </div>
       </div>
