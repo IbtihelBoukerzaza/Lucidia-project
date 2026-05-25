@@ -82,3 +82,20 @@ Thumbs.db
 *.swp
 *.swo
 *.tmp
+#################################
+# Scraper sessions (NEVER COMMIT - contain social media credentials)
+#################################
+backend/fb_session.json
+backend/tiktok_cookies.json
+backend/playwright_instagram_session/
+backend/refresh_fb_session.py
+
+#################################
+# Django static files
+#################################
+backend/staticfiles/
+
+#################################
+# ML service models
+#################################
+ml-service/models/
