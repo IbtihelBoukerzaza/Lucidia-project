@@ -100,7 +100,7 @@
     "monitoring": "Surveillance continue"
   },
   "features": {
-    "aiAnalysis":      { "title": "Analyse par IA",                  "description": "Les modèles DziriBERT et MARBERT entraînés sur le dialecte algérien classifient les sentiments avec plus de 98% de précision." },
+    "aiAnalysis":      { "title": "Analyse par IA",                  "description": "Les modèles DziriBERT et MARBERT entraînés sur le dialecte algérien classifient les sentiments avec plus de 72% de précision." },
     "multiPlatform":   { "title": "Surveillance multi-plateformes",  "description": "Facebook, Instagram, TikTok, YouTube, Reddit, X — tout en un seul endroit." },
     "realTimeAlerts":  { "title": "Alertes en temps réel",           "description": "Soyez notifié dès qu'un indicateur dépasse votre seuil, pour agir avant qu'une crise ne s'aggrave." },
     "brandProtection": { "title": "Protection de la réputation",     "description": "Surveillez l'image de votre marque quotidiennement et suivez tout changement dans les sentiments de votre audience." }

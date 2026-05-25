@@ -100,7 +100,7 @@
       "monitoring": "Continuous Monitoring"
     },
     "features": {
-      "aiAnalysis":      { "title": "AI-Powered Analysis",        "description": "DziriBERT and MARBERT models trained on Algerian dialect classify sentiment with over 98% accuracy." },
+      "aiAnalysis":      { "title": "AI-Powered Analysis",        "description": "DziriBERT and MARBERT models trained on Algerian dialect classify sentiment with over 72% accuracy." },
       "multiPlatform":   { "title": "Multi-Platform Monitoring",  "description": "Facebook, Instagram, TikTok, YouTube, Reddit, X — everything in one place." },
       "realTimeAlerts":  { "title": "Real-Time Alerts",           "description": "Get notified the moment any indicator crosses your threshold, so you can act before a crisis escalates." },
       "brandProtection": { "title": "Brand Reputation Protection","description": "Monitor your brand image daily and track any shift in your audience's sentiment." }

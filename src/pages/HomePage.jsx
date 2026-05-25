@@ -474,7 +474,7 @@ export default function HomePage() {
             <div style={{ display: 'flex', gap: '2rem', paddingTop: '0.5rem' }}>
               {[
                 { value: '+50',  label: t('home.trust.brands')     },
-                { value: '98%',  label: t('home.trust.accuracy')   },
+                { value: '72%',  label: t('home.trust.accuracy')   },
                 { value: '24/7', label: t('home.trust.monitoring') },
               ].map(s => (
                 <div key={s.label} style={{ textAlign: 'center' }}>

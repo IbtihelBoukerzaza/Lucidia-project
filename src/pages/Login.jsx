@@ -209,7 +209,7 @@ export default function Login() {
   ];
 
   const stats = [
-    { label: t("login.stats.accuracy"), value: "94%",  color: "#2E8B57", delay: 0.3  },
+    { label: t("login.stats.accuracy"), value: "72%",  color: "#2E8B57", delay: 0.3  },
     { label: t("login.stats.sources"),  value: "8+",   color: "#C9A84C", delay: 0.45 },
     { label: t("login.stats.realtime"), value: "Live", color: "#4A90D9", delay: 0.6  },
   ];
