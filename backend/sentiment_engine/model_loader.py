@@ -1,5 +1,5 @@
 """
-HTTP client for the Gantra ML Service (FastAPI).
+HTTP client for the Gantra ML Service (FastAPI on HuggingFace Spaces).
 Django no longer loads models directly — it calls the ML service over HTTP.
 """
 
@@ -13,6 +13,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 ML_SERVICE_URL = os.getenv("ML_SERVICE_URL", "http://localhost:8001")
+ML_SERVICE_TOKEN = os.getenv("ML_SERVICE_TOKEN", "")
 
 
 def predict_via_service(text: str) -> dict:
@@ -21,9 +22,14 @@ def predict_via_service(text: str) -> dict:
     Falls back to neutral if the service is unreachable.
     """
     try:
+        headers = {}
+        if ML_SERVICE_TOKEN:
+            headers["Authorization"] = f"Bearer {ML_SERVICE_TOKEN}"
+
         resp = requests.post(
             f"{ML_SERVICE_URL}/predict",
             json={"text": text},
+            headers=headers,
             timeout=30,
         )
         resp.raise_for_status()
