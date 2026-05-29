@@ -10,7 +10,10 @@ import logging
 import time
 from typing import List, Dict
 
-from playwright.sync_api import sync_playwright
+try:
+    from playwright.sync_api import sync_playwright
+except ImportError:
+    sync_playwright = None
 
 logger = logging.getLogger(__name__)
 

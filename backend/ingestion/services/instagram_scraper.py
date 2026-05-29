@@ -14,7 +14,12 @@ from pathlib import Path
 from typing import List, Dict, Optional
 from urllib.parse import urlparse
 
-from playwright.sync_api import sync_playwright, Page, TimeoutError as PWTimeout
+try:
+    from playwright.sync_api import sync_playwright, Page, TimeoutError as PWTimeout
+except ImportError:
+    sync_playwright = None
+    Page = None
+    PWTimeout = Exception
 
 logger = logging.getLogger(__name__)
 
