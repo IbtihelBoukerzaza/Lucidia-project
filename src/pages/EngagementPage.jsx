@@ -29,10 +29,10 @@ function fmtDate(s) {
 
 /* ── platform config ── */
 const P = {
-  facebook:  { label: "Facebook",  color: "#4F46E5", icon: <Radio     size={13}/> },
-  instagram: { label: "Instagram", color: "#EC4899", icon: <Camera   size={13}/> },
-  tiktok:    { label: "TikTok",    color: "#14B8A6", icon: <Play      size={13}/> },
-  youtube:   { label: "YouTube",   color: "#E53E3E", icon: <Video  size={13}/> },
+  facebook:  { label: "Facebook",  color: "#4F46E5", icon: <Radio   size={13}/> },
+  instagram: { label: "Instagram", color: "#EC4899", icon: <Camera  size={13}/> },
+  tiktok:    { label: "TikTok",    color: "#14B8A6", icon: <Play    size={13}/> },
+  youtube:   { label: "YouTube",   color: "#E53E3E", icon: <Video   size={13}/> },
 };
 
 function PBadge({ platform }) {
@@ -347,7 +347,8 @@ function PostsTable({ companyId, isDark, t }) {
         <p style={{ margin:0, fontWeight:800, fontSize:"0.95rem", color:isDark?"#E5E7EB":"#111" }}>
           {t("engagement.table.title")}
         </p>
-        <div style={{ display:"flex", borderRadius:10, overflow:"hidden", border:`1px solid ${isDark?"#1E1E1E":"#E5E7EB"}` }}>
+        {/* Platform filter — wraps on mobile */}
+        <div style={{ display:"flex", flexWrap:"wrap", borderRadius:10, overflow:"hidden", border:`1px solid ${isDark?"#1E1E1E":"#E5E7EB"}` }}>
           {platforms.map(opt => (
             <button key={opt.v} onClick={()=>setPlatform(opt.v)} style={{
               padding:"5px 11px", fontSize:"0.72rem", fontWeight:700,
@@ -523,7 +524,19 @@ export default function EngagementPage() {
 
   return (
     <div dir="rtl" style={{ minHeight:"100vh", background:ui.bg, color:ui.text }}>
-      <style>{`@keyframes spin { to { transform:rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .eng-content-grid {
+          display: grid;
+          grid-template-columns: 1fr 300px;
+          gap: 1.25rem;
+        }
+        @media (max-width: 768px) {
+          .eng-content-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
 
       <div style={{ maxWidth:1080, margin:"0 auto", padding:"2rem 1.25rem" }}>
 
@@ -575,7 +588,8 @@ export default function EngagementPage() {
         ) : (
           <div style={{ display:"flex", flexDirection:"column", gap:"1.25rem" }}>
             <KpiStrip totals={stats?.totals} isDark={isDark} t={t}/>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 300px", gap:"1.25rem" }}>
+            {/* ← responsive grid: side-by-side on desktop, stacked on mobile */}
+            <div className="eng-content-grid">
               <TopContent companyId={activeCompany.id} isDark={isDark} t={t}/>
               <PlatformBreakdown breakdown={stats?.breakdown} isDark={isDark} t={t}/>
             </div>

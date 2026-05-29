@@ -1,145 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 function formatDateTime(dateStr) {
   const d = new Date(dateStr);
   return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
 }
 
-function handlePrint(report, companyName) {
-  const printWindow = window.open("", "_blank");
-
-  const lines = report.content.split("\n");
-  let html = "";
-
-  for (const line of lines) {
-    if (line.startsWith("# ")) {
-      html += `<h1>${line.replace("# ", "")}</h1>`;
-    } else if (line.startsWith("## ")) {
-      html += `<h2>${line.replace("## ", "")}</h2>`;
-    } else if (line.startsWith("- ")) {
-      html += `<li>${line.replace("- ", "")}</li>`;
-    } else if (line.trim() === "") {
-      html += `<br/>`;
-    } else {
-      html += `<p>${line}</p>`;
-    }
-  }
-
-  printWindow.document.write(`
-    <!DOCTYPE html>
-    <html dir="rtl" lang="ar">
-    <head>
-      <meta charset="UTF-8" />
-      <title>Gantra — ${companyName} — ${formatDateTime(report.generated_at)}</title>
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-          font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-          font-size: 14px;
-          line-height: 1.9;
-          color: #111;
-          background: #fff;
-          padding: 48px 56px;
-          direction: rtl;
-        }
-        .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border-bottom: 2px solid #C9A84C;
-          padding-bottom: 16px;
-          margin-bottom: 32px;
-        }
-        .brand {
-          font-size: 22px;
-          font-weight: 900;
-          color: #C9A84C;
-          letter-spacing: -0.5px;
-        }
-        .meta {
-          font-size: 12px;
-          color: #9CA3AF;
-          text-align: left;
-        }
-        h1 {
-          font-size: 20px;
-          font-weight: 800;
-          color: #C9A84C;
-          margin: 0 0 16px;
-        }
-        h2 {
-          font-size: 15px;
-          font-weight: 700;
-          color: #B8912E;
-          margin: 28px 0 10px;
-          padding-bottom: 6px;
-          border-bottom: 1px solid #C9A84C33;
-        }
-        p {
-          margin-bottom: 8px;
-          color: #222;
-        }
-        li {
-          margin: 6px 0 6px 0;
-          padding-right: 16px;
-          color: #222;
-          list-style: none;
-          position: relative;
-        }
-        li::before {
-          content: "•";
-          color: #C9A84C;
-          position: absolute;
-          right: 0;
-        }
-        .footer {
-          margin-top: 48px;
-          padding-top: 16px;
-          border-top: 1px solid #E5E7EB;
-          font-size: 11px;
-          color: #9CA3AF;
-          display: flex;
-          justify-content: space-between;
-        }
-        @media print {
-          body { padding: 32px 40px; }
-          h2 { page-break-after: avoid; }
-        }
-      </style>
-    </head>
-    <body>
-      <div class="header">
-        <div class="brand">✦ Gantra AI</div>
-        <div class="meta">
-          <div>${companyName}</div>
-          <div>${formatDateTime(report.generated_at)}</div>
-          <div>${report.period_days} يوم / jours / days</div>
-        </div>
-      </div>
-      ${html}
-      <div class="footer">
-        <span>Gantra — منصة تحليل المشاعر</span>
-        <span>gantra.dz</span>
-      </div>
-    </body>
-    </html>
-  `);
-
-  printWindow.document.close();
-  printWindow.focus();
-  setTimeout(() => {
-    printWindow.print();
-    printWindow.close();
-  }, 400);
-}
-
 function MarkdownReport({ content, ui }) {
   const lines = content.split("\n");
-
   return (
     <div style={{ lineHeight: "2", fontSize: "15px", color: ui.text }}>
       {lines.map((line, i) => {
@@ -172,6 +45,86 @@ function MarkdownReport({ content, ui }) {
   );
 }
 
+/* ── Hidden print-ready div rendered by browser (handles Arabic + RTL perfectly) ── */
+function PrintableReport({ report, companyName }) {
+  if (!report) return null;
+  const lines = report.content.split("\n");
+  return (
+    <div style={{
+      width: "794px",         /* A4 width at 96dpi */
+      padding: "48px 56px",
+      background: "#FFFFFF",
+      color: "#111111",
+      fontFamily: "'Segoe UI', Tahoma, Arial, sans-serif",
+      direction: "rtl",
+      textAlign: "right",
+      boxSizing: "border-box",
+    }}>
+      {/* Header bar */}
+      <div style={{
+        background: "#C9A84C",
+        margin: "-48px -56px 36px -56px",
+        padding: "16px 56px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}>
+        <span style={{ fontWeight: "700", fontSize: "16px", color: "#000" }}>Gantra AI</span>
+        <span style={{ fontSize: "12px", color: "#000" }}>
+          {companyName} · {formatDateTime(report.generated_at)} · {report.period_days} يوم
+        </span>
+      </div>
+
+      {/* Content */}
+      {lines.map((line, i) => {
+        if (line.startsWith("# ")) {
+          return (
+            <h1 key={i} style={{ fontSize: "20px", fontWeight: "700", color: "#C9A84C", marginBottom: "12px", marginTop: "8px" }}>
+              {line.replace("# ", "")}
+            </h1>
+          );
+        }
+        if (line.startsWith("## ")) {
+          return (
+            <h2 key={i} style={{
+              fontSize: "15px", fontWeight: "700", color: "#B8892A",
+              marginTop: "24px", marginBottom: "8px",
+              borderBottom: "1px solid #C9A84C66", paddingBottom: "6px",
+            }}>
+              {line.replace("## ", "")}
+            </h2>
+          );
+        }
+        if (line.startsWith("- ")) {
+          return (
+            <div key={i} style={{ display: "flex", gap: "8px", marginBottom: "6px", lineHeight: "1.8", fontSize: "13px" }}>
+              <span style={{ color: "#C9A84C" }}>•</span>
+              <span>{line.replace("- ", "")}</span>
+            </div>
+          );
+        }
+        if (line.trim() === "") return <div key={i} style={{ height: "10px" }} />;
+        return (
+          <p key={i} style={{ marginBottom: "6px", lineHeight: "1.9", fontSize: "13px" }}>
+            {line}
+          </p>
+        );
+      })}
+
+      {/* Footer */}
+      <div style={{
+        marginTop: "48px", paddingTop: "12px",
+        borderTop: "1px solid #E5E7EB",
+        display: "flex", justifyContent: "space-between",
+        fontSize: "11px", color: "#9CA3AF",
+      }}>
+        <span>Gantra — منصة تحليل المشاعر</span>
+        <span>تقرير #{report.id}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function InsightsPage() {
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
@@ -189,13 +142,17 @@ export default function InsightsPage() {
 
   const company = companies?.[0];
 
-  const [latest, setLatest]         = useState(null);
-  const [history, setHistory]       = useState([]);
-  const [selected, setSelected]     = useState(null);
-  const [loading, setLoading]       = useState(true);
-  const [generating, setGenerating] = useState(false);
-  const [error, setError]           = useState("");
-  const [periodDays, setPeriodDays] = useState(30);
+  const [latest,      setLatest]      = useState(null);
+  const [history,     setHistory]     = useState([]);
+  const [selected,    setSelected]    = useState(null);
+  const [loading,     setLoading]     = useState(true);
+  const [generating,  setGenerating]  = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [error,       setError]       = useState("");
+  const [periodDays,  setPeriodDays]  = useState(30);
+
+  /* ref to the hidden printable div */
+  const printRef = useRef(null);
 
   useEffect(() => {
     if (!company) return;
@@ -210,7 +167,6 @@ export default function InsightsPage() {
         api.getLatestInsight(company.id),
         api.getInsightHistory(company.id),
       ]);
-
       if (latestRes.ok) {
         const data = await latestRes.json();
         setLatest(data);
@@ -232,7 +188,7 @@ export default function InsightsPage() {
     setError("");
     try {
       const lang = i18n.language?.slice(0, 2) || "ar";
-      const res = await api.generateInsight(company.id, periodDays, lang);
+      const res  = await api.generateInsight(company.id, periodDays, lang);
       if (!res.ok) {
         const err = await res.json();
         setError(err.error || t("insights.generateError", "فشل إنشاء التقرير."));
@@ -249,6 +205,64 @@ export default function InsightsPage() {
     }
   }
 
+  /* ── NEW: screenshot the hidden div → PDF ── */
+  async function handleDownloadPDF() {
+    if (!printRef.current || !selected) return;
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(printRef.current, {
+        scale: 2,           /* 2× for sharp text */
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
+
+      const imgData  = canvas.toDataURL("image/png");
+      const pdf      = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pageW    = pdf.internal.pageSize.getWidth();
+      const pageH    = pdf.internal.pageSize.getHeight();
+
+      /* canvas dimensions in mm (at 96dpi: 1px = 0.2646mm) */
+      const pxToMm   = 0.2646;
+      const imgW     = canvas.width  * pxToMm;
+      const imgH     = canvas.height * pxToMm;
+
+      /* scale to fit page width */
+      const ratio    = pageW / imgW;
+      const scaledH  = imgH * ratio;
+
+      /* if content fits on one page */
+      if (scaledH <= pageH) {
+        pdf.addImage(imgData, "PNG", 0, 0, pageW, scaledH);
+      } else {
+        /* multi-page: slice the canvas vertically */
+        let yOffset = 0;
+        const sliceH = Math.floor(pageH / ratio); /* height in px per page */
+
+        while (yOffset < canvas.height) {
+          const sliceCanvas = document.createElement("canvas");
+          sliceCanvas.width  = canvas.width;
+          sliceCanvas.height = Math.min(sliceH, canvas.height - yOffset);
+
+          const ctx = sliceCanvas.getContext("2d");
+          ctx.drawImage(canvas, 0, -yOffset);
+
+          const sliceData = sliceCanvas.toDataURL("image/png");
+          if (yOffset > 0) pdf.addPage();
+          pdf.addImage(sliceData, "PNG", 0, 0, pageW, sliceCanvas.height * ratio * pxToMm);
+
+          yOffset += sliceH;
+        }
+      }
+
+      pdf.save(`gantra-report-${company.name}-${selected.id}.pdf`);
+    } catch (err) {
+      setError("فشل تحميل PDF. حاول مجدداً.");
+      console.error(err);
+    } finally {
+      setDownloading(false);
+    }
+  }
+
   if (!company) {
     return (
       <div dir="rtl" style={{ minHeight: "100vh", background: ui.bg, color: ui.text, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -260,7 +274,27 @@ export default function InsightsPage() {
   return (
     <div dir="rtl" style={{ minHeight: "100vh", background: ui.bg, color: ui.text, padding: "32px 24px" }}>
 
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      {/* ── Hidden printable div (off-screen, not display:none so html2canvas can read it) ── */}
+      <div style={{ position: "absolute", top: "-9999px", left: "-9999px", zIndex: -1 }}>
+        <div ref={printRef}>
+          <PrintableReport report={selected} companyName={company.name} />
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .insights-grid {
+          display: grid;
+          grid-template-columns: 260px 1fr;
+          gap: 24px;
+          align-items: start;
+        }
+        @media (max-width: 768px) {
+          .insights-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
 
       {/* ── HEADER ── */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginBottom: "32px" }}>
@@ -273,7 +307,6 @@ export default function InsightsPage() {
           </p>
         </div>
 
-        {/* Generate controls */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
           <select
             value={periodDays}
@@ -284,7 +317,7 @@ export default function InsightsPage() {
               fontSize: "14px", cursor: "pointer",
             }}
           >
-            <option value={7}>{t("insights.period7", "آخر 7 أيام")}</option>
+            <option value={7}>{t("insights.period7",  "آخر 7 أيام")}</option>
             <option value={30}>{t("insights.period30", "آخر 30 يوماً")}</option>
             <option value={90}>{t("insights.period90", "آخر 90 يوماً")}</option>
           </select>
@@ -339,12 +372,7 @@ export default function InsightsPage() {
           }} />
         </div>
       ) : (
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: history.length > 1 ? "260px 1fr" : "1fr",
-          gap: "24px",
-          alignItems: "start",
-        }}>
+        <div className={history.length > 1 ? "insights-grid" : ""}>
 
           {/* ── HISTORY SIDEBAR ── */}
           {history.length > 1 && (
@@ -388,7 +416,6 @@ export default function InsightsPage() {
           }}>
             {selected ? (
               <>
-                {/* Report meta + download button */}
                 <div style={{
                   display: "flex", justifyContent: "space-between",
                   alignItems: "center", marginBottom: "24px",
@@ -400,20 +427,33 @@ export default function InsightsPage() {
                   </div>
 
                   <button
-                    onClick={() => handlePrint(selected, company.name)}
+                    onClick={handleDownloadPDF}
+                    disabled={downloading}
                     style={{
                       display: "flex", alignItems: "center", gap: "7px",
                       padding: "7px 16px", borderRadius: "8px",
                       border: "1px solid #C9A84C44",
                       background: "#C9A84C11",
-                      color: "#C9A84C",
+                      color: downloading ? ui.muted : "#C9A84C",
                       fontSize: "13px", fontWeight: "600",
-                      cursor: "pointer", transition: "all 0.2s",
+                      cursor: downloading ? "not-allowed" : "pointer",
+                      transition: "all 0.2s",
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.background = "#C9A84C22"; }}
+                    onMouseEnter={e => { if (!downloading) e.currentTarget.style.background = "#C9A84C22"; }}
                     onMouseLeave={e => { e.currentTarget.style.background = "#C9A84C11"; }}
                   >
-                    ⬇ {t("insights.download", "تحميل PDF")}
+                    {downloading ? (
+                      <>
+                        <span style={{
+                          display: "inline-block", width: "12px", height: "12px",
+                          border: "2px solid #9CA3AF", borderTopColor: "transparent",
+                          borderRadius: "50%", animation: "spin 0.8s linear infinite",
+                        }} />
+                        {t("insights.downloading", "جارٍ التحميل...")}
+                      </>
+                    ) : (
+                      <>⬇ {t("insights.download", "تحميل PDF")}</>
+                    )}
                   </button>
                 </div>
 
