@@ -79,7 +79,6 @@ function TestimonialsSection({ ui, isDark, t }) {
     load()
   }, [])
 
-  // Auto-rotate cards
   useEffect(() => {
     if (testimonials.length <= 1) return
     const id = setInterval(() => setActiveIdx(p => (p + 1) % testimonials.length), 5000)
@@ -93,12 +92,10 @@ function TestimonialsSection({ ui, isDark, t }) {
     : stats.nps_score >= 0  ? '#F59E0B'
     : '#E53E3E'
 
-  // Show up to 3 cards; on mobile carousel shows 1
   const visible = testimonials.slice(0, 6)
 
   return (
     <section>
-      {/* ── Header ── */}
       <div style={{ marginBottom: '2rem' }}>
         <span style={{
           display: 'inline-flex', alignItems: 'center', gap: '6px',
@@ -118,85 +115,39 @@ function TestimonialsSection({ ui, isDark, t }) {
         </p>
       </div>
 
-      {/* ── Aggregate stats bar ── */}
       {stats?.total > 0 && (
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
           gap: '12px', marginBottom: '2rem',
         }}>
-          {/* NPS */}
-          <div style={{
-            padding: '18px 20px', borderRadius: '18px',
-            background: ui.surface, border: `1px solid ${ui.border}`,
-            position: 'relative', overflow: 'hidden',
-          }}>
-            <div style={{
-              position: 'absolute', top: 0, left: 0, right: 0, height: '3px',
-              background: npsColor,
-            }} />
-            <p style={{ fontSize: '11px', fontWeight: 600, color: ui.muted, margin: '0 0 6px' }}>
-              {t('home.testimonials.stats.nps')}
-            </p>
-            <p style={{ fontSize: '32px', fontWeight: 900, color: npsColor, margin: '0 0 4px', lineHeight: 1 }}>
-              {stats.nps_score > 0 ? '+' : ''}{stats.nps_score}
-            </p>
-            <p style={{ fontSize: '11px', color: ui.muted, margin: 0 }}>
-              {t('home.testimonials.stats.from', { count: stats.total })}
-            </p>
+          <div style={{ padding: '18px 20px', borderRadius: '18px', background: ui.surface, border: `1px solid ${ui.border}`, position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: npsColor }} />
+            <p style={{ fontSize: '11px', fontWeight: 600, color: ui.muted, margin: '0 0 6px' }}>{t('home.testimonials.stats.nps')}</p>
+            <p style={{ fontSize: '32px', fontWeight: 900, color: npsColor, margin: '0 0 4px', lineHeight: 1 }}>{stats.nps_score > 0 ? '+' : ''}{stats.nps_score}</p>
+            <p style={{ fontSize: '11px', color: ui.muted, margin: 0 }}>{t('home.testimonials.stats.from', { count: stats.total })}</p>
           </div>
-
-          {/* Accuracy */}
-          <div style={{
-            padding: '18px 20px', borderRadius: '18px',
-            background: ui.surface, border: `1px solid ${ui.border}`,
-            position: 'relative', overflow: 'hidden',
-          }}>
+          <div style={{ padding: '18px 20px', borderRadius: '18px', background: ui.surface, border: `1px solid ${ui.border}`, position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: '#F59E0B' }} />
-            <p style={{ fontSize: '11px', fontWeight: 600, color: ui.muted, margin: '0 0 6px' }}>
-              {t('home.testimonials.stats.accuracy')}
-            </p>
-            <p style={{ fontSize: '28px', fontWeight: 900, color: '#F59E0B', margin: '0 0 4px', lineHeight: 1 }}>
-              {stats.avg_accuracy}<span style={{ fontSize: '14px', color: ui.muted, fontWeight: 400 }}>/5</span>
-            </p>
+            <p style={{ fontSize: '11px', fontWeight: 600, color: ui.muted, margin: '0 0 6px' }}>{t('home.testimonials.stats.accuracy')}</p>
+            <p style={{ fontSize: '28px', fontWeight: 900, color: '#F59E0B', margin: '0 0 4px', lineHeight: 1 }}>{stats.avg_accuracy}<span style={{ fontSize: '14px', color: ui.muted, fontWeight: 400 }}>/5</span></p>
             <StarsDisplay value={stats.avg_accuracy} />
           </div>
-
-          {/* Usability */}
-          <div style={{
-            padding: '18px 20px', borderRadius: '18px',
-            background: ui.surface, border: `1px solid ${ui.border}`,
-            position: 'relative', overflow: 'hidden',
-          }}>
+          <div style={{ padding: '18px 20px', borderRadius: '18px', background: ui.surface, border: `1px solid ${ui.border}`, position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: '#4A90D9' }} />
-            <p style={{ fontSize: '11px', fontWeight: 600, color: ui.muted, margin: '0 0 6px' }}>
-              {t('home.testimonials.stats.usability')}
-            </p>
-            <p style={{ fontSize: '28px', fontWeight: 900, color: '#4A90D9', margin: '0 0 4px', lineHeight: 1 }}>
-              {stats.avg_usability}<span style={{ fontSize: '14px', color: ui.muted, fontWeight: 400 }}>/5</span>
-            </p>
+            <p style={{ fontSize: '11px', fontWeight: 600, color: ui.muted, margin: '0 0 6px' }}>{t('home.testimonials.stats.usability')}</p>
+            <p style={{ fontSize: '28px', fontWeight: 900, color: '#4A90D9', margin: '0 0 4px', lineHeight: 1 }}>{stats.avg_usability}<span style={{ fontSize: '14px', color: ui.muted, fontWeight: 400 }}>/5</span></p>
             <StarsDisplay value={stats.avg_usability} />
           </div>
-
-          {/* Coverage */}
-          <div style={{
-            padding: '18px 20px', borderRadius: '18px',
-            background: ui.surface, border: `1px solid ${ui.border}`,
-            position: 'relative', overflow: 'hidden',
-          }}>
+          <div style={{ padding: '18px 20px', borderRadius: '18px', background: ui.surface, border: `1px solid ${ui.border}`, position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: '#2E8B57' }} />
-            <p style={{ fontSize: '11px', fontWeight: 600, color: ui.muted, margin: '0 0 6px' }}>
-              {t('home.testimonials.stats.coverage')}
-            </p>
-            <p style={{ fontSize: '28px', fontWeight: 900, color: '#2E8B57', margin: '0 0 4px', lineHeight: 1 }}>
-              {stats.avg_coverage}<span style={{ fontSize: '14px', color: ui.muted, fontWeight: 400 }}>/5</span>
-            </p>
+            <p style={{ fontSize: '11px', fontWeight: 600, color: ui.muted, margin: '0 0 6px' }}>{t('home.testimonials.stats.coverage')}</p>
+            <p style={{ fontSize: '28px', fontWeight: 900, color: '#2E8B57', margin: '0 0 4px', lineHeight: 1 }}>{stats.avg_coverage}<span style={{ fontSize: '14px', color: ui.muted, fontWeight: 400 }}>/5</span></p>
             <StarsDisplay value={stats.avg_coverage} />
           </div>
         </div>
       )}
 
-      {/* ── Testimonial cards grid ── */}
       {visible.length > 0 && (
         <>
           <div style={{
@@ -205,154 +156,62 @@ function TestimonialsSection({ ui, isDark, t }) {
             gap: '16px',
             marginBottom: testimonials.length > 3 ? '16px' : 0,
           }}>
-            {visible.map((item, idx) => (
-              <div
-                key={item.id}
-                style={{
-                  padding: '24px', borderRadius: '22px',
-                  background: ui.surface, border: `1px solid ${ui.border}`,
-                  display: 'flex', flexDirection: 'column', gap: '16px',
-                  position: 'relative', overflow: 'hidden',
-                  transition: 'transform 0.25s, border-color 0.25s, box-shadow 0.25s',
-                  cursor: 'default',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform    = 'translateY(-4px)'
-                  e.currentTarget.style.borderColor  = 'rgba(201,168,76,0.4)'
-                  e.currentTarget.style.boxShadow    = isDark
-                    ? '0 12px 40px rgba(0,0,0,0.5)'
-                    : '0 12px 32px rgba(0,0,0,0.1)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform    = 'translateY(0)'
-                  e.currentTarget.style.borderColor  = ui.border
-                  e.currentTarget.style.boxShadow    = 'none'
-                }}
+            {visible.map((item) => (
+              <div key={item.id} style={{
+                padding: '24px', borderRadius: '22px',
+                background: ui.surface, border: `1px solid ${ui.border}`,
+                display: 'flex', flexDirection: 'column', gap: '16px',
+                position: 'relative', overflow: 'hidden',
+                transition: 'transform 0.25s, border-color 0.25s, box-shadow 0.25s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)'; e.currentTarget.style.boxShadow = isDark ? '0 12px 40px rgba(0,0,0,0.5)' : '0 12px 32px rgba(0,0,0,0.1)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.boxShadow = 'none' }}
               >
-                {/* Gold top accent */}
-                <div style={{
-                  position: 'absolute', top: 0, left: '20%', right: '20%', height: '2px',
-                  background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)',
-                }} />
-
-                {/* Decorative quote mark */}
-                <div style={{
-                  position: 'absolute', top: '16px',
-                  left: '20px',
-                  fontSize: '64px', lineHeight: 1, fontFamily: 'Georgia, serif',
-                  color: isDark ? 'rgba(201,168,76,0.06)' : 'rgba(201,168,76,0.1)',
-                  pointerEvents: 'none', userSelect: 'none',
-                }}>
-                  "
-                </div>
-
-                {/* Top row: NPS + stars */}
+                <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: '2px', background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)' }} />
+                <div style={{ position: 'absolute', top: '16px', left: '20px', fontSize: '64px', lineHeight: 1, fontFamily: 'Georgia, serif', color: isDark ? 'rgba(201,168,76,0.06)' : 'rgba(201,168,76,0.1)', pointerEvents: 'none', userSelect: 'none' }}>"</div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
                   <NPSBadge score={item.nps_score} />
                   <StarsDisplay value={item.accuracy_rating} size={13} />
                 </div>
-
-                {/* Comment */}
                 {item.comment && (
-                  <p style={{
-                    fontSize: '13px', lineHeight: 1.75, color: ui.text,
-                    margin: 0, fontStyle: 'italic', flex: 1,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 5,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }}>
+                  <p style={{ fontSize: '13px', lineHeight: 1.75, color: ui.text, margin: 0, fontStyle: 'italic', flex: 1, display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     "{item.comment}"
                   </p>
                 )}
-
-                {/* Ratings row */}
-                <div style={{
-                  display: 'flex', gap: '12px', flexWrap: 'wrap',
-                  paddingTop: '12px', borderTop: `1px solid ${ui.border}`,
-                }}>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', paddingTop: '12px', borderTop: `1px solid ${ui.border}` }}>
                   {[
                     { label: t('home.testimonials.stats.accuracy'), value: item.accuracy_rating,  color: '#F59E0B' },
                     { label: t('home.testimonials.stats.usability'), value: item.usability_rating, color: '#4A90D9' },
                     { label: t('home.testimonials.stats.coverage'),  value: item.coverage_rating,  color: '#2E8B57' },
                   ].map(({ label, value, color }) => (
                     <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: '60px' }}>
-                      <span style={{ fontSize: '10px', color: ui.muted, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {label}
-                      </span>
+                      <span style={{ fontSize: '10px', color: ui.muted, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <div style={{
-                          flex: 1, height: '4px', borderRadius: '999px',
-                          background: isDark ? '#1E1E1E' : '#F0F0F0',
-                          overflow: 'hidden',
-                        }}>
-                          <div style={{
-                            height: '100%', borderRadius: '999px',
-                            width: `${((value || 0) / 5) * 100}%`,
-                            background: color,
-                            transition: 'width 0.6s ease',
-                          }} />
+                        <div style={{ flex: 1, height: '4px', borderRadius: '999px', background: isDark ? '#1E1E1E' : '#F0F0F0', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', borderRadius: '999px', width: `${((value || 0) / 5) * 100}%`, background: color, transition: 'width 0.6s ease' }} />
                         </div>
-                        <span style={{ fontSize: '10px', fontWeight: 700, color, flexShrink: 0 }}>
-                          {value}/5
-                        </span>
+                        <span style={{ fontSize: '10px', fontWeight: 700, color, flexShrink: 0 }}>{value}/5</span>
                       </div>
                     </div>
                   ))}
                 </div>
-
-                {/* Author */}
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: '10px',
-                  marginTop: 'auto',
-                }}>
-                  <div style={{
-                    width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0,
-                    background: 'linear-gradient(135deg, #C9A84C, #2E8B57)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '14px', fontWeight: 900, color: '#fff',
-                    boxShadow: '0 2px 8px rgba(201,168,76,0.3)',
-                  }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 'auto' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0, background: 'linear-gradient(135deg, #C9A84C, #2E8B57)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 900, color: '#fff', boxShadow: '0 2px 8px rgba(201,168,76,0.3)' }}>
                     {item.display_name?.charAt(0)?.toUpperCase() || '?'}
                   </div>
                   <div>
-                    <p style={{ fontSize: '13px', fontWeight: 700, color: ui.text, margin: 0 }}>
-                      {item.display_name}
-                    </p>
-                    <p style={{ fontSize: '11px', color: ui.muted, margin: 0 }}>
-                      {t('home.testimonials.verifiedClient', 'عميل موثوق')}
-                    </p>
+                    <p style={{ fontSize: '13px', fontWeight: 700, color: ui.text, margin: 0 }}>{item.display_name}</p>
+                    <p style={{ fontSize: '11px', color: ui.muted, margin: 0 }}>{t('home.testimonials.verifiedClient', 'عميل موثوق')}</p>
                   </div>
-                  {/* Verified checkmark */}
-                  <div style={{
-                    marginRight: 'auto',
-                    width: '20px', height: '20px', borderRadius: '50%',
-                    background: '#2E8B5715', border: '1px solid #2E8B5730',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '11px', color: '#2E8B57',
-                  }}>
-                    ✓
-                  </div>
+                  <div style={{ marginRight: 'auto', width: '20px', height: '20px', borderRadius: '50%', background: '#2E8B5715', border: '1px solid #2E8B5730', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', color: '#2E8B57' }}>✓</div>
                 </div>
               </div>
             ))}
           </div>
-
-          {/* Dot indicators if more than 3 */}
           {testimonials.length > 3 && (
             <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '8px' }}>
               {visible.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveIdx(i)}
-                  style={{
-                    height: '6px', borderRadius: '999px', border: 'none',
-                    cursor: 'pointer', transition: 'all 0.3s',
-                    width: i === activeIdx % visible.length ? '24px' : '6px',
-                    background: i === activeIdx % visible.length ? '#C9A84C' : ui.border,
-                    padding: 0,
-                  }}
-                />
+                <button key={i} onClick={() => setActiveIdx(i)} style={{ height: '6px', borderRadius: '999px', border: 'none', cursor: 'pointer', transition: 'all 0.3s', width: i === activeIdx % visible.length ? '24px' : '6px', background: i === activeIdx % visible.length ? '#C9A84C' : ui.border, padding: 0 }} />
               ))}
             </div>
           )}
@@ -401,6 +260,17 @@ export default function HomePage() {
     <div dir="rtl" style={{ background: ui.bg, color: ui.text, minHeight: '100vh' }}>
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        .analytics-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+          gap: 1.25rem;
+          align-items: start;
+        }
+        @media (max-width: 768px) {
+          .analytics-grid {
+            grid-template-columns: 1fr;
+          }
+        }
       `}</style>
 
       <div style={{
@@ -426,18 +296,11 @@ export default function HomePage() {
               background: 'rgba(46,139,87,0.08)', color: '#2E8B57',
               fontSize: '0.75rem', fontWeight: '600',
             }}>
-              <span style={{
-                width: '6px', height: '6px', borderRadius: '50%',
-                background: '#2E8B57', animation: 'pulse 2s infinite',
-              }} />
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#2E8B57', animation: 'pulse 2s infinite' }} />
               {t('home.tagline')}
             </span>
 
-            <h1 style={{
-              fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
-              fontWeight: '900', lineHeight: '1.25',
-              margin: 0, color: ui.text, letterSpacing: '-0.02em',
-            }}>
+            <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: '900', lineHeight: '1.25', margin: 0, color: ui.text, letterSpacing: '-0.02em' }}>
               {t('home.title')}
               <span style={{ color: '#2E8B57' }}> {t('home.subtitle')}</span>
             </h1>
@@ -447,24 +310,12 @@ export default function HomePage() {
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
-              <NavLink to="/login" style={{
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                borderRadius: '999px', padding: '10px 28px',
-                fontSize: '0.875rem', fontWeight: '700',
-                background: '#2E8B57', color: '#fff',
-                textDecoration: 'none', transition: 'all 0.2s', border: 'none',
-              }}
+              <NavLink to="/login" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '999px', padding: '10px 28px', fontSize: '0.875rem', fontWeight: '700', background: '#2E8B57', color: '#fff', textDecoration: 'none', transition: 'all 0.2s', border: 'none' }}
               onMouseEnter={e => e.currentTarget.style.background = '#3DAA6A'}
               onMouseLeave={e => e.currentTarget.style.background = '#2E8B57'}>
                 {t('navigation.login')}
               </NavLink>
-              <NavLink to="/request-access" style={{
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                borderRadius: '999px', padding: '10px 22px',
-                fontSize: '0.875rem', fontWeight: '600',
-                border: `1px solid ${ui.border}`, color: ui.subtle,
-                textDecoration: 'none', transition: 'all 0.2s', background: 'transparent',
-              }}
+              <NavLink to="/request-access" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '999px', padding: '10px 22px', fontSize: '0.875rem', fontWeight: '600', border: `1px solid ${ui.border}`, color: ui.subtle, textDecoration: 'none', transition: 'all 0.2s', background: 'transparent' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = '#C9A84C'; e.currentTarget.style.color = '#C9A84C' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border;  e.currentTarget.style.color = ui.subtle }}>
                 {t('home.requestTrial')}
@@ -486,118 +337,54 @@ export default function HomePage() {
           </div>
 
           {/* Feature carousel */}
-          <div style={{
-            position: 'relative', height: '320px', overflow: 'hidden',
-            borderRadius: '24px', border: `1px solid ${ui.border}`,
-            background: ui.surface, padding: '1.5rem',
-          }}>
+          <div style={{ position: 'relative', height: '320px', overflow: 'hidden', borderRadius: '24px', border: `1px solid ${ui.border}`, background: ui.surface, padding: '1.5rem' }}>
             {slides.map((slide, index) => {
               const Icon   = slide.icon
               const active = index === currentSlide
               return (
-                <div key={slide.id} style={{
-                  position: 'absolute', inset: 0, padding: '1.5rem',
-                  display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center',
-                  opacity: active ? 1 : 0,
-                  transform: active ? 'scale(1)' : 'scale(0.95)',
-                  transition: 'all 0.6s ease',
-                  pointerEvents: active ? 'auto' : 'none',
-                }}>
+                <div key={slide.id} style={{ position: 'absolute', inset: 0, padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: active ? 1 : 0, transform: active ? 'scale(1)' : 'scale(0.95)', transition: 'all 0.6s ease', pointerEvents: active ? 'auto' : 'none' }}>
                   <div style={{ borderRadius: '20px', padding: '1rem', marginBottom: '1rem', background: slide.bg }}>
                     <Icon style={{ width: '48px', height: '48px', color: slide.accent }} />
                   </div>
-                  <h3 style={{ fontSize: '1rem', fontWeight: '700', color: ui.text, textAlign: 'center', margin: '0 0 8px' }}>
-                    {slide.title}
-                  </h3>
-                  <p style={{ fontSize: '0.82rem', color: ui.muted, textAlign: 'center', lineHeight: '1.7', margin: 0 }}>
-                    {slide.description}
-                  </p>
+                  <h3 style={{ fontSize: '1rem', fontWeight: '700', color: ui.text, textAlign: 'center', margin: '0 0 8px' }}>{slide.title}</h3>
+                  <p style={{ fontSize: '0.82rem', color: ui.muted, textAlign: 'center', lineHeight: '1.7', margin: 0 }}>{slide.description}</p>
                 </div>
               )
             })}
-
-            <button onClick={() => setCurrentSlide(p => (p - 1 + slides.length) % slides.length)}
-              style={{
-                position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
-                borderRadius: '50%', width: '32px', height: '32px',
-                background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-                border: 'none', cursor: 'pointer', color: ui.muted,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+            <button onClick={() => setCurrentSlide(p => (p - 1 + slides.length) % slides.length)} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', borderRadius: '50%', width: '32px', height: '32px', background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)', border: 'none', cursor: 'pointer', color: ui.muted, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <ChevronLeft style={{ width: '16px', height: '16px' }} />
             </button>
-            <button onClick={() => setCurrentSlide(p => (p + 1) % slides.length)}
-              style={{
-                position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
-                borderRadius: '50%', width: '32px', height: '32px',
-                background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-                border: 'none', cursor: 'pointer', color: ui.muted,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+            <button onClick={() => setCurrentSlide(p => (p + 1) % slides.length)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', borderRadius: '50%', width: '32px', height: '32px', background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)', border: 'none', cursor: 'pointer', color: ui.muted, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <ChevronRight style={{ width: '16px', height: '16px' }} />
             </button>
-
             <div style={{ position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '6px' }}>
               {slides.map((_, i) => (
-                <button key={i} onClick={() => setCurrentSlide(i)}
-                  style={{
-                    height: '6px', borderRadius: '999px', border: 'none', cursor: 'pointer',
-                    width: i === currentSlide ? '24px' : '6px',
-                    background: i === currentSlide ? '#2E8B57' : ui.border,
-                    transition: 'all 0.3s', padding: 0,
-                  }} />
+                <button key={i} onClick={() => setCurrentSlide(i)} style={{ height: '6px', borderRadius: '999px', border: 'none', cursor: 'pointer', width: i === currentSlide ? '24px' : '6px', background: i === currentSlide ? '#2E8B57' : ui.border, transition: 'all 0.3s', padding: 0 }} />
               ))}
             </div>
           </div>
         </section>
 
         {/* ── ANALYTICS ── */}
-        <section style={{
-          borderRadius: '24px', border: `1px solid ${ui.border}`,
-          background: ui.surface, padding: '1.75rem',
-          position: 'relative', overflow: 'hidden',
-        }}>
-          <div style={{
-            position: 'absolute', top: 0, insetInline: 0, height: '3px',
-            background: 'linear-gradient(to left, #4A90D9, #2E8B57, #C9A84C)',
-            borderRadius: '3px 3px 0 0',
-          }} />
+        <section style={{ borderRadius: '24px', border: `1px solid ${ui.border}`, background: ui.surface, padding: '1.75rem', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: 0, insetInline: 0, height: '3px', background: 'linear-gradient(to left, #4A90D9, #2E8B57, #C9A84C)', borderRadius: '3px 3px 0 0' }} />
 
-          <div style={{
-            display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-            marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem',
-          }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
-              <h2 style={{
-                fontSize: '1.1rem', fontWeight: '700', color: ui.text,
-                margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '8px',
-              }}>
+              <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: ui.text, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <TrendingUp style={{ width: '18px', height: '18px', color: '#2E8B57' }} />
                 {t('home.analytics.title')}
               </h2>
-              <p style={{ fontSize: '0.82rem', color: ui.muted, margin: 0 }}>
-                {t('home.analytics.description')}
-              </p>
+              <p style={{ fontSize: '0.82rem', color: ui.muted, margin: 0 }}>{t('home.analytics.description')}</p>
             </div>
-            <span style={{
-              padding: '4px 12px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: '600',
-              border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C',
-              background: 'rgba(201,168,76,0.08)',
-            }}>
+            <span style={{ padding: '4px 12px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: '600', border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', background: 'rgba(201,168,76,0.08)' }}>
               {t('home.analytics.liveData')}
             </span>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr)',
-            gap: '1.25rem', alignItems: 'start',
-          }}>
-            <div style={{
-              borderRadius: '18px', border: `1px solid ${ui.border}`,
-              background: ui.surface2, padding: '1.25rem',
-            }}>
+          {/* ← responsive: chart + stats side by side on desktop, stacked on mobile */}
+          <div className="analytics-grid">
+            <div style={{ borderRadius: '18px', border: `1px solid ${ui.border}`, background: ui.surface2, padding: '1.25rem' }}>
               <p style={{ fontSize: '0.82rem', fontWeight: '600', color: ui.text, margin: '0 0 1rem' }}>
                 {t('home.analytics.sentimentEvolution')}
               </p>
@@ -620,12 +407,7 @@ export default function HomePage() {
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
                       legend: { position: 'top', labels: { color: ui.muted, font: { size: 11 }, padding: 12 } },
-                      tooltip: {
-                        backgroundColor: isDark ? 'rgba(17,17,17,0.95)' : 'rgba(255,255,255,0.98)',
-                        titleColor: ui.text, bodyColor: ui.muted,
-                        borderColor: ui.border, borderWidth: 1,
-                        callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y + '%' },
-                      },
+                      tooltip: { backgroundColor: isDark ? 'rgba(17,17,17,0.95)' : 'rgba(255,255,255,0.98)', titleColor: ui.text, bodyColor: ui.muted, borderColor: ui.border, borderWidth: 1, callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y + '%' } },
                     },
                     scales: {
                       x: { grid: { color: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }, ticks: { color: ui.muted, font: { size: 10 } } },
@@ -642,10 +424,7 @@ export default function HomePage() {
                 { icon: Target,        label: t('home.analytics.positiveRate'),  value: '68%',    sub: t('home.analytics.ofTotalComments'), accent: '#2E8B57', bg: 'rgba(46,139,87,0.1)'   },
                 { icon: Clock,         label: t('home.analytics.lastUpdate'),    value: t('home.analytics.now'), sub: t('home.analytics.realTime'), accent: '#C9A84C', bg: 'rgba(201,168,76,0.1)' },
               ].map(({ icon: Icon, label, value, sub, accent, bg }) => (
-                <div key={label} style={{
-                  borderRadius: '16px', border: `1px solid ${ui.border}`,
-                  background: ui.surface2, padding: '1rem',
-                }}>
+                <div key={label} style={{ borderRadius: '16px', border: `1px solid ${ui.border}`, background: ui.surface2, padding: '1rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{ borderRadius: '12px', padding: '8px', background: bg, flexShrink: 0 }}>
                       <Icon style={{ width: '18px', height: '18px', color: accent }} />
@@ -664,35 +443,19 @@ export default function HomePage() {
 
         {/* ── HOW IT WORKS ── */}
         <section>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: ui.text, margin: '0 0 6px' }}>
-            {t('home.howItWorks.title')}
-          </h2>
-          <p style={{ fontSize: '0.85rem', color: ui.muted, margin: '0 0 1.5rem', maxWidth: '560px' }}>
-            {t('home.howItWorks.description')}
-          </p>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: ui.text, margin: '0 0 6px' }}>{t('home.howItWorks.title')}</h2>
+          <p style={{ fontSize: '0.85rem', color: ui.muted, margin: '0 0 1.5rem', maxWidth: '560px' }}>{t('home.howItWorks.description')}</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             {[
               { num: '1', title: t('home.howItWorks.step1.title'), desc: t('home.howItWorks.step1.description'), accent: '#2E8B57', bg: 'rgba(46,139,87,0.1)'  },
               { num: '2', title: t('home.howItWorks.step2.title'), desc: t('home.howItWorks.step2.description'), accent: '#4A90D9', bg: 'rgba(74,144,217,0.1)' },
               { num: '3', title: t('home.howItWorks.step3.title'), desc: t('home.howItWorks.step3.description'), accent: '#C9A84C', bg: 'rgba(201,168,76,0.1)' },
             ].map(({ num, title, desc, accent, bg }) => (
-              <div key={num} style={{
-                borderRadius: '20px', border: `1px solid ${ui.border}`,
-                background: ui.surface, padding: '1.5rem',
-                transition: 'all 0.2s', cursor: 'default',
-                position: 'relative', overflow: 'hidden',
-              }}
+              <div key={num} style={{ borderRadius: '20px', border: `1px solid ${ui.border}`, background: ui.surface, padding: '1.5rem', transition: 'all 0.2s', position: 'relative', overflow: 'hidden' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.transform = 'translateY(-4px)' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.transform = 'translateY(0)' }}>
                 <div style={{ position: 'absolute', top: 0, insetInline: 0, height: '3px', background: accent, borderRadius: '3px 3px 0 0' }} />
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                  width: '40px', height: '40px', borderRadius: '14px',
-                  background: bg, color: accent,
-                  fontSize: '1.1rem', fontWeight: '800', marginBottom: '1rem',
-                }}>
-                  {num}
-                </span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '14px', background: bg, color: accent, fontSize: '1.1rem', fontWeight: '800', marginBottom: '1rem' }}>{num}</span>
                 <h3 style={{ fontSize: '0.875rem', fontWeight: '700', color: ui.text, margin: '0 0 6px' }}>{title}</h3>
                 <p style={{ fontSize: '0.78rem', color: ui.muted, margin: 0, lineHeight: '1.7' }}>{desc}</p>
               </div>
@@ -702,24 +465,15 @@ export default function HomePage() {
 
         {/* ── WHAT WE OFFER ── */}
         <section>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: ui.text, margin: '0 0 6px' }}>
-            {t('home.whatWeOffer.title')}
-          </h2>
-          <p style={{ fontSize: '0.85rem', color: ui.muted, margin: '0 0 1.5rem' }}>
-            {t('home.whatWeOffer.description')}
-          </p>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: ui.text, margin: '0 0 6px' }}>{t('home.whatWeOffer.title')}</h2>
+          <p style={{ fontSize: '0.85rem', color: ui.muted, margin: '0 0 1.5rem' }}>{t('home.whatWeOffer.description')}</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             {[
               { emoji: '📊', title: t('home.whatWeOffer.sentimentAnalysis.title'),    desc: t('home.whatWeOffer.sentimentAnalysis.description'),    accent: '#2E8B57' },
               { emoji: '🇩🇿', title: t('home.whatWeOffer.dialectAnalysis.title'),     desc: t('home.whatWeOffer.dialectAnalysis.description'),     accent: '#4A90D9' },
               { emoji: '⚡',  title: t('home.whatWeOffer.reputationIndicator.title'), desc: t('home.whatWeOffer.reputationIndicator.description'), accent: '#C9A84C' },
             ].map(({ emoji, title, desc, accent }) => (
-              <div key={title} style={{
-                borderRadius: '20px', border: `1px solid ${ui.border}`,
-                background: ui.surface, padding: '1.5rem',
-                display: 'flex', flexDirection: 'column',
-                transition: 'all 0.2s', position: 'relative', overflow: 'hidden',
-              }}
+              <div key={title} style={{ borderRadius: '20px', border: `1px solid ${ui.border}`, background: ui.surface, padding: '1.5rem', display: 'flex', flexDirection: 'column', transition: 'all 0.2s', position: 'relative', overflow: 'hidden' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.transform = 'scale(1.02)' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.transform = 'scale(1)' }}>
                 <div style={{ position: 'absolute', top: 0, insetInline: 0, height: '3px', background: accent, borderRadius: '3px 3px 0 0' }} />
@@ -732,16 +486,9 @@ export default function HomePage() {
         </section>
 
         {/* ── PLATFORMS ── */}
-        <section style={{
-          borderRadius: '24px', border: `1px solid ${ui.border}`,
-          background: ui.surface, padding: '1.75rem',
-        }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: ui.text, margin: '0 0 4px' }}>
-            {t('home.platforms.title')}
-          </h2>
-          <p style={{ fontSize: '0.82rem', color: ui.muted, margin: '0 0 1.25rem' }}>
-            {t('home.platforms.description')}
-          </p>
+        <section style={{ borderRadius: '24px', border: `1px solid ${ui.border}`, background: ui.surface, padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: ui.text, margin: '0 0 4px' }}>{t('home.platforms.title')}</h2>
+          <p style={{ fontSize: '0.82rem', color: ui.muted, margin: '0 0 1.25rem' }}>{t('home.platforms.description')}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
             {[
               { name: t('home.platforms.twitter'),   color: '#94A3B8', icon: <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /> },
@@ -751,12 +498,7 @@ export default function HomePage() {
               { name: 'YouTube', color: '#F87171', icon: <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /> },
               { name: 'Reddit',  color: '#FCA5A5', icon: <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" /> },
             ].map(({ name, color, icon }) => (
-              <div key={name} style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                borderRadius: '16px', border: `1px solid ${ui.border}`,
-                background: ui.surface2, padding: '16px 24px',
-                transition: 'all 0.2s', cursor: 'default', gap: '8px',
-              }}
+              <div key={name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', border: `1px solid ${ui.border}`, background: ui.surface2, padding: '16px 24px', transition: 'all 0.2s', gap: '8px' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.transform = 'translateY(-3px)' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.transform = 'translateY(0)' }}>
                 <svg style={{ width: '28px', height: '28px', fill: color }} viewBox="0 0 24 24">{icon}</svg>
@@ -767,16 +509,9 @@ export default function HomePage() {
         </section>
 
         {/* ── WHO WE SERVE ── */}
-        <section style={{
-          borderRadius: '24px', border: `1px solid ${ui.border}`,
-          background: ui.surface2, padding: '1.75rem',
-        }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: ui.text, margin: '0 0 4px' }}>
-            {t('home.whoWeServe.title')}
-          </h2>
-          <p style={{ fontSize: '0.82rem', color: ui.muted, margin: '0 0 1.25rem' }}>
-            {t('home.whoWeServe.description')}
-          </p>
+        <section style={{ borderRadius: '24px', border: `1px solid ${ui.border}`, background: ui.surface2, padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: ui.text, margin: '0 0 4px' }}>{t('home.whoWeServe.title')}</h2>
+          <p style={{ fontSize: '0.82rem', color: ui.muted, margin: '0 0 1.25rem' }}>{t('home.whoWeServe.description')}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             {[
               { label: t('home.whoWeServe.localBrands'),     accent: '#2E8B57', bg: 'rgba(46,139,87,0.08)',   border: 'rgba(46,139,87,0.3)'   },
@@ -784,13 +519,7 @@ export default function HomePage() {
               { label: t('home.whoWeServe.customerService'), accent: '#C9A84C', bg: 'rgba(201,168,76,0.08)', border: 'rgba(201,168,76,0.3)'  },
               { label: t('home.whoWeServe.agencies'),        accent: '#8B5CF6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.3)'  },
             ].map(({ label, accent, bg, border }) => (
-              <span key={label} style={{
-                padding: '8px 18px', borderRadius: '999px',
-                fontSize: '0.8rem', fontWeight: '600',
-                border: `1px solid ${border}`, color: accent, background: bg,
-              }}>
-                {label}
-              </span>
+              <span key={label} style={{ padding: '8px 18px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: '600', border: `1px solid ${border}`, color: accent, background: bg }}>{label}</span>
             ))}
           </div>
         </section>
@@ -799,45 +528,19 @@ export default function HomePage() {
         <TestimonialsSection ui={ui} isDark={isDark} t={t} />
 
         {/* ── CTA ── */}
-        <section style={{
-          borderRadius: '24px', padding: '2.5rem',
-          textAlign: 'center', position: 'relative', overflow: 'hidden',
-          border: '1px solid rgba(46,139,87,0.25)',
-          background: isDark
-            ? 'linear-gradient(135deg, rgba(46,139,87,0.07) 0%, rgba(74,144,217,0.07) 100%)'
-            : 'linear-gradient(135deg, rgba(46,139,87,0.05) 0%, rgba(74,144,217,0.05) 100%)',
-        }}>
+        <section style={{ borderRadius: '24px', padding: '2.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden', border: '1px solid rgba(46,139,87,0.25)', background: isDark ? 'linear-gradient(135deg, rgba(46,139,87,0.07) 0%, rgba(74,144,217,0.07) 100%)' : 'linear-gradient(135deg, rgba(46,139,87,0.05) 0%, rgba(74,144,217,0.05) 100%)' }}>
           <div style={{ position: 'absolute', top: '-60px', left: '-60px', width: '200px', height: '200px', borderRadius: '50%', background: '#2E8B57', opacity: 0.04, filter: 'blur(48px)' }} />
           <div style={{ position: 'absolute', bottom: '-60px', right: '-60px', width: '200px', height: '200px', borderRadius: '50%', background: '#4A90D9', opacity: 0.04, filter: 'blur(48px)' }} />
-
-          <img src={gantraLogo} alt="Gantra"
-            style={{ height: '56px', width: 'auto', objectFit: 'contain', margin: '0 auto 1.25rem', display: 'block', opacity: 0.9 }}
-          />
-          <h2 style={{ fontSize: '1.3rem', fontWeight: '800', color: ui.text, margin: '0 0 8px' }}>
-            {t('home.cta.title')}
-          </h2>
-          <p style={{ fontSize: '0.875rem', color: ui.muted, margin: '0 auto 1.75rem', maxWidth: '420px', lineHeight: '1.7' }}>
-            {t('home.cta.description')}
-          </p>
+          <img src={gantraLogo} alt="Gantra" style={{ height: '56px', width: 'auto', objectFit: 'contain', margin: '0 auto 1.25rem', display: 'block', opacity: 0.9 }} />
+          <h2 style={{ fontSize: '1.3rem', fontWeight: '800', color: ui.text, margin: '0 0 8px' }}>{t('home.cta.title')}</h2>
+          <p style={{ fontSize: '0.875rem', color: ui.muted, margin: '0 auto 1.75rem', maxWidth: '420px', lineHeight: '1.7' }}>{t('home.cta.description')}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center' }}>
-            <NavLink to="/request-access" style={{
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              borderRadius: '999px', padding: '11px 28px',
-              fontSize: '0.875rem', fontWeight: '700',
-              background: '#2E8B57', color: '#fff',
-              textDecoration: 'none', transition: 'all 0.2s',
-            }}
+            <NavLink to="/request-access" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '999px', padding: '11px 28px', fontSize: '0.875rem', fontWeight: '700', background: '#2E8B57', color: '#fff', textDecoration: 'none', transition: 'all 0.2s' }}
             onMouseEnter={e => e.currentTarget.style.background = '#3DAA6A'}
             onMouseLeave={e => e.currentTarget.style.background = '#2E8B57'}>
               {t('home.requestTrial')}
             </NavLink>
-            <NavLink to="/login" style={{
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              borderRadius: '999px', padding: '11px 26px',
-              fontSize: '0.875rem', fontWeight: '600',
-              border: `1px solid ${ui.border}`, color: ui.subtle,
-              textDecoration: 'none', transition: 'all 0.2s', background: 'transparent',
-            }}
+            <NavLink to="/login" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '999px', padding: '11px 26px', fontSize: '0.875rem', fontWeight: '600', border: `1px solid ${ui.border}`, color: ui.subtle, textDecoration: 'none', transition: 'all 0.2s', background: 'transparent' }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = '#C9A84C'; e.currentTarget.style.color = '#C9A84C' }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border;  e.currentTarget.style.color = ui.subtle }}>
               {t('navigation.login')}
