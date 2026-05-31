@@ -14,7 +14,7 @@ import {
 import {
   TrendingUp, MessageSquare, Clock, Target,
   Brain, Globe, Zap, Shield, ChevronLeft, ChevronRight,
-  Star, Quote,
+  Star,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -270,6 +270,9 @@ export default function HomePage() {
           .analytics-grid {
             grid-template-columns: 1fr;
           }
+          .analytics-chart-wrap {
+            overflow-x: hidden;
+          }
         }
       `}</style>
 
@@ -317,7 +320,7 @@ export default function HomePage() {
               </NavLink>
               <NavLink to="/request-access" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '999px', padding: '10px 22px', fontSize: '0.875rem', fontWeight: '600', border: `1px solid ${ui.border}`, color: ui.subtle, textDecoration: 'none', transition: 'all 0.2s', background: 'transparent' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = '#C9A84C'; e.currentTarget.style.color = '#C9A84C' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border;  e.currentTarget.style.color = ui.subtle }}>
+              onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.color = ui.subtle }}>
                 {t('home.requestTrial')}
               </NavLink>
             </div>
@@ -382,13 +385,17 @@ export default function HomePage() {
             </span>
           </div>
 
-          {/* ← responsive: chart + stats side by side on desktop, stacked on mobile */}
           <div className="analytics-grid">
-            <div style={{ borderRadius: '18px', border: `1px solid ${ui.border}`, background: ui.surface2, padding: '1.25rem' }}>
+            {/* Chart — minWidth:0 prevents grid overflow */}
+            <div className="analytics-chart-wrap" style={{
+              borderRadius: '18px', border: `1px solid ${ui.border}`,
+              background: ui.surface2, padding: '1.25rem',
+              minWidth: 0,
+            }}>
               <p style={{ fontSize: '0.82rem', fontWeight: '600', color: ui.text, margin: '0 0 1rem' }}>
                 {t('home.analytics.sentimentEvolution')}
               </p>
-              <div style={{ height: '220px' }}>
+              <div style={{ height: '220px', width: '100%' }}>
                 <Line
                   data={{
                     labels: currentLang === 'ar'
@@ -418,7 +425,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {/* Stat cards — minWidth:0 prevents grid overflow */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: 0 }}>
               {[
                 { icon: MessageSquare, label: t('home.analytics.totalComments'), value: '12,450', sub: t('home.analytics.thisMonth'),       accent: '#4A90D9', bg: 'rgba(74,144,217,0.1)'  },
                 { icon: Target,        label: t('home.analytics.positiveRate'),  value: '68%',    sub: t('home.analytics.ofTotalComments'), accent: '#2E8B57', bg: 'rgba(46,139,87,0.1)'   },
@@ -542,7 +550,7 @@ export default function HomePage() {
             </NavLink>
             <NavLink to="/login" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '999px', padding: '11px 26px', fontSize: '0.875rem', fontWeight: '600', border: `1px solid ${ui.border}`, color: ui.subtle, textDecoration: 'none', transition: 'all 0.2s', background: 'transparent' }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = '#C9A84C'; e.currentTarget.style.color = '#C9A84C' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border;  e.currentTarget.style.color = ui.subtle }}>
+            onMouseLeave={e => { e.currentTarget.style.borderColor = ui.border; e.currentTarget.style.color = ui.subtle }}>
               {t('navigation.login')}
             </NavLink>
           </div>
