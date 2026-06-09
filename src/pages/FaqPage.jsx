@@ -333,7 +333,7 @@ export default function FaqPage() {
           <p style={{ fontSize: "12px", color: ui.muted, margin: "0 0 18px" }}>
             {t("faq.cta.subtitle")}
           </p>
-          <a href="/contact"
+          <a href="/contact-us"
             style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
               padding: "11px 28px", borderRadius: "40px", fontSize: "13px", fontWeight: 800,

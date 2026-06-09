@@ -14,7 +14,8 @@
     "contactUs": "Contact Us",
     "logout": "Logout",
     "feedback": "Your Feedback",
-    "insights": "Insights"
+    "insights": "Insights",
+    "socialListening": "Social Listening"
   },
 
   "alerts": {
@@ -86,89 +87,376 @@
     "faq": "FAQ",
     "contactUs": "Contact Us"
   },
-
   "home": {
-    "tagline": "Algerian Social Listening & Sentiment Analysis",
-    "title": "Understand what your",
-    "subtitle": "Algerian audience says",
-    "description": "Gantra monitors social media and news content, analyzing sentiment with high accuracy and full support for Algerian dialect and Arabizi.",
-    "requestTrial": "Request Free Trial",
+    "tagline": "AI Platform for the Algerian Market",
+    "title": "Understand What Your",
+    "subtitle": "Audience",
+    "titleEnd": "Is Saying in Real Time",
+    "description": "Gantra is a platform for monitoring and analyzing Algerian audience sentiment across social media, powered by AI models trained on Algerian and Maghrebi dialects.",
+    "requestTrial": "Request a Trial",
     "getStarted": "Learn More",
+    "nav": {
+      "products": "Products",
+      "about": "About Us"
+    },
+    "products": {
+      "socialListening": {
+        "title": "Social Listening",
+        "desc": "Track all posts and comments related to your brand across different platforms."
+      },
+      "sentiment": {
+        "title": "Sentiment Analysis",
+        "desc": "Understand how your audience feels about your brand across all platforms."
+      },
+      "topics": {
+        "title": "Topic Analysis",
+        "desc": "Discover the most discussed keywords and topics around your brand across all platforms."
+      },
+      "alerts": {
+        "title": "Alert System",
+        "desc": "Create automatic alert rules triggered after every data collection run to monitor your brand."
+      },
+      "engagement": {
+        "title": "Audience Engagement",
+        "desc": "Track post performance across social platforms and measure how your audience engages with content."
+      }
+    },
     "trust": {
       "brands": "Brands",
       "accuracy": "Analysis Accuracy",
       "monitoring": "Continuous Monitoring"
     },
-    "features": {
-      "aiAnalysis":      { "title": "AI-Powered Analysis",        "description": "DziriBERT and MARBERT models trained on Algerian dialect classify sentiment with over 72% accuracy." },
-      "multiPlatform":   { "title": "Multi-Platform Monitoring",  "description": "Facebook, Instagram, TikTok, YouTube, Reddit, X — everything in one place." },
-      "realTimeAlerts":  { "title": "Real-Time Alerts",           "description": "Get notified the moment any indicator crosses your threshold, so you can act before a crisis escalates." },
-      "brandProtection": { "title": "Brand Reputation Protection","description": "Monitor your brand image daily and track any shift in your audience's sentiment." }
+    "stats": {
+      "posts": "Posts in Database",
+      "postsNote": "Training and Evaluation Data",
+      "accuracy": "Sentiment Classification Accuracy",
+      "accuracyNote": "On Test Data",
+      "platforms": "Supported Platforms",
+      "platformsNote": "Facebook · Instagram · TikTok · YouTube"
     },
-    "analytics": {
-      "title": "Live Analytics Dashboard",
-      "description": "Real data updated after every monitoring run",
-      "liveData": "Live Data",
-      "sentimentEvolution": "Sentiment Evolution Over Time",
-      "positive": "Positive",
-      "neutral": "Neutral",
-      "negative": "Negative",
-      "totalComments": "Total Comments",
-      "thisMonth": "This month",
-      "positiveRate": "Positive Rate",
-      "ofTotalComments": "Of total comments",
-      "lastUpdate": "Last Update",
-      "realTime": "Real time",
-      "now": "Now"
-    },
+    "services": {
+  "title": "What Does the Platform Offer?",
+  "subtitle": "From data collection to reporting — everything in one place",
+  "postsDescription": "Collect posts and comments related to your brand from various social media platforms.",
+  "sentimentDescription": "Analyze sentiment in Algerian and Maghrebi dialects to understand how your audience feels about your brand.",
+  "topicsDescription": "Discover the most discussed topics and keywords related to your brand across all platforms.",
+  "alertsDescription": "Create automated alert rules that trigger after each data collection cycle to monitor your brand.",
+  "engagementDescription": "Track post performance across social platforms and measure how your audience engages with your content.",
+  "insightsDescription": "Automatic reports that summarize collected data and present it in an exportable format."
+},
     "howItWorks": {
-      "title": "How does it work?",
-      "description": "Three simple steps to get accurate insights about your brand",
-      "step1": { "title": "Add Your Brand",            "description": "Register the keywords and social media accounts of your company." },
-      "step2": { "title": "Automatic Monitoring",      "description": "The platform automatically collects all posts and comments related to your brand across all platforms." },
-      "step3": { "title": "Instant Analysis & Alerts", "description": "Sentiment is analyzed automatically and you receive alerts as soon as any significant change is detected." }
-    },
-    "whatWeOffer": {
-      "title": "What do we offer?",
-      "description": "Integrated tools to understand Algerian public opinion about your brand",
-      "sentimentAnalysis":   { "title": "Sentiment Analysis",           "description": "Automatic classification of every post and comment as positive, negative, or neutral." },
-      "dialectAnalysis":     { "title": "Algerian Dialect Support",     "description": "Models specifically trained on Algerian dialect, Arabizi, and mixed-language content." },
-      "reputationIndicator": { "title": "Digital Reputation Indicator", "description": "Daily tracking of your brand image with alerts on any sudden deterioration." }
+      "title": "How the Platform Works",
+      "description": "Three steps from monitoring to insights",
+      "step1": {
+        "title": "Collect Posts",
+        "description": "Posts are periodically collected from supported platforms and stored in the database."
+      },
+      "step2": {
+        "title": "Analyze Sentiment",
+        "description": "Each post is automatically classified as positive, negative, or neutral using an AI model."
+      },
+      "step3": {
+        "title": "Display Results",
+        "description": "Data is presented in a clear dashboard with alerts and exportable reports."
+      }
     },
     "platforms": {
-      "title": "Supported Platforms",
-      "description": "We monitor content from all platforms most used in Algeria",
-      "twitter": "X / Twitter",
-      "facebook": "Facebook",
-      "instagram": "Instagram"
+      "title": "Currently Supported Platforms",
+      "description": "We monitor public posts from these platforms"
     },
     "whoWeServe": {
-      "title": "Who do we serve?",
-      "description": "Gantra serves companies and institutions that want to understand the Algerian public's opinion",
-      "localBrands": "Algerian Brands",
-      "smes": "Small & Medium Enterprises",
-      "customerService": "Customer Service Teams",
-      "agencies": "Digital Marketing Agencies"
+      "title": "Who Is This Platform For?",
+      "description": "Any organization that wants to know what is being said about them or their competitors online",
+      "localBrands": "Local Brands",
+      "smes": "Small and Medium-Sized Enterprises",
+      "customerService": "Customer Support Teams",
+      "agencies": "Digital Marketing Agencies",
+      "researchers": "Researchers and Academics"
+    },
+    "about": {
+      "badge": "About the Platform",
+      "title": "An Algerian Platform for Sentiment Monitoring and Analysis",
+      "description": "Gantra is a comprehensive platform for monitoring what people are saying about your brand across social media. With sentiment analysis tailored to Algerian and Maghrebi dialects, the platform automatically collects data and transforms it into clear reports that help you make data-driven decisions.",
+      "point1": "Sentiment analysis for Algerian, Maghrebi, and Modern Standard Arabic",
+      "point2": "Monitor posts from Facebook, Instagram, TikTok, and YouTube",
+      "point3": "Smart reports and instant alerts when sentiment changes",
+      "point4": "Clear dashboard with engagement statistics and trending topics",
+      "cta": "Learn More About the Platform",
+      "stat1": "Posts in Database",
+      "stat2": "Classification Accuracy on Test Data",
+      "stat3": "Monitored Platforms",
+      "stat4": "Supported Dialects"
     },
     "testimonials": {
-      "title": "What our clients say",
-      "description": "Real feedback from marketing and communication teams using Gantra daily.",
-       "badge": "Client Reviews",
-        "verifiedClient": "Verified Client",
+      "badge": "User Reviews",
+      "title": "What Do Users Say About the Platform?",
+      "description": "Real feedback from people who have used Gantra",
+      "verifiedUser": "Verified User",
       "stats": {
-        "nps": "NPS Score",
-        "accuracy": "Sentiment Accuracy",
+        "nps": "Satisfaction Score",
+        "accuracy": "Analysis Accuracy",
         "usability": "Ease of Use",
-        "coverage": "Source Coverage",
-        "from": "from {{count}} reviews"
+        "coverage": "Coverage",
+        "from": "From {{count}} users"
       }
     },
     "cta": {
-      "title": "Ready to understand your Algerian audience?",
-      "description": "Join the companies that rely on Gantra to monitor their digital reputation and understand their customers' sentiment.",
+      "title": "Want to Try the Platform?",
+      "description": "Contact us to get trial access and test the platform with your brand's data.",
       "contactUs": "Contact Us"
     }
   },
+  "sentimentAnalysis": {
+  "hero": {
+    "badge": "Sentiment Analysis",
+    "titlePre": "Understand how",
+    "titleHighlight": "your Algerian audience",
+    "titleEnd": "feels about your brand",
+    "description": "AI models specialised in Algerian and Maghrebi dialect classify your audience's sentiment — positive, negative, or neutral — in real time across all supported platforms.",
+    "check1": "72% accuracy on real Algerian test data",
+    "check2": "Every new post analysed instantly, no manual work needed",
+    "check3": "Smart alerts when negative sentiment spikes",
+    "backHome": "Home"
+  },
+  "steps": {
+    "badge": "How it works",
+    "title": "From post to classification in seconds",
+    "subtitle": "A fully automated pipeline — no manual intervention required",
+    "step1Title": "Post collection",
+    "step1Desc": "New posts are gathered from supported platforms and pushed into the text processing pipeline.",
+    "step2Title": "Language processing",
+    "step2Desc": "The text is cleaned and processed by an AI model trained on Algerian and Maghrebi dialect.",
+    "step3Title": "Classification & result",
+    "step3Desc": "Each post is labelled (positive / negative / neutral) with a confidence score and the dashboard updates instantly."
+  },
+  "features": {
+    "badge": "Features",
+    "title": "Why Gantra for sentiment analysis?",
+    "subtitle": "Built specifically for the Algerian market with accuracy general global models can't match",
+    "dialectTitle": "Algerian & Maghrebi dialect",
+    "dialectDesc": "AI models specialised in understanding Algerian Darija and Maghrebi Arabic, going beyond the limits of generic global models.",
+    "realtimeTitle": "Real-time analysis",
+    "realtimeDesc": "Every post is automatically classified as soon as it's collected — positive, negative, or neutral — with no manual work.",
+    "chartsTitle": "Interactive charts",
+    "chartsDesc": "Track daily and weekly sentiment distribution through clear charts that reveal shifts in public opinion.",
+    "alertsTitle": "Negative-spike alerts",
+    "alertsDesc": "The system sends an instant alert when negative sentiment exceeds a defined threshold to protect your reputation.",
+    "accuracyTitle": "Proven accuracy",
+    "accuracyDesc": "72% classification accuracy on real Algerian test data — measured and documented.",
+    "multiPlatformTitle": "Multi-platform",
+    "multiPlatformDesc": "Works across Facebook, Instagram, TikTok, and YouTube posts — all in one interface."
+  },
+  "why": {
+    "badge": "What sets us apart",
+    "title": "Everything you need in one platform",
+    "dialect": "Algerian dialect",
+    "realtime": "Instant analysis",
+    "accurate": "Proven accuracy",
+    "alerts": "Smart alerts",
+    "charts": "Clear charts",
+    "export": "Exportable reports"
+  },
+  "stats": {
+    "accuracy": "Classification accuracy",
+    "accuracySub": "On real test data",
+    "posts": "Posts trained on",
+    "postsSub": "From real Algerian platforms",
+    "platforms": "Supported platforms",
+    "platformsSub": "Facebook · Instagram · TikTok · YouTube",
+    "dialects": "Dialects understood",
+    "dialectsSub": "Algerian · Maghrebi · Modern Standard Arabic"
+  },
+  "cta": {
+    "title": "Try sentiment analysis on your brand's data",
+    "description": "Contact us for trial access and see how your Algerian audience's posts are classified with high accuracy."
+  }
+},
+"socialListening": {
+  "hero": {
+    "badge": "Social Listening",
+    "titlePre": "Know what's being said about",
+    "titleHighlight": "your brand",
+    "titleEnd": "across every platform",
+    "description": "An automated monitoring system that collects posts from Facebook, Instagram, TikTok, and YouTube simultaneously, displaying everything said about your brand in one unified dashboard.",
+    "check1": "Monitor 4 platforms at once from a single place",
+    "check2": "Automatic collection 24/7 with no manual work",
+    "check3": "Instant sentiment analysis with every collected post",
+    "backHome": "Home"
+  },
+  "platforms": {
+    "badge": "Supported platforms",
+    "title": "Four platforms — one dashboard",
+    "subtitle": "No need to switch between apps — everything published about you in one place",
+    "facebook": "Public posts and groups",
+    "instagram": "Posts and comments",
+    "tiktok": "Videos and comments",
+    "youtube": "Videos and comments"
+  },
+  "steps": {
+    "badge": "How it works",
+    "title": "Three steps from setup to results",
+    "subtitle": "Setup takes minutes — monitoring starts immediately",
+    "step1Title": "Add your brand",
+    "step1Desc": "Enter your brand name or the keywords you want to monitor across platforms.",
+    "step2Title": "Automatic collection begins",
+    "step2Desc": "The monitoring system activates automatically and starts collecting posts from Facebook, Instagram, TikTok, and YouTube.",
+    "step3Title": "Follow results in real time",
+    "step3Desc": "View collected posts with sentiment analysis and statistics in the unified dashboard."
+  },
+  "features": {
+    "badge": "Features",
+    "title": "Why social listening from Gantra?",
+    "subtitle": "Comprehensive monitoring built specifically for the Algerian and Maghrebi market",
+    "autoCollectTitle": "Automatic & continuous collection",
+    "autoCollectDesc": "Posts are automatically collected from all supported platforms without any manual intervention — running around the clock.",
+    "multiPlatformTitle": "Four platforms in one interface",
+    "multiPlatformDesc": "Facebook, Instagram, TikTok, and YouTube — every platform monitored simultaneously, results in one place.",
+    "keywordTitle": "Keyword monitoring",
+    "keywordDesc": "Define your brand, competitors, or any keyword and the system will track every mention related to it.",
+    "realtimeTitle": "Real-time data",
+    "realtimeDesc": "Every new post is detected and added to the dashboard the moment it's published, with no delay.",
+    "trendsTitle": "Trend discovery",
+    "trendsDesc": "Identify the topics and keywords most discussed around your brand moment by moment.",
+    "reputationTitle": "Reputation protection",
+    "reputationDesc": "Detect crises early before they spread — sharp negative sentiment spikes reach you instantly."
+  },
+  "stats": {
+    "platforms": "Monitored platforms",
+    "platformsSub": "Facebook · Instagram · TikTok · YouTube",
+    "posts": "Posts collected",
+    "postsSub": "Real data from the Algerian market",
+    "uptime": "Continuous monitoring",
+    "uptimeSub": "Collection runs around the clock",
+    "accuracy": "Sentiment analysis accuracy",
+    "accuracySub": "On real Algerian test data"
+  },
+  "cta": {
+    "title": "Start monitoring your brand today",
+    "description": "Contact us for trial access and see what's being said about your brand across Algerian platforms in real time."
+  }
+},
+"topicsPage": {
+  "hero": {
+    "badge": "Topics",
+    "titlePre": "Discover what",
+    "titleHighlight": "your Algerian audience",
+    "titleEnd": "is talking about right now",
+    "description": "The system automatically extracts the most frequently discussed keywords and hashtags around your brand, ranked to reveal what captures your audience's attention most.",
+    "check1": "Automatic discovery after every collection — no manual setup",
+    "check2": "Dynamic ranking of topics by actual frequency",
+    "check3": "Each topic automatically linked to audience sentiment",
+    "backHome": "Home"
+  },
+  "steps": {
+    "badge": "How it works",
+    "title": "From post to trend in three steps",
+    "subtitle": "The entire process is automatic — results appear in the dashboard instantly",
+    "step1Title": "Post collection",
+    "step1Desc": "Your brand's posts are collected from all platforms and stored in the database.",
+    "step2Title": "Keyword extraction",
+    "step2Desc": "The system analyses post text and extracts the most frequently occurring words and hashtags.",
+    "step3Title": "Trending display",
+    "step3Desc": "Topics are displayed in descending order with sentiment and platform stats in the dashboard."
+  },
+  "features": {
+    "badge": "Features",
+    "title": "Why topic analysis from Gantra?",
+    "subtitle": "Know exactly what captures your Algerian audience's attention",
+    "autoDiscoverTitle": "Automatic trend discovery",
+    "autoDiscoverDesc": "The system automatically discovers trending topics after every collection cycle, no manual setup required.",
+    "hashtagTitle": "Hashtag tracking",
+    "hashtagDesc": "Monitor hashtags linked to your brand and measure their spread across different platforms.",
+    "frequencyTitle": "Word frequency analysis",
+    "frequencyDesc": "The system counts each word's occurrences and ranks them to reveal what occupies your audience most.",
+    "categoriesTitle": "Category classification",
+    "categoriesDesc": "Topics are automatically classified into categories (brands, technology, marketing...) for easy filtering.",
+    "realtimeTitle": "Real-time updates",
+    "realtimeDesc": "The trending list updates with every new collection cycle — you always see the current picture.",
+    "multiPlatformTitle": "Multi-platform analysis",
+    "multiPlatformDesc": "Keywords are aggregated from Facebook, Instagram, TikTok, and YouTube into one unified list."
+  },
+  "stats": {
+    "topics": "Topics discovered",
+    "topicsSub": "In the last collection cycle",
+    "posts": "Posts analysed",
+    "postsSub": "From real Algerian platforms",
+    "platforms": "Monitored platforms",
+    "platformsSub": "Facebook · Instagram · TikTok · YouTube",
+    "updates": "Automatic updates",
+    "updatesSub": "Renewed with every collection cycle"
+  },
+  "cta": {
+    "title": "Discover your brand's trending topics today",
+    "description": "Contact us for trial access and see the words and topics your Algerian audience is talking about."
+  }
+},
+"alertsPage": {
+  "hero": {
+    "badge": "Alerts",
+    "titlePre": "Be the first to know when",
+    "titleHighlight": "negative sentiment spikes",
+    "titleEnd": "around your brand",
+    "description": "Create smart alert rules that fire automatically after every data collection cycle — protecting your brand's reputation before a crisis escalates.",
+    "check1": "7 flexible, fully customisable rule types",
+    "check2": "Automatic evaluation after every data collection",
+    "check3": "Full notification log with timestamps and details",
+    "backHome": "Home"
+  },
+  "ruleTypes": {
+    "badge": "Rule types",
+    "title": "7 alert rule types",
+    "subtitle": "Covering every reputation monitoring scenario — from percentages to keywords",
+    "negativePct": "Negative sentiment exceeds threshold",
+    "positiveBelow": "Positive sentiment drops below threshold",
+    "volumeSpike": "Daily post volume exceeds threshold",
+    "keywordSpike": "Keyword exceeds threshold",
+    "sentimentDrop": "Sharp drop in positive sentiment",
+    "negativeStreak": "Negative dominant for consecutive days",
+    "negativeCount": "Negative post count exceeds daily threshold"
+  },
+  "steps": {
+    "badge": "How it works",
+    "title": "From rule setup to instant notification",
+    "subtitle": "Set it up once — evaluation runs automatically forever",
+    "step1Title": "Create an alert rule",
+    "step1Desc": "Define the rule type, the threshold that triggers the alert, and its severity (low / medium / high).",
+    "step2Title": "System monitors automatically",
+    "step2Desc": "After every data collection cycle, each rule is automatically evaluated against the new data.",
+    "step3Title": "Receive the alert instantly",
+    "step3Desc": "When the threshold is crossed, the alert fires and is added to the notification log with full details."
+  },
+  "features": {
+    "badge": "Features",
+    "title": "Why alerts from Gantra?",
+    "subtitle": "Proactive monitoring that protects your reputation before a crisis escalates",
+    "autoTriggerTitle": "Instant automatic alerts",
+    "autoTriggerDesc": "The system fires an alert immediately after every data collection cycle when defined rules are breached.",
+    "rulesTitle": "Flexible & customisable rules",
+    "rulesDesc": "Create rules controlling the alert type, threshold, and severity — everything is precisely adjustable.",
+    "sentimentDropTitle": "Sentiment collapse detection",
+    "sentimentDropDesc": "The system detects a sharp drop in positive sentiment compared to the previous day and notifies you instantly.",
+    "multiRuleTitle": "Multiple rule types",
+    "multiRuleDesc": "Seven alert rule types covering negative ratio, volume, keywords, and sudden drops.",
+    "historyTitle": "Notification history",
+    "historyDesc": "Every alert is stored in a detailed log with the timestamp and the value that triggered it for later review.",
+    "reputationTitle": "Proactive reputation protection",
+    "reputationDesc": "Detect crises before they spread — early alerts give you time to respond professionally."
+  },
+  "stats": {
+    "ruleTypes": "Rule types",
+    "ruleTypesSub": "Covering all monitoring scenarios",
+    "auto": "Automatic evaluation",
+    "autoSub": "After every data collection cycle",
+    "severity": "Severity levels",
+    "severitySub": "Low · Medium · High",
+    "uptime": "Evaluation accuracy",
+    "uptimeSub": "No threshold breach goes undetected"
+  },
+  "cta": {
+    "title": "Protect your brand's reputation before it's too late",
+    "description": "Contact us for trial access and try the alert system on your Algerian brand's data."
+  }
+},
 
   "dashboard": {
     "brand": "AI Platform",
@@ -766,5 +1054,137 @@
   "insightsHeading": "AI Insights",
   "insightsDesc": "AI-generated Arabic sentiment reports",
   "download": "Download PDF"
+},
+"engagementPage": {
+  "badge": "Real-time Engagement Analytics",
+  "hero": {
+    "titlePre": "Read the",
+    "titleAccent": "engagement pulse",
+    "titlePost": "of your audience",
+    "description": "Track likes, comments, shares, and views across social media platforms in one dashboard — and discover which posts drive the highest engagement with your Algerian audience.",
+    "stat1": "Instant analysis",
+    "stat2": "4 platforms",
+    "stat3": "PDF reports"
+  },
+  "features": {
+    "badge": "Features",
+    "title": "Everything you need to understand your audience engagement",
+    "subtitle": "From a single post to a complete picture of your brand performance",
+    "reactions": {
+      "title": "Reaction tracking",
+      "desc": "Track likes, comments, and shares in real time across all supported platforms."
+    },
+    "trending": {
+      "title": "Top performing posts",
+      "desc": "Identify your highest-engagement posts and benchmark their performance against competitors."
+    },
+    "breakdown": {
+      "title": "Platform breakdown",
+      "desc": "Compare engagement data across Facebook, Instagram, and TikTok in a unified dashboard."
+    },
+    "rate": {
+      "title": "Engagement rate",
+      "desc": "Automatically calculate engagement rate divided by views for an accurate picture of each post."
+    },
+    "audience": {
+      "title": "Audience insights",
+      "desc": "Discover peak times and content types that drive the highest engagement with your target audience."
+    },
+    "alerts": {
+      "title": "Viral alerts",
+      "desc": "Get an instant notification whenever one of your posts experiences a sudden spike in engagement."
+    }
+  },
+  "howItWorks": {
+    "title": "How does engagement tracking work?",
+    "subtitle": "Three steps from monitoring to reporting"
+  },
+  "steps": {
+    "step1": {
+      "title": "Connect platforms",
+      "desc": "Gantra automatically collects engagement data from the platforms you monitor — no manual setup needed."
+    },
+    "step2": {
+      "title": "Analyze data",
+      "desc": "Likes, comments, shares, and views are processed for every post and engagement rates are calculated automatically."
+    },
+    "step3": {
+      "title": "View reports",
+      "desc": "Browse your engagement data in a clear dashboard with charts and exportable reports."
+    }
+  },
+  "metrics": {
+    "interactions": "Interactions analyzed",
+    "interactionsSub": "Likes, comments, shares",
+    "realtime": "Real-time updates",
+    "realtimeSub": "No data delays",
+    "platforms": "Supported platforms",
+    "history": "Post history",
+    "historySub": "No time limits"
+  },
+  "cta": {
+    "badge": "Try it free",
+    "title": "Start measuring your audience engagement today",
+    "description": "Get a complete picture of your brand performance across social media platforms with exportable reports."
+  }
+},
+"aboutPage": {
+  "hero": {
+    "badge": "About us",
+    "titlePre": "An Algerian platform built",
+    "titleHighlight": "for the Algerian market",
+    "description": "Gantra is a complete platform for monitoring what is said about your brand on social media, with sentiment analysis in the Algerian and Maghrebi dialect — real data, accurate analysis, decisions built on facts.",
+    "statAlgeria": "Made in Algeria"
+  },
+  "story": {
+    "badge": "Our story",
+    "title": "Born from a real gap in the Algerian market",
+    "p1": "We noticed that Algerian companies relied on Western tools that don't understand the Algerian dialect or the local cultural context — getting distorted results or ignoring sentiment analysis altogether.",
+    "p2": "We decided to build a platform from scratch trained on the Algerian and Maghrebi dialect, with comprehensive monitoring of the most-used social media platforms in Algeria."
+  },
+  "pillars": {
+    "badge": "What sets us apart",
+    "title": "Why Gantra and not others?",
+    "subtitle": "Six features you won't find in any other platform built for the Algerian market",
+    "dialectTitle": "AI for the Algerian dialect",
+    "dialectDesc": "Models trained specifically on Algerian Darija and Maghrebi Arabic — we don't rely on generic models that fail to understand local context.",
+    "platformsTitle": "Comprehensive platform coverage",
+    "platformsDesc": "We monitor Facebook, Instagram, TikTok, and YouTube in one unified system — everything said about your brand in one place.",
+    "realtimeTitle": "Live data, not historical",
+    "realtimeDesc": "Data is collected and analysed in real time — make decisions based on what's happening now, not last week.",
+    "reputationTitle": "Proactive reputation protection",
+    "reputationDesc": "A smart alert system notifies you the moment your audience's sentiment crosses defined thresholds — crises don't start without warning.",
+    "accuracyTitle": "Measured and documented accuracy",
+    "accuracyDesc": "We don't just claim it — classification accuracy measured on real Algerian post test data, published openly.",
+    "insightsTitle": "Exportable reports",
+    "insightsDesc": "Smart summaries and periodic reports that turn raw data into clear decisions shareable with your team."
+  },
+  "values": {
+    "badge": "Our values",
+    "title": "The principles behind every decision we make",
+    "subtitle": "Not slogans on a wall — daily practices visible in every feature we build",
+    "local": "Authentically Algerian",
+    "localDesc": "Built in Algeria, for Algeria — we understand the local market because we're part of it.",
+    "precision": "Uncompromising accuracy",
+    "precisionDesc": "Every result backed by real metrics — we don't sell promises without numbers.",
+    "speed": "Update speed",
+    "speedDesc": "Continuously refreshed data — waiting is a cost we don't accept.",
+    "research": "Continuous research",
+    "researchDesc": "We continuously improve our models with more real Algerian data."
+  },
+  "stats": {
+    "title": "By the numbers",
+    "subtitle": "Real metrics, not marketing claims",
+    "dialects": "Supported dialects",
+    "dialectsSub": "Algerian, Maghrebi, and Modern Standard Arabic"
+  },
+  "serve": {
+    "title": "Built for anyone who cares about their digital reputation"
+  },
+  "cta": {
+    "chip1": "No credit card required",
+    "chip2": "Setup in under a day",
+    "chip3": "Arabic support"
+  }
 }
 }

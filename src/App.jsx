@@ -9,7 +9,7 @@ import FaqPage from "./pages/FaqPage.jsx";
 import ContactPage from "./pages/ContactPage.jsx";
 import MediaMonitoringPage from "./pages/MediaMonitoringPage.jsx";
 import ProfilesPage from "./pages/ProfilesPage.jsx";
-import SocialListeningPage from "./pages/SocialListeningPage.jsx";
+import SocialListeningPage from './pages/SocialListeningPage'
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import Login from "./pages/Login.jsx";
 import RequestAccessPage from "./pages/RequestAccessPage.jsx";
@@ -24,11 +24,15 @@ import TopicsPage from "./pages/TopicsPage.jsx";
 import SurveysPage from "./pages/SurveysPage.jsx";
 import EngagementPage from "./pages/EngagementPage";
 import PublicSurveyPage from "./pages/PublicSurveyPage.jsx";
+import SentimentAnalysisPage from './pages/SentimentAnalysisPage';
+import Topics from './pages/Topics';
+import Alerts from './pages/Alerts'
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LanguageSwitcher from "./components/LanguageSwitcher.jsx";
 import AppNavbar from "./components/AppNavbar.jsx";
 import InsightsPage from "./pages/InsightsPage";
 import FeedbackPage from "./pages/FeedbackPage";
+import AboutPage from './pages/AboutPage'
 import GantraLogo from "./components/GantraLogo.jsx";
 import ChatWidget from "./components/ChatWidget";
 import { useTranslation } from "react-i18next";
@@ -85,12 +89,52 @@ function App() {
     }}>
       <Routes>
         {/* Public marketing pages */}
-        <Route path="/"                          element={<PublicLayout><HomePage /></PublicLayout>} />
+        <Route path="/" element={
+  <div style={{ minHeight:"100vh", background:"var(--bg)", color:"var(--text)", display:"flex", flexDirection:"column" }}>
+    <main style={{ flex: 1 }}><HomePage /></main>
+    <Footer />
+  </div>
+} />
         <Route path="/resources/faq"             element={<PublicLayout><FaqPage /></PublicLayout>} />
         <Route path="/contact-us"                element={<PublicLayout><ContactPage /></PublicLayout>} />
         <Route path="/products/media-monitoring" element={<PublicLayout><MediaMonitoringPage /></PublicLayout>} />
-        <Route path="/products/profiles"         element={<PublicLayout><ProfilesPage /></PublicLayout>} />
-        <Route path="/products/social-listening" element={<PublicLayout><SocialListeningPage /></PublicLayout>} />
+         <Route path="/products/engagement" element={
+  <div style={{ minHeight:"100vh", background:"var(--bg)", color:"var(--text)", display:"flex", flexDirection:"column" }}>
+    <main style={{ flex: 1 }}><ProfilesPage /></main>
+    <Footer />
+  </div>
+} />
+        <Route path="/products/social-listening" element={
+  <div style={{ minHeight:"100vh", background:"var(--bg)", color:"var(--text)", display:"flex", flexDirection:"column" }}>
+    <main style={{ flex: 1 }}><SocialListeningPage /></main>
+    <Footer />
+  </div>
+} />
+        <Route path="/products/sentiment-analysis" element={
+  <div style={{ minHeight:"100vh", background:"var(--bg)", color:"var(--text)", display:"flex", flexDirection:"column" }}>
+    <main style={{ flex: 1 }}><SentimentAnalysisPage /></main>
+    <Footer />
+  </div>
+} />
+<Route path="/products/alerts" element={
+  <div style={{ minHeight:"100vh", display:"flex", flexDirection:"column" }}>
+    <main style={{ flex: 1 }}><Alerts /></main>
+    <Footer />
+  </div>
+} />
+
+<Route path="/products/topics" element={
+  <div style={{ minHeight:"100vh", display:"flex", flexDirection:"column" }}>
+    <main style={{ flex: 1 }}><Topics /></main>
+    <Footer />
+  </div>
+} />
+<Route path="/about" element={
+  <div style={{ minHeight:"100vh", display:"flex", flexDirection:"column" }}>
+    <main style={{ flex: 1 }}><AboutPage /></main>
+    <Footer />
+  </div>
+} />
 
         {/* Auth pages — no header/footer */}
         <Route path="/login"          element={<Login />} />
