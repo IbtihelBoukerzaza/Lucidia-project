@@ -7,7 +7,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../contexts/ThemeContext";
-import gantraLogo from "../assets/gantra-logo.png";
+import gantraLogo from "../assets/gantra-logo (2).png";
 
 // ─── Language Switcher ────────────────────────────────────────────────────────
 function LangSwitcher({ isDark }) {

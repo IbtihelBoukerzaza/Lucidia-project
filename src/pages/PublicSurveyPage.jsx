@@ -5,7 +5,7 @@ import { CheckCircle2, AlertCircle, Send } from "lucide-react";
 import { api } from "../services/api";
 import { useTheme } from "../contexts/ThemeContext";
 import { useTranslation } from "react-i18next";
-import gantraLogo from "../assets/gantra-logo.png";
+import gantraLogo from "../assets/gantra-logo (2).png";
 
 const ACCENT = "#8B5CF6";
 

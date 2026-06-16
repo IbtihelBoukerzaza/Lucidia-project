@@ -9,7 +9,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLanguage } from '../contexts/LanguageContext'
 import { useTheme } from '../contexts/ThemeContext'
-import gantraLogo from '../assets/gantra-logo.png'
+import gantraLogo from '../assets/gantra-logo (2).png'
 
 // ─── Simulation data ──────────────────────────────────────────────────────────
 

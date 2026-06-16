@@ -5,7 +5,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { useTranslation } from "react-i18next";
 import { KeyRound, Eye, EyeOff, CheckCircle, AlertCircle, Loader } from "lucide-react";
 import { api } from "../services/api";
-import gantraLogo from "../assets/gantra-logo.png";
+import gantraLogo from "../assets/gantra-logo (2).png";
 
 export default function SetPasswordPage() {
   const navigate       = useNavigate();

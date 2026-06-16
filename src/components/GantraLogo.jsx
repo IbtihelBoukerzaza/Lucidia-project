@@ -1,4 +1,4 @@
-import gantraLogo from "../assets/gantra-logo.png";
+import gantraLogo from "../assets/gantra-logo (2).png";
 
 export default function GantraLogo({
   size = "md",

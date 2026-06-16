@@ -5,7 +5,7 @@ import { Building2, Mail, User, Briefcase, Users, Target, ArrowRight, CheckCircl
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../contexts/ThemeContext";
 import { api } from "../services/api";
-import gantraLogo from "../assets/gantra-logo.png";
+import gantraLogo from "../assets/gantra-logo (2).png";
 
 // ─── Floating orbs (same as Login) ───────────────────────────────────────────
 function Orbs({ isDark }) {
